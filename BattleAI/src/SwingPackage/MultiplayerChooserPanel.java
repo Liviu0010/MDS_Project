@@ -11,7 +11,7 @@ package SwingPackage;
  */
 public class MultiplayerChooserPanel extends javax.swing.JPanel {
 
-    MainFrame rootFrame;
+    private final MainFrame rootFrame;
     
     /**
      * Creates new form MultiplayerChooserPanel
@@ -99,7 +99,7 @@ public class MultiplayerChooserPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_internetButtonActionPerformed
 
     private void lanButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lanButtonActionPerformed
-        
+        rootFrame.changePanel(new MultiplayerLanPanel(rootFrame));
     }//GEN-LAST:event_lanButtonActionPerformed
 
     private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed

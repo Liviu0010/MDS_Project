@@ -11,7 +11,7 @@ package SwingPackage;
  */
 public class MultiplayerLoginRegisterPanel extends javax.swing.JPanel {
     
-    MainFrame rootFrame;
+    private final MainFrame rootFrame;
     
     /**
      * Creates new form MultiplayerLoginPanel

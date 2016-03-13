@@ -6,7 +6,7 @@ package SwingPackage;
  */
 public class MultiplayerServerPanel extends javax.swing.JPanel {
 
-    MainFrame rootFrame;
+    private final MainFrame rootFrame;
     
     /**
      * Creates new form MultiplayerServerBrowser

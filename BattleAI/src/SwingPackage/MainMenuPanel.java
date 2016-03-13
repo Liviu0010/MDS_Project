@@ -7,7 +7,6 @@ package SwingPackage;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.plaf.OptionPaneUI;
 
 /**
  *
