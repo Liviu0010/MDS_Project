@@ -5,7 +5,9 @@
  */
 package SwingPackage;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.plaf.OptionPaneUI;
 
 /**
  *
@@ -157,7 +159,10 @@ public class MainMenuPanel extends JPanel {
     }//GEN-LAST:event_editorButtonActionPerformed
 
     private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
-        // TODO add your handling code here:
+        int result = JOptionPane.showConfirmDialog(rootFrame, "Sure you wanna quit?", "Quit?", JOptionPane.YES_NO_OPTION);
+        if(result == 0){
+            System.exit(0);
+        }
     }//GEN-LAST:event_exitButtonActionPerformed
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
