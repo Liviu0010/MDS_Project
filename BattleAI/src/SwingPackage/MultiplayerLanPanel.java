@@ -111,7 +111,7 @@ public class MultiplayerLanPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void connectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectButtonActionPerformed
-        // TODO add your handling code here:
+        rootFrame.changePanel(new MultiplayerServerPanel(rootFrame));
     }//GEN-LAST:event_connectButtonActionPerformed
 
     private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
