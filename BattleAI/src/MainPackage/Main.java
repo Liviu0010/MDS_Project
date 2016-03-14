@@ -1,6 +1,6 @@
 package MainPackage;
 
-import SwingPackage.MainFrame;
+import InterfacePackage.MainFrame;
 import java.awt.EventQueue;
 
 
