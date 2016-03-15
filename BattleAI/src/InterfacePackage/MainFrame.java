@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package SwingPackage;
+package InterfacePackage;
 
 import MainPackage.FrameConstants;
 import javax.swing.JFrame;
@@ -15,8 +15,6 @@ import javax.swing.JPanel;
  */
 public class MainFrame extends JFrame implements FrameConstants{
     
-    private final MainMenuPanel mainMenu;
-    
     /**
      * Frame-ul principal al programului
      */
@@ -26,10 +24,7 @@ public class MainFrame extends JFrame implements FrameConstants{
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setResizable(false);
         
-        mainMenu = new MainMenuPanel(this);
-        
-        this.add(mainMenu);
-        
+        this.add(new MainMenuPanel(this));
     }
     
     public void changePanel(JPanel panel){
