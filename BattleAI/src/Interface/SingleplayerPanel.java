@@ -14,14 +14,13 @@ import javax.swing.JPanel;
 public class SingleplayerPanel extends JPanel {
 
     private final MainFrame rootFrame;
-    
     /**
      * Creates new form SingleplayerPanel
+     * @param rootFrame
      */
     public SingleplayerPanel(MainFrame rootFrame) {
         
-        this.rootFrame = rootFrame;
-        
+        this.rootFrame = rootFrame; 
         initComponents();
     }
 
@@ -160,7 +159,8 @@ public class SingleplayerPanel extends JPanel {
     }//GEN-LAST:event_removeButtonActionPerformed
 
     private void battleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_battleButtonActionPerformed
-        // TODO add your handling code here:
+        Visual.VEngine ve = Visual.VEngine.getInstance();
+        ve.showEngine();    //show the visual engine
     }//GEN-LAST:event_battleButtonActionPerformed
 
     private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
