@@ -1,4 +1,4 @@
-package InterfacePackage;
+package Interface;
 
 /**
  *

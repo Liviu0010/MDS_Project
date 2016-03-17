@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package InterfacePackage;
+package Interface;
 
-import MainPackage.FrameConstants;
+import Constants.FrameConstants;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
