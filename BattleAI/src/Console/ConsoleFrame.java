@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ConsolePackage;
+package Console;
 
 import javax.swing.JFrame;
 
@@ -11,16 +11,21 @@ import javax.swing.JFrame;
  *
  * @author Dragos-Alexandru
  */
-public class ConsoleFrame extends JFrame {
+public final class ConsoleFrame extends JFrame {
 
     public boolean ready = false;
     
     /**
      * Creates new form ConsoleFrame
+     * @param isServer
      */
-    public ConsoleFrame() {
+    public ConsoleFrame(boolean isServer) {
         initComponents();
-        ready = true;
+        if(isServer){
+            sendMessage("Console", "***Welcome to BattleAI MasterServer***");
+        }else{
+            sendMessage("Console", "***Welcome to BattleAI Client***");
+        }
     }
 
     /**
@@ -41,7 +46,6 @@ public class ConsoleFrame extends JFrame {
 
         outputArea.setColumns(20);
         outputArea.setRows(5);
-        outputArea.setText("//* Console BattleAI-Server *//");
         outputArea.setEditable(false);
         outputScroll.setViewportView(outputArea);
 
@@ -91,7 +95,7 @@ public class ConsoleFrame extends JFrame {
      * @param message
      */
     public synchronized void sendMessage(String className, String message){
-        outputArea.append("\n "+className+": "+message);
+        outputArea.append(" "+className+": "+message+"\n");
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

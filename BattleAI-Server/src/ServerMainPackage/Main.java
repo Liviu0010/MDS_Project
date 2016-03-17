@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 public class Main {
 
-    static ConsoleFrame console;
+    public static ConsoleFrame console;
     
     public static void main(String[] args) {
         
@@ -36,6 +36,42 @@ public class Main {
                     Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+            
+            Main main = new Main();
+            main.start();
         }
+    }
+    
+    public void start(){
+        Thread th = new Thread(new Speaker("A", console));
+        Thread th2 = new Thread(new Speaker("B", console));
+        
+        th.start();
+        th2.start();
+        
+        
+    }
+    
+    class Speaker implements Runnable{
+        
+        ConsoleFrame console;
+        String name;
+        public Speaker(String name, ConsoleFrame console){
+            this.console = console;
+            this.name = name;
+        }
+        
+        @Override
+        public void run() {
+            for(int i =0;i<30;i++){
+                Main.console.sendMessage(name, i+"");
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+        
     }
 }
