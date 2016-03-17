@@ -1,5 +1,5 @@
 
-package GameObjects;
+package Engine;
 
 public interface MovementInterface {
     public void MoveUp();
