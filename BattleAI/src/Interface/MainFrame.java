@@ -6,6 +6,9 @@
 package Interface;
 
 import Constants.FrameConstants;
+import Visual.VEngine;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -23,6 +26,8 @@ public class MainFrame extends JFrame implements FrameConstants{
         this.setSize(FRAME_WIDTH, FRAME_HEIGHT);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setResizable(false);
+        
+        this.addWindowListener(new WinListener());  //need to tell the engine the window is closing
         
         this.add(new MainMenuPanel(this));
     }
