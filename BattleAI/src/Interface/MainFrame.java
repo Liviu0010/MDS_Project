@@ -3,10 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package SwingPackage;
+package Interface;
 
-import MainPackage.FrameConstants;
-import java.awt.Container;
+import Constants.FrameConstants;
+import Visual.VEngine;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -15,8 +17,6 @@ import javax.swing.JPanel;
  * @author Dragos-Alexandru
  */
 public class MainFrame extends JFrame implements FrameConstants{
-    
-    private final MainMenuPanel mainMenu;
     
     /**
      * Frame-ul principal al programului
@@ -27,10 +27,9 @@ public class MainFrame extends JFrame implements FrameConstants{
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setResizable(false);
         
-        mainMenu = new MainMenuPanel(this);
+        this.addWindowListener(new WinListener());  //need to tell the engine the window is closing
         
-        this.add(mainMenu);
-        
+        this.add(new MainMenuPanel(this));
     }
     
     public void changePanel(JPanel panel){

@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package SwingPackage;
+package Interface;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
@@ -35,50 +36,10 @@ public class MainMenuPanel extends JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        addButton = new javax.swing.JButton();
-        removeButton = new javax.swing.JButton();
-        battleButton = new javax.swing.JButton();
-        backButton = new javax.swing.JButton();
         singleplayerButton = new javax.swing.JButton();
         multiplayerButton = new javax.swing.JButton();
         editorButton = new javax.swing.JButton();
         exitButton = new javax.swing.JButton();
-
-        addButton.setBackground(new java.awt.Color(255, 255, 255));
-        addButton.setFont(new java.awt.Font("Verdana", 0, 11)); // NOI18N
-        addButton.setText("Add");
-        addButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addButtonActionPerformed(evt);
-            }
-        });
-
-        removeButton.setBackground(new java.awt.Color(255, 255, 255));
-        removeButton.setFont(new java.awt.Font("Verdana", 0, 11)); // NOI18N
-        removeButton.setText("Remove");
-        removeButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                removeButtonActionPerformed(evt);
-            }
-        });
-
-        battleButton.setBackground(new java.awt.Color(255, 255, 255));
-        battleButton.setFont(new java.awt.Font("Verdana", 0, 11)); // NOI18N
-        battleButton.setText("Battle");
-        battleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                battleButtonActionPerformed(evt);
-            }
-        });
-
-        backButton.setBackground(new java.awt.Color(255, 255, 255));
-        backButton.setFont(new java.awt.Font("Verdana", 0, 11)); // NOI18N
-        backButton.setText("Back");
-        backButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                backButtonActionPerformed(evt);
-            }
-        });
 
         setBackground(new java.awt.Color(255, 255, 255));
         setMaximumSize(new java.awt.Dimension(600, 400));
@@ -149,7 +110,7 @@ public class MainMenuPanel extends JPanel {
     }//GEN-LAST:event_singleplayerButtonActionPerformed
 
     private void multiplayerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_multiplayerButtonActionPerformed
-
+        rootFrame.changePanel(new MultiplayerChooserPanel(rootFrame));
     }//GEN-LAST:event_multiplayerButtonActionPerformed
 
     private void editorButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editorButtonActionPerformed
@@ -157,34 +118,17 @@ public class MainMenuPanel extends JPanel {
     }//GEN-LAST:event_editorButtonActionPerformed
 
     private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
-        // TODO add your handling code here:
+        int result = JOptionPane.showConfirmDialog(rootFrame, "Sure you wanna quit?", "Quit?", JOptionPane.YES_NO_OPTION);
+        if(result == 0){
+            System.exit(0);
+        }
     }//GEN-LAST:event_exitButtonActionPerformed
-
-    private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_addButtonActionPerformed
-
-    private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_removeButtonActionPerformed
-
-    private void battleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_battleButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_battleButtonActionPerformed
-
-    private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
-        rootFrame.changePanel(new MainMenuPanel(rootFrame));
-    }//GEN-LAST:event_backButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton addButton;
-    private javax.swing.JButton backButton;
-    private javax.swing.JButton battleButton;
     private javax.swing.JButton editorButton;
     private javax.swing.JButton exitButton;
     private javax.swing.JButton multiplayerButton;
-    private javax.swing.JButton removeButton;
     private javax.swing.JButton singleplayerButton;
     // End of variables declaration//GEN-END:variables
 }
