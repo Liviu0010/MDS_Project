@@ -20,6 +20,7 @@ public class ServerDispatcher implements Runnable {
 	private List<MatchConnection> activeConnections =
 			Collections.synchronizedList(new LinkedList<MatchConnection>());
 	private boolean isRunning = false;
+	private Thread mainThread;
 	
 	private ServerDispatcher() {}
 	
@@ -29,7 +30,8 @@ public class ServerDispatcher implements Runnable {
 	
 	public boolean start() {
 		if (!isRunning) {
-			new Thread(this).start();
+			mainThread = new Thread(this);
+			mainThread.start();
 			isRunning = true;
 			return true;
 		}
@@ -37,10 +39,11 @@ public class ServerDispatcher implements Runnable {
 		return false;
 	}
 	
-	public boolean stop() {
+	public boolean stop() throws InterruptedException {
 		if (isRunning) {
 			isRunning = false;
 			activeConnections.clear();
+			mainThread.join();
 			return true;
 		}
 		
