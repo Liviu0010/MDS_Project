@@ -137,7 +137,7 @@ public class MultiplayerServerPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void joinMatchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_joinMatchButtonActionPerformed
-        // TODO add your handling code here:
+        rootFrame.changePanel(new MultiplayerMatchPanel(rootFrame));
     }//GEN-LAST:event_joinMatchButtonActionPerformed
 
     private void createMatchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createMatchButtonActionPerformed
