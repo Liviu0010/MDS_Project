@@ -15,36 +15,43 @@ import javafx.scene.paint.Paint;
  * @author Liviu
  */
 public class Animator extends AnimationTimer{
-    private GraphicsContext gc;
-    private long timeSum, lastTime, fpsCounter, fps;
+    
+    private final GraphicsContext graphicContext;
+    private long elapsedTime, oldTime, fpsCounter, fps;
     
     
     public Animator(GraphicsContext gc){
-        this.gc = gc;
+        this.graphicContext = gc;
     }
     
     @Override
-    public void handle(long timeNano){  //timeNano == current time value
-        gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
-        gc.setFill(Color.AZURE);
-        gc.fillRect(0,0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
-        showFPS(timeNano);
+    public void handle(long newTime){  //timeNano == current time value
+        graphicContext.clearRect(0, 0, graphicContext.getCanvas().getWidth(), graphicContext.getCanvas().getHeight());
+        graphicContext.setFill(Color.AZURE);
+        graphicContext.fillRect(0,0, graphicContext.getCanvas().getWidth(), graphicContext.getCanvas().getHeight());
+        showFPS(newTime);
     }
     
-    private void showFPS(long timeNano){
-        timeSum += timeNano - lastTime;
-        lastTime = timeNano;
+    private void showFPS(long newTime){
+        
+        elapsedTime += newTime - oldTime;
+        oldTime = newTime;
         fpsCounter++;
         
-        if(timeSum >= 1e9){
-            fps = fpsCounter > 60 && timeSum > 1e9 ? 60 : fpsCounter;
-            timeSum = fpsCounter = 0;
+        if(elapsedTime >= 1e9){
+            if(fpsCounter > 60 && elapsedTime > 1e9){
+                fps = 60;
+            }else{
+                fps = fpsCounter;
+            }
+            elapsedTime = 0;
+            fpsCounter = 0;
         }
         
-        Paint c = gc.getStroke();
-        gc.setStroke(Color.BLACK);
-        gc.strokeText(fps+" FPS", 0, 10);
-        gc.setStroke(c);
+        Paint c = graphicContext.getStroke();
+        graphicContext.setStroke(Color.BLACK);
+        graphicContext.strokeText(fps+" FPS", 0, 10);
+        graphicContext.setStroke(c);
     }
     
 }

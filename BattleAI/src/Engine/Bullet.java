@@ -2,32 +2,19 @@
 package Engine;
 import java.awt.geom.*;
 public class Bullet extends GameEntity implements TransformInterface{
-    Bullet(double xPos , double yPos , double ang, double spd){
+    Bullet(double xPos , double yPos , double ang, double spd,double dmg){
         boundingBox = new Rectangle2D.Double(xPos,yPos,5,5);
         x = xPos;
         y = yPos;
         angle = ang;
         speed = spd;
+        damage = dmg;
     }
     Bullet(){
         boundingBox = new Rectangle2D.Double(0,0,5,5);
         x = y = angle = 0;
         speed = 10;
-    }
-    public double GetSpeed(){
-        return speed;
-    }
-    public void SetSpeed(double spd){
-        speed = spd;
-    }
-    public double GetDamage(){
-        return damage;
-    }
-    public void SetDamage(double dmg){
-        damage = dmg;
-    }
-    public double GetAngle(){
-        return angle;
+        damage = 10;
     }
     public void MoveFront(){
         double s = Math.sin(angle * Math.PI/180.0);
