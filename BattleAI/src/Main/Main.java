@@ -1,7 +1,6 @@
 package Main;
 
 import Console.ConsoleFrame;
-import Constants.MasterServerConstants;
 import Interface.MainFrame;
 import java.awt.EventQueue;
 import java.util.logging.Level;
@@ -48,7 +47,7 @@ public class Main implements ApplicationState{
 
                 @Override
                 public void run() {
-                    mainFrame = new MainFrame();
+                    mainFrame = MainFrame.getInstance();
                     mainFrame.setLocationRelativeTo(null);
                     mainFrame.setVisible(true);
                 }
