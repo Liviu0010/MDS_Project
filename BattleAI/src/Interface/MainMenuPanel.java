@@ -114,7 +114,7 @@ public class MainMenuPanel extends JPanel {
     }//GEN-LAST:event_multiplayerButtonActionPerformed
 
     private void editorButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editorButtonActionPerformed
-        // TODO add your handling code here:
+        
     }//GEN-LAST:event_editorButtonActionPerformed
 
     private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
