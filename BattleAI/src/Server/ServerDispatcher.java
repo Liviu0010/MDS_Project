@@ -1,4 +1,4 @@
-package ServerMainPackage;
+package Server;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import Constants.ServerConstants;
+import Constants.MasterServerConstants;
 
 public class ServerDispatcher implements Runnable {
 	
@@ -67,12 +67,13 @@ public class ServerDispatcher implements Runnable {
             }
         };
         connectionCleaner.scheduleAtFixedRate(removeInactiveConnections, 0,
-                        ServerConstants.PACKET_DELAY * 2);
+                        MasterServerConstants.PACKET_DELAY * 2);
 
         Object object = null;
 
         while (isRunning) {
-            try (ServerSocket serverSocket = new ServerSocket(ServerConstants.PORT)) {
+            try (ServerSocket serverSocket = 
+                    new ServerSocket(MasterServerConstants.PORT)) {
                 Socket clientSocket = serverSocket.accept();
                 
                 /* Once connection is establshed, client should immediately send

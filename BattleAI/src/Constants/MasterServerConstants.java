@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Constants;
 
 /**
@@ -10,5 +5,7 @@ package Constants;
  * @author Dragos-Alexandru
  */
 public interface MasterServerConstants {
-    String masterUsername="BattleAIMS";
+    String MASTER_USERNAME = "BattleAIMS";
+    int PORT = 60010;
+    long PACKET_DELAY = 3000; // expressed in milliseconds
 }

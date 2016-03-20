@@ -1,4 +1,4 @@
-package ServerMainPackage;
+package Server;
 
 /**
  * A HostMatchRequest is a ClientRequest which provides a Match object and asks

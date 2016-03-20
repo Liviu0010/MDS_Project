@@ -1,4 +1,4 @@
-package ServerMainPackage;
+package Server;
 
 /**
  * <pre> A regular request is a request which does not require the server to do

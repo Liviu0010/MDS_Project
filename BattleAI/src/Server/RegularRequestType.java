@@ -1,4 +1,4 @@
-package ServerMainPackage;
+package Server;
 
 /**
  * Enumeration containing regular request types to be used for 

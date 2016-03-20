@@ -1,4 +1,4 @@
-package ServerMainPackage;
+package Server;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -6,7 +6,7 @@ import java.net.Socket;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import Constants.ServerConstants;
+import Constants.MasterServerConstants;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -104,12 +104,12 @@ public class MatchConnection implements Runnable {
             }
         };
         connectionHandler.scheduleAtFixedRate(handleConnections, 0, 
-                ServerConstants.PACKET_DELAY * 2);
+                MasterServerConstants.PACKET_DELAY * 2);
 
         while (threadRunning) {
             try (ObjectInputStream inputStream = 
                     new ObjectInputStream(clientSocket.getInputStream())) {
-                Thread.sleep(ServerConstants.PACKET_DELAY);
+                Thread.sleep(MasterServerConstants.PACKET_DELAY);
                 
                 if (!clientSocket.isInputShutdown()) {
                     object = inputStream.readObject();
