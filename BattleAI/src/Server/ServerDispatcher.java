@@ -24,7 +24,7 @@ public class ServerDispatcher implements Runnable {
 
     private ServerDispatcher() {}
 
-    public ServerDispatcher getInstance() {
+    public static ServerDispatcher getInstance() {
         return serverDispatcher;
     }
 
