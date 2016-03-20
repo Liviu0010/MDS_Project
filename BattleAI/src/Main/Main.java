@@ -61,7 +61,7 @@ public class Main implements ApplicationState{
 
                 @Override
                 public void run() {
-                    console = new ConsoleFrame(isServer);
+                    console = ConsoleFrame.getInstance();
                     console.setLocation(100, 100);
                     console.setVisible(true);
                 }
