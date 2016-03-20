@@ -5,6 +5,12 @@
  */
 package Interface;
 
+import Client.ConnectionHandler;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Dragos-Alexandru
@@ -121,16 +127,29 @@ public class MultiplayerLoginRegisterPanel extends javax.swing.JPanel {
     private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
         rootFrame.changePanel(new MultiplayerChooserPanel(rootFrame));
     }//GEN-LAST:event_backButtonActionPerformed
-
+    
     private void loginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginButtonActionPerformed
+        if (!connectToMasterServer())
+            return;
         rootFrame.changePanel(new MultiplayerServerPanel(rootFrame));
     }//GEN-LAST:event_loginButtonActionPerformed
 
     private void registerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerButtonActionPerformed
-        // TODO add your handling code here:
+        if (!connectToMasterServer())
+            return;
     }//GEN-LAST:event_registerButtonActionPerformed
 
-
+    private boolean connectToMasterServer() {
+        try {
+            ConnectionHandler.getInstance().connectToMasterServer();
+        } catch (IOException ex) {
+             JOptionPane.showMessageDialog(null, ex.getMessage(), 
+                    "Failed to connect to master server", 
+                    JOptionPane.ERROR_MESSAGE);
+             return false;
+        }
+        return true;
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton backButton;
     private javax.swing.JButton loginButton;
