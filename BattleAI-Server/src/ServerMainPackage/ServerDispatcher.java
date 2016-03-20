@@ -53,6 +53,9 @@ public class ServerDispatcher implements Runnable {
     @Override
     public void run() {
         Timer connectionCleaner = new Timer();
+        
+        /* This task checks the activeConnection list each PACKET_DELAY * 2 
+          milliseconds and removes every inactive connection. */
         TimerTask removeInactiveConnections = new TimerTask() {
             @Override
             public void run() {
@@ -71,18 +74,23 @@ public class ServerDispatcher implements Runnable {
         while (isRunning) {
             try (ServerSocket serverSocket = new ServerSocket(ServerConstants.PORT)) {
                 Socket clientSocket = serverSocket.accept();
+                
+                /* Once connection is establshed, client should immediately send
+                   a request to clarify the intent. If the request is not
+                   received in 2 seconds, readObject() should timeout. */
                 clientSocket.setSoTimeout(2000);
 
                 ObjectInputStream objectInputStream = 
                         new ObjectInputStream(clientSocket.getInputStream());
-                object = objectInputStream.readObject();
+                // Read a request from the accepted client.
+                object = objectInputStream.readObject(); 
+                
+                // Handle client request
                 if (object instanceof ClientRequest) 
                         processRequest(clientSocket, (ClientRequest)object);
             } catch (SocketTimeoutException e) {
                     e.printStackTrace();
-            } catch (IOException e) {
-                    e.printStackTrace();
-            } catch (ClassNotFoundException e) {
+            } catch (IOException | ClassNotFoundException e) {
                     e.printStackTrace();
             }
         }
@@ -92,22 +100,24 @@ public class ServerDispatcher implements Runnable {
     private void processRequest(Socket clientSocket, ClientRequest clientRequest) throws IOException {
         if (clientRequest instanceof HostMatchRequest) {
             HostMatchRequest request = (HostMatchRequest)clientRequest;
+            // We no longer need readObject() to timeout 
             clientSocket.setSoTimeout(0);
-
+                
             MatchConnection clientConnection = 
                 new MatchConnection(clientSocket, request.getMatch());
-
+            
             activeConnections.add(clientConnection);
         } else if (clientRequest instanceof RegularClientRequest) {
             RegularClientRequest request = (RegularClientRequest)clientRequest;
             
-            if (request.getRequestType() != RegularRequestType.GET_SERVER_LIST) 
+            if (request.getRequestType() != RegularRequestType.GET_MATCH_LIST) 
                 return;
             
             ObjectOutputStream objectOutputStream = 
                 new ObjectOutputStream(clientSocket.getOutputStream());
             objectOutputStream.writeObject(activeConnections);
             objectOutputStream.flush();
+            objectOutputStream.close();
             clientSocket.close();
         }
     }
