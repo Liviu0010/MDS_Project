@@ -6,16 +6,18 @@ public class Tank extends GameEntity  implements MovementInterface,TransformInte
     protected double  life;
     protected Cannon cannon;
     protected Bullet bullet;
-    Tank(double xPos, double yPos, double spd, double lfe, double dmg, double ang){
+    public Tank(double xPos, double yPos, double spd, double lfe, double dmg, double ang){
         boundingBox = new Rectangle2D.Double(xPos,yPos,20,20);
         cannon = new Cannon(xPos,yPos,ang,spd,dmg);
         speed = spd;
         life = lfe;
         damage = dmg;
         angle = ang;
+        x = xPos;
+        y = yPos;
     }
     
-    Tank(){
+    public Tank(){
         boundingBox = new Rectangle2D.Double(200,200,20,20);
         speed = 1;
         life = 100;

@@ -37,6 +37,8 @@ public class VisualEngine extends Application {
         //^it adds 10 pixels on width and height when I set the stage to be non-resizable, for some reason
         //END
         
+        
+        
         //this is actually the window
         visualStage = new Stage();
         visualStage.setTitle(VisualEngineConstants.ENGINE_TITLE);

@@ -56,4 +56,12 @@ public abstract class GameEntity {
         return null;
     }
     
+    public double getX(){
+        return x;
+    }
+    
+    public double getY(){
+        return y;
+    }
+    
 }
