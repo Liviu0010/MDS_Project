@@ -1,31 +1,32 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Console;
 
 import javax.swing.JFrame;
 
 /**
- *
+ *  Clasa singleton prin care se vor afisa toate mesajele importante ale serverului sau
+ * clientului pentru debug
+ * !OBS: Se poate afisa fie print instanta sau prin metoda statica
  * @author Dragos-Alexandru
  */
 public final class ConsoleFrame extends JFrame {
 
+    private static ConsoleFrame instance;
     public boolean ready = false;
     
     /**
      * Creates new form ConsoleFrame
      * @param isServer
      */
-    public ConsoleFrame(boolean isServer) {
+    private ConsoleFrame() {
         initComponents();
-        if(isServer){
-            sendMessage("Console", "***Welcome to BattleAI MasterServer***");
-        }else{
-            sendMessage("Console", "***Welcome to BattleAI Client***");
+        printMessage("Console", "***Welcome to BattleAI Console***");
+    }
+    
+    public static ConsoleFrame getInstance(){
+        if(instance == null){
+            instance = new ConsoleFrame();
         }
+        return instance;
     }
 
     /**
@@ -90,12 +91,23 @@ public final class ConsoleFrame extends JFrame {
     }//GEN-LAST:event_sendButtonActionPerformed
     
     /**
-     *  Metoda sincronizata ce afiseaza un mesaj pe consola
+     *  Metoda sincronizata ce afiseaza un mesaj pe consola (Nestatica)
      * @param className
      * @param message
      */
-    public synchronized void sendMessage(String className, String message){
+    
+    public synchronized void printMessage(String className, String message){
         outputArea.append(" "+className+": "+message+"\n");
+    }
+    
+    /**
+     *  Metoda sincronizata ce afiseaza un mesaj pe consola (Statica)
+     * @param className
+     * @param message
+     */
+    public synchronized static void sendMessage(String className, String message){
+        ConsoleFrame consola = getInstance();
+        consola.printMessage(className, message);
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -17,11 +17,11 @@ import javafx.stage.WindowEvent;
 //Welp, unless you wanna have a bad time, that is
 public class VisualEngine extends Application {
     
-    private GraphicsContext gc;
+    private GraphicsContext graphicContext;
     private Stage visualStage;
     private static VisualEngine instance;
-    private boolean running;
-    private Animator ani;
+    private boolean isRunning;
+    private Animator animator;
     
     @Override
     public void start(Stage primaryStage) {
@@ -29,7 +29,7 @@ public class VisualEngine extends Application {
         Pane pane = new Pane();
         Canvas canvas =new Canvas(VisualEngineConstants.ENGINE_WIDTH, VisualEngineConstants.ENGINE_HEIGHT);
         
-        gc = canvas.getGraphicsContext2D();
+        graphicContext = canvas.getGraphicsContext2D();
         
         pane.getChildren().add(canvas);
         
@@ -47,13 +47,13 @@ public class VisualEngine extends Application {
         visualStage.setResizable(false);
         //END
         
-        ani = new Animator(canvas.getGraphicsContext2D());  //get the magic ready
+        animator = new Animator(canvas.getGraphicsContext2D());  //get the magic ready
         
-        gc.setFill(Color.BLACK);
-        gc.fillRect(0, 0, 1, 1);
+        graphicContext.setFill(Color.BLACK);
+        graphicContext.fillRect(0, 0, 1, 1);
         
         instance = this;
-        running = false;
+        isRunning = false;
     }
     
     public static VisualEngine getInstance(){
@@ -64,9 +64,9 @@ public class VisualEngine extends Application {
         Platform.runLater(new Runnable(){
            @Override
             public void run(){
-                running = true;
+                isRunning = true;
                 visualStage.show();
-                ani.start();    //start the magic
+                animator.start();    //start the magic
             }
         });
         
@@ -77,9 +77,9 @@ public class VisualEngine extends Application {
         Platform.runLater(new Runnable(){
            @Override
             public void run(){
-                running = false;
+                isRunning = false;
                 visualStage.hide();
-                ani.stop();     //no hidden magic
+                animator.stop();     //no hidden magic
             }
         });
     }
@@ -91,12 +91,12 @@ public class VisualEngine extends Application {
     }
     
     private void onClose(WindowEvent we){
-        running = false;
-        ani.stop();     //stop the magic before it eats all resources
+        isRunning = false;
+        animator.stop();     //stop the magic before it eats all resources
     }
     
     public boolean isRunning(){
-        return running;
+        return isRunning;
     }
     
     public static void main(String args[]){
