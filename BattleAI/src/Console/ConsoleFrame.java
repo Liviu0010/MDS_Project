@@ -98,6 +98,7 @@ public final class ConsoleFrame extends JFrame {
     
     public synchronized void printMessage(String className, String message){
         outputArea.append(" "+className+": "+message+"\n");
+        System.out.println(" "+className+": "+message+"\n");
     }
     
     /**
