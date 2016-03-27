@@ -20,12 +20,16 @@ public class Main implements ApplicationState{
 
         if(args.length > 0){
             switch (args[0]) {
-                case MASTER_SERVER:
+                case MASTER_SERVER_CONSOLE:
                 {
                     isServer = true;
                     showConsole = true;
                 }
                 break;
+                case MASTER_SERVER_NO_CONSOLE:{
+                    isServer = true;
+                    showConsole = false;
+                }break;
                 case CLIENT_CONSOLE:
                 {
                     isServer = false;
