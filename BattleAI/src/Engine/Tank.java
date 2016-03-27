@@ -42,8 +42,14 @@ public class Tank extends GameEntity  implements MovementInterface,TransformInte
     @Override
     public void Rotate(double degrees){
         angle = (angle + degrees)%360;
+        cannon.Rotate(degrees);
         
     }
+    
+    public void rotateCannon(double degrees){
+        cannon.Rotate(degrees);
+    }
+    
     @Override
     public void Resize(double sx, double sy){
         
@@ -72,6 +78,9 @@ public class Tank extends GameEntity  implements MovementInterface,TransformInte
         double c = Math.cos(angle * Math.PI/180.0);
         x += c*speed;
         y += s*speed;
+        
+        cannon.x = x;
+        cannon.y = y;
     }
     /**
      * Shoots a bullet.
