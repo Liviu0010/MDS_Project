@@ -25,7 +25,7 @@ public class Bullet extends GameEntity implements TransformInterface{
 
     @Override
     public void Rotate(double degrees) {
-        
+        angle = (angle+degrees)%360;
     }
 
     @Override

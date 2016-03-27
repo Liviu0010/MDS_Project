@@ -87,7 +87,7 @@ public class Tank extends GameEntity  implements MovementInterface,TransformInte
      * @return a Bullet object representing a bullet shoot by the tank.
      */
     public Bullet Shoot(){
-        return new Bullet(x,y,angle,speed,damage);
+        return new Bullet(x,y,cannon.angle,1,damage);
     }
     
 }

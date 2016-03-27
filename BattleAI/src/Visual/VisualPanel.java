@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Visual;
 
 import java.awt.Color;
@@ -11,17 +6,9 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
-import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import javax.imageio.stream.FileCacheImageInputStream;
 
 /**
  *
@@ -36,7 +23,7 @@ public class VisualPanel extends javax.swing.JPanel {
     /**
      * Creates new form VisualPanel
      */ 
-    Image tankSprite, cannonSprite, bulletSprite;
+    static Image tankSprite, cannonSprite, bulletSprite;
     
     public VisualPanel() {
         initComponents();
@@ -50,6 +37,8 @@ public class VisualPanel extends javax.swing.JPanel {
         }
 
         visualEntities.add(new VisualTank(300, 300, 2, 100, 10, 0, tankSprite, cannonSprite));
+        visualEntities.add(new VisualTank(500, 200, 2, 100, 10, 100, tankSprite, cannonSprite));
+        
         animator = new Animator(this, visualEntities);
     }
     
@@ -62,8 +51,17 @@ public class VisualPanel extends javax.swing.JPanel {
         ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
         
         //drawing all the stuff
+        //drawing the tanks first
         for(int i = 0; i < visualEntities.size(); i++)
-            visualEntities.get(i).draw(g);
+            if(visualEntities.get(i) instanceof VisualTank)
+                visualEntities.get(i).draw(g);
+        
+        //bullets drawn on top of the tanks
+        for(int i = 0; i < visualEntities.size(); i++)
+            if(visualEntities.get(i) instanceof VisualBullet)
+                visualEntities.get(i).draw(g);
+        //
+        
         
         long currentTime = System.currentTimeMillis();
         totalTime += lastTime == 0 ? 0 : currentTime - lastTime;

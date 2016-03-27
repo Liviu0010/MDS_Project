@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Visual;
 
 import java.util.Vector;
@@ -21,10 +16,12 @@ public class Animator extends Thread{
     private boolean running;
     private final int framerate = Constants.VisualEngineConstants.FRAME_RATE;
     private Vector<VisualEntity> visualEntities;
+    private TankFiringThread fire;
     
     public Animator(JPanel panel, Vector<VisualEntity> visualEntities){
         this.panel = panel;
         this.visualEntities = visualEntities;
+        fire = new TankFiringThread(visualEntities);
         running = true;
     }
     
@@ -32,20 +29,30 @@ public class Animator extends Thread{
     public void run(){
         Engine.Tank tank;
         Engine.Bullet bullet;
+        fire.start();
         
         while(running){
             
-            //DO ENTITY UPDATES
-            
+            //DO ENTITY UPDATES    
             for(int i = 0; i < visualEntities.size(); i++) {
-                if(visualEntities.get(i) instanceof Engine.Tank){
+                if(visualEntities.get(i) instanceof VisualTank){
                     tank = (Engine.Tank) visualEntities.get(i);
                     tank.Rotate(1);
                     tank.rotateCannon(1);
                     tank.MoveFront();
                 }
+                
+                if(visualEntities.get(i) instanceof VisualBullet){
+                    bullet = (Engine.Bullet) visualEntities.get(i);
+                    
+                   if(bullet.getX() > Constants.VisualEngineConstants.ENGINE_WIDTH || bullet.getX() < 0 ||
+                            bullet.getY() > Constants.VisualEngineConstants.ENGINE_HEIGHT || bullet.getY() < 0)
+                        visualEntities.remove(i);   //if the bullet is no longer on the screen, it's removed
+                    else{
+                        bullet.MoveFront();
+                    }
+                }
             }
-            
             //
              
             panel.repaint();    //done with updates, start painting
@@ -65,6 +72,7 @@ public class Animator extends Thread{
      */
     
     public void stopAnimation(){
+        fire.stopFiring();
         running = false;
     }
 }
