@@ -1,52 +1,78 @@
 package Visual;
 
-import javafx.animation.AnimationTimer;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
+import java.util.Vector;
+import javax.swing.JPanel;
 
 /**
- *
+ * The separate thread which is responsible
+ * with updating game entitites. It calls the 
+ * repaint() function from JPanel.
+ * 
  * @author Liviu
+ * 
  */
-public class Animator extends AnimationTimer{
+public class Animator extends Thread{
+    private JPanel panel;
+    private boolean running;
+    private final int framerate = Constants.VisualEngineConstants.FRAME_RATE;
+    private Vector<VisualEntity> visualEntities;
+    private TankFiringThread fire;
     
-    private final GraphicsContext graphicContext;
-    private long elapsedTime, oldTime, fpsCounter, fps;
-    
-    
-    public Animator(GraphicsContext gc){
-        this.graphicContext = gc;
+    public Animator(JPanel panel, Vector<VisualEntity> visualEntities){
+        this.panel = panel;
+        this.visualEntities = visualEntities;
+        fire = new TankFiringThread(visualEntities);
+        running = true;
     }
     
     @Override
-    public void handle(long newTime){  //timeNano == current time value
-        graphicContext.clearRect(0, 0, graphicContext.getCanvas().getWidth(), graphicContext.getCanvas().getHeight());
-        graphicContext.setFill(Color.AZURE);
-        graphicContext.fillRect(0,0, graphicContext.getCanvas().getWidth(), graphicContext.getCanvas().getHeight());
-        showFPS(newTime);
-    }
-    
-    private void showFPS(long newTime){
+    public void run(){
+        Engine.Tank tank;
+        Engine.Bullet bullet;
+        fire.start();
         
-        elapsedTime += newTime - oldTime;
-        oldTime = newTime;
-        fpsCounter++;
-        
-        if(elapsedTime >= 1e9){
-            if(fpsCounter > 60 && elapsedTime > 1e9){
-                fps = 60;
-            }else{
-                fps = fpsCounter;
+        while(running){
+            
+            //DO ENTITY UPDATES    
+            for(int i = 0; i < visualEntities.size(); i++) {
+                if(visualEntities.get(i) instanceof VisualTank){
+                    tank = (Engine.Tank) visualEntities.get(i);
+                    tank.Rotate(1);
+                    tank.rotateCannon(1);
+                    tank.MoveFront();
+                }
+                
+                if(visualEntities.get(i) instanceof VisualBullet){
+                    bullet = (Engine.Bullet) visualEntities.get(i);
+                    
+                   if(bullet.getX() > Constants.VisualEngineConstants.ENGINE_WIDTH || bullet.getX() < 0 ||
+                            bullet.getY() > Constants.VisualEngineConstants.ENGINE_HEIGHT || bullet.getY() < 0)
+                        visualEntities.remove(i);   //if the bullet is no longer on the screen, it's removed
+                    else{
+                        bullet.MoveFront();
+                    }
+                }
             }
-            elapsedTime = 0;
-            fpsCounter = 0;
+            //
+             
+            panel.repaint();    //done with updates, start painting
+            
+            try{
+                Thread.sleep(1000/framerate);
+            }
+            catch(InterruptedException iex){
+                iex.printStackTrace();
+            }
         }
-        
-        Paint c = graphicContext.getStroke();
-        graphicContext.setStroke(Color.BLACK);
-        graphicContext.strokeText(fps+" FPS", 0, 10);
-        graphicContext.setStroke(c);
     }
+    /**
+     * Stops the animation in the game engine.
+     * If you want to start the animation again, you'll 
+     * have to create a new Animator object.
+     */
     
+    public void stopAnimation(){
+        fire.stopFiring();
+        running = false;
+    }
 }

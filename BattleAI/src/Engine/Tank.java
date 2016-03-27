@@ -6,16 +6,18 @@ public class Tank extends GameEntity  implements MovementInterface,TransformInte
     protected double  life;
     protected Cannon cannon;
     protected Bullet bullet;
-    Tank(double xPos, double yPos, double spd, double lfe, double dmg, double ang){
+    public Tank(double xPos, double yPos, double spd, double lfe, double dmg, double ang){
         boundingBox = new Rectangle2D.Double(xPos,yPos,20,20);
         cannon = new Cannon(xPos,yPos,ang,spd,dmg);
         speed = spd;
         life = lfe;
         damage = dmg;
         angle = ang;
+        x = xPos;
+        y = yPos;
     }
     
-    Tank(){
+    public Tank(){
         boundingBox = new Rectangle2D.Double(200,200,20,20);
         speed = 1;
         life = 100;
@@ -40,8 +42,14 @@ public class Tank extends GameEntity  implements MovementInterface,TransformInte
     @Override
     public void Rotate(double degrees){
         angle = (angle + degrees)%360;
+        cannon.Rotate(degrees);
         
     }
+    
+    public void rotateCannon(double degrees){
+        cannon.Rotate(degrees);
+    }
+    
     @Override
     public void Resize(double sx, double sy){
         
@@ -70,13 +78,16 @@ public class Tank extends GameEntity  implements MovementInterface,TransformInte
         double c = Math.cos(angle * Math.PI/180.0);
         x += c*speed;
         y += s*speed;
+        
+        cannon.x = x;
+        cannon.y = y;
     }
     /**
      * Shoots a bullet.
      * @return a Bullet object representing a bullet shoot by the tank.
      */
     public Bullet Shoot(){
-        return new Bullet(x,y,angle,speed,damage);
+        return new Bullet(x,y,cannon.angle,1,damage);
     }
     
 }
