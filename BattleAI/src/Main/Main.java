@@ -17,7 +17,7 @@ public class Main implements ApplicationState{
         System.out.println("---------------------------------------");
         System.out.println("            Started BattleAI           ");
         System.out.println("---------------------------------------\n");
-        
+        ConsoleFrame.showConsole = false;
         ConsoleFrame.sendMessage(Main.class.getName(),"Deciding how to start application...");
         final boolean showConsole;
         final boolean isServer;
