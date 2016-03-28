@@ -1,78 +1,46 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package Server;
 
+import Constants.MasterServerConstants;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import Constants.MasterServerConstants;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/** 
- * MatchConnection handles the connection between a
- * hosted match and the master server. The master server requires the host of 
- * the match to send requests each PACKET_DELAY milliseconds in order
- * to check if the connection is still active. This class starts a thread 
- * the constructor running its own run method in order to read and
- * handle those requests.
- * The connection is deemed inactive if a period of PACKET_DELAY * 2 
- * milliseconds have passed and no request has been received!
+/**
+ *
+ * @author root
  */
-public class MatchConnection implements Runnable {
-	
-    private Match activeMatch;
-    private Socket clientSocket;
-    private Thread clientThread;
-    private volatile boolean threadRunning;
-    private boolean activeConnection;
+public class MatchConnection extends Connection {
     
-    /**
-     * @param clientSocket The client socket associated with the connection.
-     * @param match The active match object to be used for the connection.
-     */
-    public MatchConnection(Socket clientSocket, Match match) {
-        this.clientSocket = clientSocket;
-        activeMatch = match;
-        activeConnection = true;
-        clientThread = new Thread(this);
-        clientThread.start();
-        threadRunning = true;
+    private Match activeMatch;
+    
+    public MatchConnection(Socket clientSocket, 
+            Match activeMatch,
+            ObjectInputStream inputStream,
+            ObjectOutputStream outputStream) throws IOException {
+        super(clientSocket, inputStream, outputStream);
+        this.activeMatch = activeMatch;
     }
     
-    /**
-     * @return Returns the match associated with the connection.
-     */
+    public void start() {
+        threadRunning = true;
+        new Thread(this).start();
+    }
+    
     public Match getActiveMatch() {
         return activeMatch;
     }
     
-    /**
-     * @return Returns the client socket associated with the connection.
-     */
-    public Socket getClientSocket() {
-        return clientSocket;
-    }
-    
-    /**
-     * @return Returns a boolean value indicating whether the connection
-     * is active.
-     */
-    public boolean isActive() {
-        return activeConnection;
-    }
-    
-    /**
-     * This method is used when starting a thread in the constructor.
-     * Its purpose is to read requests each PACKET_DELAY milliseconds, to start 
-     * a timer which will monitor whether a request has been received in the 
-     * last PACKET_DELAY * 2 milliseconds and handle the connection accordingly.
-     */
-    @Override
-    public void run() {
-        Object object = null;
-        
+    private void startConnectionHandler() {
         Timer connectionHandler = new Timer();
         
         /* This task runs every PACKET_DELAY * 2 milliseconds. If 
@@ -86,6 +54,11 @@ public class MatchConnection implements Runnable {
         TimerTask handleConnections = new TimerTask() {
             @Override
             public void run() {
+                if (!threadRunning) {
+                    connectionHandler.cancel();
+                    return;
+                }
+                
                 if (activeConnection)
                     activeConnection = false;
                 else {
@@ -97,6 +70,7 @@ public class MatchConnection implements Runnable {
                         an object to be read from the stream.
                         */
                         clientSocket.shutdownInput();
+                        System.out.println("Closed input");
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -105,40 +79,44 @@ public class MatchConnection implements Runnable {
         };
         connectionHandler.scheduleAtFixedRate(handleConnections, 0, 
                 MasterServerConstants.PACKET_DELAY * 2);
+    }
+    
+    @Override
+    public void run() {
+        startConnectionHandler();
+        
+        Object object = null;
 
         while (threadRunning) {
-            try (ObjectInputStream inputStream = 
-                    new ObjectInputStream(clientSocket.getInputStream())) {
-                Thread.sleep(MasterServerConstants.PACKET_DELAY);
-                
+            try {
                 if (!clientSocket.isInputShutdown()) {
                     object = inputStream.readObject();
-
+                    System.out.print("Received....");
+                    if (object instanceof RegularClientRequest)
+                        System.out.println("Regular client request");
                     if (object instanceof ClientRequest) {
-                        // Request has been receive so the connection is active
+                        System.out.println("Received client request");
+                        // Request has been received so the connection is active
                         activeConnection = true;
-                        
+
                         // Update the activeMatch in case of such request
                         if (object instanceof HostMatchRequest) 
                             activeMatch = ((HostMatchRequest)object).getMatch();
                     }
                 }
 
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException ex) {
+                Logger.getLogger(MatchConnection.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(MatchConnection.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
-        connectionHandler.cancel();
-        try {
-            clientSocket.close();
+            
+        /*try {
+            //clientSocket.close();
         } catch (IOException ex) {
-            Logger.getLogger(MatchConnection.class.getName()).log(Level.SEVERE,
-                    null, ex);
-        }
+            Logger.getLogger(MatchConnection.class.getName()).log(Level.SEVERE, null, ex);
+        }*/
+       
     }
 }

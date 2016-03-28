@@ -1,5 +1,8 @@
 package Interface;
 
+import Client.ConnectionHandler;
+import Server.Match;
+
 /**
  *
  * @author Dragos-Alexandru
@@ -128,6 +131,13 @@ public class MultiplayerCreateMatch extends javax.swing.JPanel {
     }//GEN-LAST:event_serverPasswordFieldActionPerformed
 
     private void createMatchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createMatchButtonActionPerformed
+        if (serverNameField.getText().isEmpty() || serverPortField.getText().isEmpty())
+            return;
+        Match activeMatch = new Match(serverNameField.getText(),
+                "localhost", Integer.parseInt(serverPortField.getText()),
+                "test", 20);
+        ConnectionHandler.getInstance().hostMatch(activeMatch);
+        
         rootFrame.changePanel(new MultiplayerMatchPanel(rootFrame));
     }//GEN-LAST:event_createMatchButtonActionPerformed
 
