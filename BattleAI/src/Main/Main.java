@@ -17,7 +17,7 @@ public class Main implements ApplicationState{
         System.out.println("---------------------------------------");
         System.out.println("            Started BattleAI           ");
         System.out.println("---------------------------------------\n");
-        
+        ConsoleFrame.showConsole = false;
         ConsoleFrame.sendMessage(Main.class.getName(),"Deciding how to start application...");
         final boolean showConsole;
         final boolean isServer;
@@ -26,6 +26,7 @@ public class Main implements ApplicationState{
             switch (args[0]) {
                 case MASTER_SERVER_CONSOLE:
                 {
+                    ConsoleFrame.showConsole = true;
                     ConsoleFrame.sendMessage(Main.class.getName(),"Start as server with visible console");
                     isServer = true;
                     showConsole = true;
@@ -33,12 +34,14 @@ public class Main implements ApplicationState{
                 break;
                 case MASTER_SERVER_NO_CONSOLE:
                 {
+                    ConsoleFrame.showConsole = false;
                     ConsoleFrame.sendMessage(Main.class.getName(),"Start as server without visible console");
                     isServer = true;
                     showConsole = false;
                 }break;
                 case CLIENT_CONSOLE:
                 {
+                    ConsoleFrame.showConsole = true;
                     ConsoleFrame.sendMessage(Main.class.getName(),"Start as client with visible console");
                     isServer = false;
                     showConsole = true;
@@ -46,12 +49,14 @@ public class Main implements ApplicationState{
                 break;
                 default:
                 {
+                    ConsoleFrame.showConsole = false;
                     ConsoleFrame.sendMessage(Main.class.getName(),"Start as client without visible console");
                     isServer = false;
                     showConsole = false;
                 }
             }
         }else{
+            ConsoleFrame.showConsole = false;
             ConsoleFrame.sendMessage(Main.class.getName(),"Start as client without visible console");
             showConsole = false;
             isServer = false;
