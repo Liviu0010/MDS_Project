@@ -36,14 +36,14 @@ public class DummyEngineClass extends JApplet {
         setBackground(bg);
         setForeground(fg);
         //bullet.Rotate(90);
-        tank.MoveDown();
-        tank.MoveDown();
-        tank.MoveDown();
-        tank.MoveDown();
-        tank.MoveDown();
+        tank.moveDown();
+        tank.moveDown();
+        tank.moveDown();
+        tank.moveDown();
+        tank.moveDown();
         
-        shape2 = bullet2.GetShape();
-        shape = bullet.GetShape();
+        shape2 = bullet2.getShape();
+        shape = bullet.getShape();
     }
  
     @Override

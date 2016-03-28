@@ -2,13 +2,17 @@ package Engine;
 
 import java.awt.Shape;
 import java.awt.geom.*;
-
+/**
+ * Game Entity class provides a framework for Bullet,Cannon and Tank classes
+ * the methods implemented in this class should work for normal 'X'-'Y' Cartesian  coordinate system so they would probably need to be altered to work with
+ * origin in the top left
+ */
 public abstract class GameEntity implements TransformInterface {
 
-    protected Area area;
-    protected Rectangle2D rec;
-    protected AffineTransform transformation;
-    ;
+    protected Area area;                        //use Area so we can transform using affinetransformer
+    protected Rectangle2D rec;                  //we keep rec so we can get the coordinates of the area
+    protected AffineTransform transformation;   //transformation applied to area
+    double x,y;
     protected double  angle, speed, damage;
 
     /**
@@ -21,11 +25,10 @@ public abstract class GameEntity implements TransformInterface {
      * @param dmg a double value representing the damage of the entity
      * @param ang a double value representing the current angle of the entity
      */
-    public GameEntity(double xPos, double yPos, double spd, double dmg, double ang) {
-        
+    public GameEntity(double xPos, double yPos, double spd, double dmg, double ang,int width, int height) {
+        area = new Area(new Rectangle2D.Double(xPos,yPos,width,height));
         this.transformation = new AffineTransform();
         transformation.setToRotation(ang, xPos, yPos);
-        area = new Area(new Rectangle2D.Double(xPos,yPos,100,100));
         area.transform(transformation);
         transformation.setToIdentity();
         damage = dmg;
@@ -38,14 +41,15 @@ public abstract class GameEntity implements TransformInterface {
         area = new Area(new Rectangle2D.Double(10,10,100,100));
         damage = speed = 10;
         angle = 0;
+        x = y = 10;
     }
-
+    
     /**
      * Gets the speed of the entity.
      *
      * @return a double value representing the speed of the entity
      */
-    public double GetSpeed() {
+    public double getSpeed() {
         return speed;
     }
 
@@ -54,7 +58,7 @@ public abstract class GameEntity implements TransformInterface {
      *
      * @param spd a double value representing the desired speed for the entity
      */
-    public void SetSpeed(double spd) {
+    public void setSpeed(double spd) {
         speed = (spd > 0) ? spd : speed;
     }
 
@@ -63,7 +67,7 @@ public abstract class GameEntity implements TransformInterface {
      *
      * @return a double value representing the damage of the entity
      */
-    public double GetDamage() {
+    public double getDamage() {
         return damage;
     }
 
@@ -72,7 +76,7 @@ public abstract class GameEntity implements TransformInterface {
      *
      * @param dmg a double value representing the desired damage for the entity
      */
-    public void SetDamage(double dmg) {
+    public void setDamage(double dmg) {
         damage = (dmg > 0) ? dmg : damage;
     }
 
@@ -81,7 +85,7 @@ public abstract class GameEntity implements TransformInterface {
      *
      * @return a double value representing the angle of the current rotation
      */
-    public double GetAngle() {
+    public double getAngle() {
         return angle;
     }
 
@@ -90,7 +94,7 @@ public abstract class GameEntity implements TransformInterface {
      *
      * @param ang a double value representing the desired angle of the entity
      */
-    public void SetAngle(double ang) {
+    public void setAngle(double ang) {
         angle = ang % 360;
         transformation.setToRotation(ang);
         area.transform(transformation);
@@ -107,21 +111,36 @@ public abstract class GameEntity implements TransformInterface {
     public boolean collision(GameEntity obj) {
         return (area.intersects(obj.area.getBounds2D()));
     }
-
+    /**
+     *  Get the x coordinate.
+     * @return a double value.
+     */
+    public abstract double getX();
+    /**
+     *  Get the y coordinate.
+     * @return a double value. 
+     */
+    public abstract double getY();
     @Override
-    public void Rotate(double degrees) {
+    public void rotate(double degrees) {
         transformation = new AffineTransform();
         rec = area.getBounds2D();
         transformation.rotate(degrees, (rec.getX()+ rec.getWidth())/2, (rec.getY()+ rec.getHeight())/2);
         area.transform(transformation);
+        angle = (angle+degrees)%360;
     }
-
+    
     @Override
-    public void Resize(double sx, double sy) {
+    public void resize(double sx, double sy) {
         transformation = new AffineTransform();
         transformation.scale(sx, sy);
         area.transform(transformation);
     }
-    public abstract Shape GetShape();
+    /**
+     *  Get the shape of the object for visual drawing.
+     * @return  a Shape object representing the shape of the entity.
+     */
+    public abstract Shape getShape();
+    
 
 }
