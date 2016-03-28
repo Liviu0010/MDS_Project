@@ -12,6 +12,7 @@ public final class ConsoleFrame extends JFrame {
 
     private static ConsoleFrame instance;
     public boolean ready = false;
+    public static boolean showConsole;
     
     /**
      * Creates new form ConsoleFrame
@@ -97,8 +98,10 @@ public final class ConsoleFrame extends JFrame {
      */
     
     public synchronized void printMessage(String className, String message){
-        outputArea.append(" "+className+": "+message+"\n");
-        System.out.println(" "+className+": "+message+"\n");
+        if(showConsole){
+            outputArea.append(" "+className+": "+message+"\n");
+        }
+        sendMessageStandardOutput(className, message);
     }
     
     /**
@@ -107,8 +110,15 @@ public final class ConsoleFrame extends JFrame {
      * @param message
      */
     public synchronized static void sendMessage(String className, String message){
-        ConsoleFrame consola = getInstance();
-        consola.printMessage(className, message);
+        if(showConsole){
+            ConsoleFrame consola = getInstance();
+            consola.printMessage(className, message);
+        }
+        sendMessageStandardOutput(className, message);
+    }
+    
+    private synchronized static void sendMessageStandardOutput(String className, String message){
+        System.out.println(" "+className+": "+message+"\n");
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
