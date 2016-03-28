@@ -21,7 +21,7 @@ public class MainFrame extends JFrame implements FrameConstants{
     private MainFrame(){
         super("BattleAI");
         this.setSize(FRAME_WIDTH, FRAME_HEIGHT);
-        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(false);
         
         this.add(new MainMenuPanel(this));
