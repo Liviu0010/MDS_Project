@@ -98,17 +98,24 @@ public final class ConsoleFrame extends JFrame {
     
     public synchronized void printMessage(String className, String message){
         outputArea.append(" "+className+": "+message+"\n");
-        System.out.println(" "+className+": "+message+"\n");
     }
     
     /**
      *  Metoda sincronizata ce afiseaza un mesaj pe consola (Statica)
      * @param className
      * @param message
+     * @param isMasterServer
      */
-    public synchronized static void sendMessage(String className, String message){
-        ConsoleFrame consola = getInstance();
-        consola.printMessage(className, message);
+    public synchronized static void sendMessage(String className, String message, boolean isMasterServer){
+        if(!isMasterServer){
+            ConsoleFrame consola = getInstance();
+            consola.printMessage(className, message);
+        }
+        sendMessageStandardOutput(className, message);
+    }
+    
+    public synchronized static void sendMessageStandardOutput(String className, String message){
+        System.out.println(" "+className+": "+message+"\n");
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
