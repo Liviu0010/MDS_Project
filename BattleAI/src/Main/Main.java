@@ -14,7 +14,11 @@ public class Main implements ApplicationState{
     static MainFrame mainFrame;
         
     public static void main(String[] args){
+        System.out.println("---------------------------------------");
+        System.out.println("            Started BattleAI           ");
+        System.out.println("---------------------------------------\n");
         
+        ConsoleFrame.sendMessage(Main.class.getName(),"Deciding how to start application...");
         final boolean showConsole;
         final boolean isServer;
 
@@ -22,26 +26,33 @@ public class Main implements ApplicationState{
             switch (args[0]) {
                 case MASTER_SERVER_CONSOLE:
                 {
+                    ConsoleFrame.sendMessage(Main.class.getName(),"Start as server with visible console");
                     isServer = true;
                     showConsole = true;
                 }
                 break;
-                case MASTER_SERVER_NO_CONSOLE:{
+                case MASTER_SERVER_NO_CONSOLE:
+                {
+                    ConsoleFrame.sendMessage(Main.class.getName(),"Start as server without visible console");
                     isServer = true;
                     showConsole = false;
                 }break;
                 case CLIENT_CONSOLE:
                 {
+                    ConsoleFrame.sendMessage(Main.class.getName(),"Start as client with visible console");
                     isServer = false;
                     showConsole = true;
                 }
                 break;
-                default:{
+                default:
+                {
+                    ConsoleFrame.sendMessage(Main.class.getName(),"Start as client without visible console");
                     isServer = false;
                     showConsole = false;
                 }
             }
         }else{
+            ConsoleFrame.sendMessage(Main.class.getName(),"Start as client without visible console");
             showConsole = false;
             isServer = false;
         }
@@ -52,6 +63,7 @@ public class Main implements ApplicationState{
 
                 @Override
                 public void run() {
+                    ConsoleFrame.sendMessage(Main.class.getName(),"Initializing MainFrame");
                     mainFrame = MainFrame.getInstance();
                     mainFrame.setLocationRelativeTo(null);
                     mainFrame.setVisible(true);
@@ -65,6 +77,7 @@ public class Main implements ApplicationState{
 
                 @Override
                 public void run() {
+                    ConsoleFrame.sendMessage(Main.class.getName(),"Initializing ConsoleFrame");
                     console = ConsoleFrame.getInstance();
                     console.setLocation(100, 100);
                     console.setVisible(true);
@@ -80,6 +93,7 @@ public class Main implements ApplicationState{
         }
         
         if(isServer){
+            ConsoleFrame.sendMessage(Main.class.getName(),"Initializing ServerDispatcher");
             ServerDispatcher.getInstance().start();
         }
     }
