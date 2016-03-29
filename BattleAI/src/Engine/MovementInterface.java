@@ -1,21 +1,24 @@
-
 package Engine;
 
 public interface MovementInterface {
+
     /**
      * Moves the entity up.
      */
-    public void MoveUp();
+    public void moveUp();
+
     /**
      * Moves the entity down.
      */
-    public void MoveDown();
+    public void moveDown();
+
     /**
      * Moves the entity left
      */
-    public void MoveLeft();
+    public void moveLeft();
+
     /**
      * Moves the entity right.
      */
-    public void MoveRight();
+    public void moveRight();
 }
