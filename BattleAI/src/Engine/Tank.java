@@ -18,7 +18,7 @@ public class Tank extends GameEntity implements MovementInterface, TransformInte
         id = 0;
     }
     
-    Tank(double xPos, double yPos, double spd, double dmg, double ang, double lfe) {
+    public Tank(double xPos, double yPos, double spd, double dmg, double ang, double lfe) {
         super(xPos, yPos, spd, dmg, ang,100,100);                       
         cannon = new Cannon(xPos, yPos, spd, dmg, ang);
         width = height = 100;
@@ -26,7 +26,7 @@ public class Tank extends GameEntity implements MovementInterface, TransformInte
         id++;
     }
 
-    Tank() {
+    public Tank() {
         super(0,0,10,10,10,100,100);
         width = height = 100;
         life = 100;
