@@ -1,10 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Interface;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JPanel;
 
 /**
@@ -14,14 +11,13 @@ import javax.swing.JPanel;
 public class SingleplayerPanel extends JPanel {
 
     private final MainFrame rootFrame;
-    
     /**
      * Creates new form SingleplayerPanel
+     * @param rootFrame
      */
     public SingleplayerPanel(MainFrame rootFrame) {
         
-        this.rootFrame = rootFrame;
-        
+        this.rootFrame = rootFrame; 
         initComponents();
     }
 
@@ -44,16 +40,12 @@ public class SingleplayerPanel extends JPanel {
         backButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setMaximumSize(new java.awt.Dimension(600, 400));
         setMinimumSize(new java.awt.Dimension(600, 400));
 
-        listChosenScripts.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
         listChosenScripts.setMaximumSize(new java.awt.Dimension(40, 80));
         listChosenScripts.setMinimumSize(new java.awt.Dimension(40, 80));
         scrolChosen.setViewportView(listChosenScripts);
@@ -66,11 +58,6 @@ public class SingleplayerPanel extends JPanel {
             }
         });
 
-        listAvailableScripts.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
         listAvailableScripts.setMaximumSize(new java.awt.Dimension(40, 80));
         listAvailableScripts.setMinimumSize(new java.awt.Dimension(40, 80));
         scrollAvailable.setViewportView(listAvailableScripts);
@@ -103,6 +90,9 @@ public class SingleplayerPanel extends JPanel {
 
         jLabel2.setText("Selected AI scripts");
 
+        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        jLabel3.setText("Select scripts");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -120,6 +110,10 @@ public class SingleplayerPanel extends JPanel {
                             .addComponent(backButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(18, 18, 18))
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jLabel3)
+                        .addGap(49, 49, 49))
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -131,22 +125,23 @@ public class SingleplayerPanel extends JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
+                .addComponent(jLabel3)
+                .addGap(26, 26, 26)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scrolChosen)
+                    .addComponent(scrolChosen, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(40, 40, 40)
                         .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(13, 13, 13)
                         .addComponent(removeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 124, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 109, Short.MAX_VALUE)
                         .addComponent(battleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(scrollAvailable, javax.swing.GroupLayout.Alignment.TRAILING))
+                    .addComponent(scrollAvailable))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -160,7 +155,17 @@ public class SingleplayerPanel extends JPanel {
     }//GEN-LAST:event_removeButtonActionPerformed
 
     private void battleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_battleButtonActionPerformed
-        // TODO add your handling code here:
+        Visual.VisualEngineWrapper visualEngine = Visual.VisualEngineWrapper.getInstance(rootFrame);
+        visualEngine.showEngine();    //show the visual engine
+        rootFrame.setVisible(false);
+        while(visualEngine.isRunning()){
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(SingleplayerPanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        rootFrame.setVisible(true);
     }//GEN-LAST:event_battleButtonActionPerformed
 
     private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
@@ -174,6 +179,7 @@ public class SingleplayerPanel extends JPanel {
     private javax.swing.JButton battleButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JList listAvailableScripts;
     private javax.swing.JList listChosenScripts;
     private javax.swing.JButton removeButton;

@@ -1,8 +1,8 @@
 package Main;
 
 import Console.ConsoleFrame;
-import Constants.MasterServerConstants;
 import Interface.MainFrame;
+import Server.ServerDispatcher;
 import java.awt.EventQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,7 +17,7 @@ public class Main implements ApplicationState{
         
         final boolean showConsole;
         final boolean isServer;
-        
+
         if(args.length > 0){
             switch (args[0]) {
                 case MASTER_SERVER:
@@ -48,7 +48,7 @@ public class Main implements ApplicationState{
 
                 @Override
                 public void run() {
-                    mainFrame = new MainFrame();
+                    mainFrame = MainFrame.getInstance();
                     mainFrame.setLocationRelativeTo(null);
                     mainFrame.setVisible(true);
                 }
@@ -61,7 +61,7 @@ public class Main implements ApplicationState{
 
                 @Override
                 public void run() {
-                    console = new ConsoleFrame(isServer);
+                    console = ConsoleFrame.getInstance();
                     console.setLocation(100, 100);
                     console.setVisible(true);
                 }
@@ -76,7 +76,7 @@ public class Main implements ApplicationState{
         }
         
         if(isServer){
-            //Start server connection
+            ServerDispatcher.getInstance().start();
         }
     }
 }
