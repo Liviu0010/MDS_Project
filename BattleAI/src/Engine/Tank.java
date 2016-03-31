@@ -8,18 +8,36 @@ public class Tank extends GameEntity implements MovementInterface, TransformInte
 
     protected double life;
     protected Cannon cannon;
-    protected Bullet bullet;
-
+    protected Bullet bullet;        
+    private static int id;          //the id of the tank will be the current number of instanced tank classes
+    final private int width,height; //the width and height of the tank are constant so we make then final
+    /**
+     * This block executes once when the class is loaded
+     */
+    static{
+        id = 0;
+    }
+    
     Tank(double xPos, double yPos, double spd, double dmg, double ang, double lfe) {
-        super(xPos, yPos, spd, dmg, ang);
+        super(xPos, yPos, spd, dmg, ang,100,100);                       
         cannon = new Cannon(xPos, yPos, spd, dmg, ang);
+        width = height = 100;
         life = lfe;
+        id++;
     }
 
     Tank() {
+        super(0,0,10,10,10,100,100);
+        width = height = 100;
         life = 100;
     }
-
+    /**
+     *  Gets the id of the tan
+     * @return a integer value representing the id of the tank.
+     */
+    public int getId(){
+        return id;
+    }
     /**
      * Gets the life of the Tank.
      *
@@ -40,30 +58,47 @@ public class Tank extends GameEntity implements MovementInterface, TransformInte
             life = lfe;
         }
     }
-
     @Override
-    public void MoveUp() {
+    public void rotate(double degrees){
+        angle = (angle + degrees)%360;
+        cannon.rotate(degrees);
+        
+    }
+    /**
+     *  Rotates the cannon of the tank by 'degrees' reported to the cannon's rotation angle
+     * @param degrees a double value representing the rotation value
+     */
+    public void rotateCannon(double degrees){
+        cannon.rotate(degrees);
+    }
+    
+    @Override
+    public void resize(double sx, double sy){
+        
+    }
+    @Override
+    public void moveUp() {
         transformation.translate(0, -1);
         area.transform(transformation);
         transformation.setToIdentity();
     }
 
     @Override
-    public void MoveDown() {
+    public void moveDown() {
         transformation.translate(0, 10);
         area.transform(transformation);
         transformation.setToIdentity();
     }
 
     @Override
-    public void MoveLeft() {
+    public void moveLeft() {
         transformation.translate(-1, 0);
         area.transform(transformation);
         transformation.setToIdentity();
     }
 
     @Override
-    public void MoveRight() {
+    public void moveRight() {
         transformation.translate(1, 0);
         area.transform(transformation);
         transformation.setToIdentity();
@@ -72,11 +107,18 @@ public class Tank extends GameEntity implements MovementInterface, TransformInte
     /**
      * Move the tank forward reported to it's current orientation angle.
      */
-    public void MoveFront() {
-        double s = Math.sin(angle * Math.PI / 180.0);
-        double c = Math.cos(angle * Math.PI / 180.0);
-        double x = c * speed;
-        double y = s * speed;
+    public void moveFront(){
+        double s = Math.sin(angle * Math.PI/180.0);
+        double c = Math.cos(angle * Math.PI/180.0);
+        x += c*speed;
+        y += s*speed;
+        area = new Area(new Rectangle2D.Double(x, y, width, height));       //we first move front the Tank then the Cannon
+        transformation.rotate(angle);
+        area.transform(transformation); 
+        double cangle = cannon.getAngle();                                  //we store the angle of the cannon in cangle
+        cannon.setAngle(angle);                                             //se the cannon rotaton to the tank rotation    
+        cannon.moveFront();                                                 //then move the cannon front
+        cannon.setAngle(cangle);                                            //then we restore the cannon to it's former angle    
     }
 
     /**
@@ -84,13 +126,23 @@ public class Tank extends GameEntity implements MovementInterface, TransformInte
      *
      * @return a Bullet object representing a bullet shoot by the tank.
      */
-    public Bullet Shoot() {
-        return new Bullet(area.getBounds().x, area.getBounds().y, angle, speed, damage);
+    public Bullet fire() {
+        return new Bullet(area.getBounds().x, area.getBounds().y, angle, speed, damage,id);
     }
 
     @Override
-    public Shape GetShape() {
+    public Shape getShape() {
         return area;
+    }
+
+    @Override
+    public double getX() {
+        return x;
+    }
+
+    @Override
+    public double getY() {
+        return y;
     }
 
 }

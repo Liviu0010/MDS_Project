@@ -26,8 +26,8 @@ public class DummyEngineClass extends JApplet {
                                                       BasicStroke.JOIN_MITER, 
                                                       10.0f, dash1, 0.0f);
     
-    Bullet bullet = new Bullet(0,0,10,10,0);
-    Bullet bullet2 = new Bullet(100,100,15,15,90);
+    Bullet bullet = new Bullet(0,0,10,10,0,20);
+    Bullet bullet2 = new Bullet(100,100,15,15,90,20);
     Tank tank = new Tank();
     Shape shape ,shape2;
     @Override
@@ -36,14 +36,14 @@ public class DummyEngineClass extends JApplet {
         setBackground(bg);
         setForeground(fg);
         //bullet.Rotate(90);
-        tank.MoveDown();
-        tank.MoveDown();
-        tank.MoveDown();
-        tank.MoveDown();
-        tank.MoveDown();
+        tank.moveDown();
+        tank.moveDown();
+        tank.moveDown();
+        tank.moveDown();
+        tank.moveDown();
         
-        shape2 = bullet2.GetShape();
-        shape = bullet.GetShape();
+        shape2 = bullet2.getShape();
+        shape = bullet.getShape();
     }
  
     @Override
