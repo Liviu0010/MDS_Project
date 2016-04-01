@@ -1,7 +1,7 @@
 package Interface;
 
 import Constants.FrameConstants;
-import Visual.VisualEngineWrapper;
+import Visual.VisualEngine;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
@@ -21,9 +21,8 @@ public class MainFrame extends JFrame implements FrameConstants{
     private MainFrame(){
         super("BattleAI");
         this.setSize(FRAME_WIDTH, FRAME_HEIGHT);
-        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(false);
-        
         this.add(new MainMenuPanel(this));
     }
     
@@ -34,9 +33,9 @@ public class MainFrame extends JFrame implements FrameConstants{
 
                 @Override
                 public void windowClosing(WindowEvent e) {
-                    if(VisualEngineWrapper.initialized()){
+                    if(VisualEngine.initialized()){
                         //telling the engine to close with the window
-                        VisualEngineWrapper.getInstance(instance).exit();
+                        VisualEngine.getInstance().dispatchEvent(new WindowEvent(instance, WindowEvent.WINDOW_CLOSING));    //firing a closing event
                     }
                     super.windowClosing(e);
                 }

@@ -1,5 +1,6 @@
 package Interface;
 
+import Visual.VisualEngine;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
@@ -155,7 +156,7 @@ public class SingleplayerPanel extends JPanel {
     }//GEN-LAST:event_removeButtonActionPerformed
 
     private void battleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_battleButtonActionPerformed
-        Visual.VisualEngineWrapper visualEngine = Visual.VisualEngineWrapper.getInstance(rootFrame);
+      /*  Visual.VisualEngineWrapper visualEngine = Visual.VisualEngineWrapper.getInstance(rootFrame);
         visualEngine.showEngine();    //show the visual engine
         rootFrame.setVisible(false);
         while(visualEngine.isRunning()){
@@ -164,7 +165,8 @@ public class SingleplayerPanel extends JPanel {
             } catch (InterruptedException ex) {
                 Logger.getLogger(SingleplayerPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
+        } */
+        VisualEngine.getInstance().setVisible(true);
         rootFrame.setVisible(true);
     }//GEN-LAST:event_battleButtonActionPerformed
 

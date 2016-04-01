@@ -1,31 +1,64 @@
 package Engine;
 
+import Constants.VisualConstants;
+import Visual.VisualPanel;
+import static Visual.VisualPanel.cannonSprite;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Shape;
 import java.awt.geom.*;
 import java.math.*;
 
-public class Tank extends GameEntity implements MovementInterface, TransformInterface {
-
+public class Tank extends GameEntity implements MovementInterface, TransformInterface, Drawable {    
+    protected Image tankSprite;
+    protected String playerName;
     protected double life;
     protected Cannon cannon;
-    protected Bullet bullet;
-
-    Tank(double xPos, double yPos, double spd, double dmg, double ang, double lfe) {
-        super(xPos, yPos, spd, dmg, ang);
-        cannon = new Cannon(xPos, yPos, spd, dmg, ang);
-        life = lfe;
+    private final int id;
+    //the id of the tank will be the current number of instanced tank classes
+    private static int staticId;
+    /**
+     * This block executes once when the class is loaded
+     */
+    static{
+        staticId = 0;
+    }
+    
+    public Tank(double xPos, double yPos, double speed, double damage, double angle, double life, String playerName, Image tankSprite, Image cannonSprite) {
+        super(staticId,xPos, yPos, speed, damage, angle);
+        this.id = staticId;
+        staticId++;
+        this.tankSprite = tankSprite;
+        this.life = life;
+        this.playerName = playerName;
+        width = (int)VisualConstants.TANK_WIDTH;
+        height = (int)VisualConstants.TANK_HEIGHT;
+        cannon = new Cannon(staticId, xPos, yPos, speed, damage, angle, cannonSprite);
     }
 
-    Tank() {
+    public Tank() {
+        super(staticId,0,0,10,10,10);
+        id = staticId;
+        staticId++;
+        width = height = 100;
         life = 100;
+        width = (int)VisualConstants.TANK_WIDTH;
+        height = (int)VisualConstants.TANK_HEIGHT;
     }
-
+    /**
+     *  Gets the id of the tan
+     * @return a integer value representing the id of the tank.
+     */
+    public int getId(){
+        return id;
+    }
     /**
      * Gets the life of the Tank.
      *
      * @return
      */
-    public double GetLife() {
+    public double getLife() {
         return life;
     }
 
@@ -35,48 +68,64 @@ public class Tank extends GameEntity implements MovementInterface, TransformInte
      *
      * @param lfe a double value representing a Tanks life
      */
-    public void SetLife(double lfe) {
+    public void setLife(double lfe) {
         if (lfe >= 0) {
             life = lfe;
         }
     }
-
     @Override
-    public void MoveUp() {
-        transformation.translate(0, -1);
-        area.transform(transformation);
-        transformation.setToIdentity();
+    public void rotate(double degrees){
+        angle = (angle + degrees)%360;
+        cannon.rotate(degrees);
+    }
+    /**
+     *  Rotates the cannon of the tank by 'degrees' reported to the cannon's rotation angle
+     * @param degrees a double value representing the rotation value
+     */
+    public void rotateCannon(double degrees){
+        cannon.rotate(degrees);
+    }
+    
+    @Override
+    public void resize(double sx, double sy){
+        
+    }
+    @Override
+    public void moveUp() {
+        setY(getY()-1);
     }
 
     @Override
-    public void MoveDown() {
-        transformation.translate(0, 10);
-        area.transform(transformation);
-        transformation.setToIdentity();
+    public void moveDown() {
+        setY(getY()+1);
     }
 
     @Override
-    public void MoveLeft() {
-        transformation.translate(-1, 0);
-        area.transform(transformation);
-        transformation.setToIdentity();
+    public void moveLeft() {
+        setX(getX()-1);
     }
 
     @Override
-    public void MoveRight() {
-        transformation.translate(1, 0);
-        area.transform(transformation);
-        transformation.setToIdentity();
+    public void moveRight() {
+        setX(getX()+1);
     }
 
     /**
      * Move the tank forward reported to it's current orientation angle.
      */
-    public void MoveFront() {
-        double s = Math.sin(angle * Math.PI / 180.0);
-        double c = Math.cos(angle * Math.PI / 180.0);
-        double x = c * speed;
-        double y = s * speed;
+    public void moveFront(){
+        double s = Math.sin(angle * Math.PI/180.0);
+        double c = Math.cos(angle * Math.PI/180.0);
+        x += c*speed;
+        y += s*speed;
+        //we store the angle of the cannon in cangle
+        double cangle = cannon.getAngle();
+        //set the cannon rotaton to the tank rotation  
+        cannon.setAngle(angle);
+        //then move the cannon front
+        cannon.moveFront();
+        //then we restore the cannon to it's former angle
+        cannon.setAngle(cangle);
     }
 
     /**
@@ -84,13 +133,36 @@ public class Tank extends GameEntity implements MovementInterface, TransformInte
      *
      * @return a Bullet object representing a bullet shoot by the tank.
      */
-    public Bullet Shoot() {
-        return new Bullet(area.getBounds().x, area.getBounds().y, angle, speed, damage);
+    public Bullet fire() {
+        return cannon.fire();
     }
 
     @Override
-    public Shape GetShape() {
-        return area;
+    public Shape getShape() {
+        return null;
+    }
+
+    @Override
+    public void draw(Graphics g) {
+        Graphics2D g2 = (Graphics2D)g;
+        AffineTransform at = g2.getTransform();
+        
+        g2.rotate(Math.toRadians(90), x+10, y+10);
+        g2.rotate(Math.toRadians(angle), x+10, y+10);
+        g2.drawImage(tankSprite, (int)x, (int)y, null);
+        g2.setTransform(at); 
+        
+        cannon.draw(g);
+        
+        /*g2.rotate(Math.toRadians(90), cannon.getX()+10, cannon.getY()+10);
+        g2.rotate(Math.toRadians(cannon.getAngle()), cannon.getX()+10, cannon.getY()+10);
+        g2.drawImage(cannonSprite, (int)cannon.getX()+8, (int)cannon.getY(), null);*/
+    }
+
+    @Override
+    public String toString() {
+        return "Tank{" + " playerName=" + playerName + ", life=" + life + ", cannon=" +
+                cannon + ", width=" + width + ", height=" + height + '}' + " " + super.toString();
     }
 
 }
