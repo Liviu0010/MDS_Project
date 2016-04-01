@@ -8,10 +8,9 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Shape;
 import java.awt.geom.*;
-import java.io.Serializable;
+import java.math.*;
 
-public final class Tank extends GameEntity implements MovementInterface, TransformInterface, Drawable, Serializable {
-    
+public class Tank extends GameEntity implements MovementInterface, TransformInterface, Drawable {    
     protected Image tankSprite;
     protected String playerName;
     protected double life;
