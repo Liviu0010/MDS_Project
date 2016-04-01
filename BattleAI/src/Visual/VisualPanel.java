@@ -1,5 +1,9 @@
 package Visual;
 
+import Console.ConsoleFrame;
+import Engine.Bullet;
+import Engine.Drawable;
+import Engine.Tank;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -7,7 +11,9 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.io.IOException;
-import java.util.Vector;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import javax.imageio.ImageIO;
 
 /**
@@ -18,28 +24,32 @@ public class VisualPanel extends javax.swing.JPanel {
 
     private long lastTime, totalTime, frames, totalFrames;
     Animator animator;
-    Vector<VisualEntity> visualEntities = new Vector<>();
+    List<Tank> tanks = Collections.synchronizedList(new LinkedList<Tank>());
+    final List<Bullet> bullets = Collections.synchronizedList(new LinkedList<Bullet>());
     
     /**
      * Creates new form VisualPanel
      */ 
-    static Image tankSprite, cannonSprite, bulletSprite;
+    public static Image tankSprite, cannonSprite, bulletSprite;
     
     public VisualPanel() {
         initComponents();
         
         try {
-            tankSprite = ImageIO.read(this.getClass().getResource(Constants.VisualEngineConstants.TANK_BODY_SPRITE_PATH));
-            cannonSprite = ImageIO.read(this.getClass().getResource(Constants.VisualEngineConstants.TANK_CANNON_SPRITE_PATH));
-            bulletSprite = ImageIO.read(this.getClass().getResource(Constants.VisualEngineConstants.BULLET_SPRITE_PATH));
+            tankSprite = ImageIO.read(this.getClass().getResource(Constants.VisualConstants.TANK_BODY_SPRITE_PATH));
+            cannonSprite = ImageIO.read(this.getClass().getResource(Constants.VisualConstants.TANK_CANNON_SPRITE_PATH));
+            bulletSprite = ImageIO.read(this.getClass().getResource(Constants.VisualConstants.BULLET_SPRITE_PATH));
         } catch (IOException ex) {
-            ex.printStackTrace();
+            ConsoleFrame.sendMessage("VisualPanel", "Failed to get sprites");
         }
 
-        visualEntities.add(new VisualTank(300, 300, 2, 100, 10, 0, tankSprite, cannonSprite));
-        visualEntities.add(new VisualTank(500, 200, 2, 100, 10, 100, tankSprite, cannonSprite));
+        tanks.add(new Tank(300, 300, 2, 100, 0, 100,"Tank1", tankSprite, cannonSprite));
         
-        animator = new Animator(this, visualEntities);
+        for(Tank aux:tanks){
+            System.out.println(aux);
+        }
+        
+        animator = new Animator(this, tanks, bullets);
     }
     
     @Override
@@ -52,15 +62,16 @@ public class VisualPanel extends javax.swing.JPanel {
         
         //drawing all the stuff
         //drawing the tanks first
-        for(int i = 0; i < visualEntities.size(); i++)
-            if(visualEntities.get(i) instanceof VisualTank)
-                visualEntities.get(i).draw(g);
+        for (Tank tankAux : tanks) {
+            tankAux.draw(g);
+        }
         
         //bullets drawn on top of the tanks
-        for(int i = 0; i < visualEntities.size(); i++)
-            if(visualEntities.get(i) instanceof VisualBullet)
-                visualEntities.get(i).draw(g);
-        //
+        synchronized(bullets){
+            for (Bullet bulletAux : bullets) {
+                bulletAux.draw(g);
+            }
+        }
         
         
         long currentTime = System.currentTimeMillis();
@@ -87,9 +98,9 @@ public class VisualPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setMaximumSize(new Dimension(Constants.VisualEngineConstants.ENGINE_WIDTH, Constants.VisualEngineConstants.ENGINE_HEIGHT));
-        setMinimumSize(new Dimension(Constants.VisualEngineConstants.ENGINE_WIDTH, Constants.VisualEngineConstants.ENGINE_HEIGHT));
-        setPreferredSize(new Dimension(Constants.VisualEngineConstants.ENGINE_WIDTH, Constants.VisualEngineConstants.ENGINE_HEIGHT));
+        setMaximumSize(new Dimension(Constants.VisualConstants.ENGINE_WIDTH, Constants.VisualConstants.ENGINE_HEIGHT));
+        setMinimumSize(new Dimension(Constants.VisualConstants.ENGINE_WIDTH, Constants.VisualConstants.ENGINE_HEIGHT));
+        setPreferredSize(new Dimension(Constants.VisualConstants.ENGINE_WIDTH, Constants.VisualConstants.ENGINE_HEIGHT));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);

@@ -1,5 +1,11 @@
 package Engine;
 
+import Constants.VisualConstants;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.*;
 
@@ -7,52 +13,56 @@ import java.awt.geom.*;
  *
  * A bullet class used by tank class to destroy enemies.
  */
-final public class Bullet extends GameEntity implements TransformInterface{
-    final private int width,height;
-    private int tankId;
-    public Bullet(double xPos , double yPos , double spd, double dmg,double ang,int id){
-        super(xPos,yPos,spd,dmg,ang,15,15);                 //spd represents the speed of the bullet, dmg represents the damage that the bullet gives to an
-                                                            //enemy tank and ang represents the angle in wich the bullet is rotated
-                                                            //id represents the id of the tank the fired the bullet
-        width = height = 15;                                                    
-        x = xPos;
-        y = yPos;
-        tankId = id;
+final public class Bullet extends GameEntity implements TransformInterface, Drawable{
+    Image bulletSprite;
+    
+    public Bullet(int id,double xPos , double yPos , double speed, double damage, double angle, Image bulletSprite){
+        super(id,xPos,yPos,speed,damage,angle);                 
+        //spd represents the speed of the bullet, dmg represents the damage that the bullet gives to an
+        //enemy tank and ang represents the angle in wich the bullet is rotated
+        //id represents the id of the tank the fired the bullet
+        this.bulletSprite = bulletSprite;
+        width = VisualConstants.BULLET_WIDTH;
+        height = VisualConstants.BULLET_HEIGHT;
     }
     public Bullet(){
-        super(0,0,12,11,13,15,15);
-        x = y =0;
-        width = height = 15;
-        tankId = 0;
+        super();
+        width = VisualConstants.BULLET_WIDTH;
+        height = VisualConstants.BULLET_HEIGHT;
     }
     public void moveFront(){
         double s = Math.sin(angle * Math.PI/180.0);
         double c = Math.cos(angle * Math.PI/180.0);
         x += c*speed;
         y += s*speed;
-        area = new Area(new Rectangle2D.Double(x, y, width, height));
-        transformation.rotate(angle);
-        area.transform(transformation);
-        
     }
     /**
      * We get the id of the tank that fired the bullet .
      * @return a integer value 
      */
     public int getId(){
-        return tankId;
+        return id;
     }
+    
+    @Override
     public Shape getShape() {
-        return area;
+        Area area = new Area(new Rectangle((int)getX(), (int)getY(), (int)width, (int)height));
+        return area.getBounds2D();
     }
-
+    
     @Override
-    public double getX() {
-        return x;
-    }
-
-    @Override
-    public double getY() {
-        return y;
+    public void draw(Graphics g) {
+        Graphics2D g2 = (Graphics2D)g;
+        AffineTransform at = g2.getTransform();
+        
+        g2.rotate(Math.toRadians(angle), x, y);
+        //g2.drawImage(sprite, (int)x, (int)y,null);    //disabled for now
+                                                       //8-9 FPS at ~1300 objects
+        g2.setColor(Color.red);
+        g2.fillRect((int)x, (int)y, 4, 4);  //drawing rectangles is less costly than drawing images
+                                            // 60 FPS at ~1300 objects
+                                            //6-9 FPS at ~18000 objects
+        
+        g2.setTransform(at);
     }
 }

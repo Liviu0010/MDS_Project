@@ -1,6 +1,11 @@
 package Visual;
 
-import java.util.Vector;
+import Console.ConsoleFrame;
+import Engine.Bullet;
+import Engine.Drawable;
+import Engine.Tank;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *  This class is temporary. It exists for testing purposes.
@@ -9,34 +14,31 @@ import java.util.Vector;
  * @author Liviu
  */
 public class TankFiringThread extends Thread{
-    Vector<VisualEntity> visualEntities;
+    final List<Tank> tanks;
+    final List<Bullet> bullets;
     boolean running;
     
-    public TankFiringThread(Vector<VisualEntity> visualEntities){
-        this.visualEntities = visualEntities;
+    public TankFiringThread(List<Tank> visualEntities, List<Bullet> bullets){
+        this.tanks = visualEntities;
+        this.bullets = bullets;
         running = true;
     }
     
     @Override
     public void run(){
-        Engine.Tank tank;
-        VisualBullet bullet;
-        Engine.Bullet b;
+        Bullet auxBullet;
         
         while(running){
-            for(int i = 0; i < visualEntities.size(); i++) {
-                if(visualEntities.get(i) instanceof VisualTank){
-                    tank = (Engine.Tank)visualEntities.get(i);
-                    b = tank.Shoot();
-                    bullet = new VisualBullet(b.getX(), b.getY(), b.GetAngle(), b.GetSpeed(), b.GetDamage(), VisualPanel.bulletSprite);
-                    visualEntities.add(bullet);
+            for (Tank tankAux : tanks) {
+                auxBullet = tankAux.fire();
+                synchronized(bullets){
+                    bullets.add(auxBullet);
                 }
             }
-            
             try {
                 Thread.sleep((long)(Math.random()*500));    //random firing time (500 ms gets 20-30 bullets on the screen)
             } catch (InterruptedException ex) {
-                ex.printStackTrace();
+                ConsoleFrame.sendMessage("TankFiringThread", "Sleep interrupted");
             }
         }
     }

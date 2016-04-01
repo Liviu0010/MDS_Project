@@ -133,14 +133,14 @@ public class MultiplayerLoginRegisterPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_registerButtonActionPerformed
 
     private boolean connectToMasterServer() {
-        try {
+        /*try {
             ConnectionHandler.getInstance().connectToMasterServer();
         } catch (IOException ex) {
              JOptionPane.showMessageDialog(null, ex.getMessage(), 
                     "Failed to connect to master server", 
                     JOptionPane.ERROR_MESSAGE);
              return false;
-        }
+        } */
         return true;
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
