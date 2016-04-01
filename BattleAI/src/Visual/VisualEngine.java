@@ -17,7 +17,7 @@ public class VisualEngine extends javax.swing.JFrame {
     private VisualEngine() {
         initComponents();
         setLocationRelativeTo(null);
-        
+        setAlwaysOnTop(true);
     }
     
     public static VisualEngine getInstance(){
@@ -42,10 +42,10 @@ public class VisualEngine extends javax.swing.JFrame {
         visualPanel1 = new Visual.VisualPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle(Constants.VisualEngineConstants.ENGINE_TITLE);
-        setPreferredSize(new Dimension(Constants.VisualEngineConstants.ENGINE_WIDTH, Constants.VisualEngineConstants.ENGINE_HEIGHT));
+        setTitle(Constants.VisualConstants.ENGINE_TITLE);
+        setPreferredSize(new Dimension(Constants.VisualConstants.ENGINE_WIDTH, Constants.VisualConstants.ENGINE_HEIGHT));
         setResizable(false);
-        setSize(new Dimension(Constants.VisualEngineConstants.ENGINE_WIDTH, Constants.VisualEngineConstants.ENGINE_HEIGHT));
+        setSize(new Dimension(Constants.VisualConstants.ENGINE_WIDTH, Constants.VisualConstants.ENGINE_HEIGHT));
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
@@ -55,9 +55,9 @@ public class VisualEngine extends javax.swing.JFrame {
             }
         });
 
-        visualPanel1.setMaximumSize(new Dimension(Constants.VisualEngineConstants.ENGINE_WIDTH, Constants.VisualEngineConstants.ENGINE_HEIGHT));
-        visualPanel1.setMinimumSize(new Dimension(Constants.VisualEngineConstants.ENGINE_WIDTH, Constants.VisualEngineConstants.ENGINE_HEIGHT));
-        visualPanel1.setPreferredSize(new Dimension(Constants.VisualEngineConstants.ENGINE_WIDTH, Constants.VisualEngineConstants.ENGINE_HEIGHT));
+        visualPanel1.setMaximumSize(new Dimension(Constants.VisualConstants.ENGINE_WIDTH, Constants.VisualConstants.ENGINE_HEIGHT));
+        visualPanel1.setMinimumSize(new Dimension(Constants.VisualConstants.ENGINE_WIDTH, Constants.VisualConstants.ENGINE_HEIGHT));
+        visualPanel1.setPreferredSize(new Dimension(Constants.VisualConstants.ENGINE_WIDTH, Constants.VisualConstants.ENGINE_HEIGHT));
 
         javax.swing.GroupLayout visualPanel1Layout = new javax.swing.GroupLayout(visualPanel1);
         visualPanel1.setLayout(visualPanel1Layout);

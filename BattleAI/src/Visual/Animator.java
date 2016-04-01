@@ -1,6 +1,11 @@
 package Visual;
 
-import java.util.Vector;
+import Console.ConsoleFrame;
+import Engine.Bullet;
+import Engine.Tank;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import javax.swing.JPanel;
 
 /**
@@ -12,48 +17,48 @@ import javax.swing.JPanel;
  * 
  */
 public class Animator extends Thread{
-    private JPanel panel;
+    private final JPanel panel;
     private boolean running;
-    private final int framerate = Constants.VisualEngineConstants.FRAME_RATE;
-    private Vector<VisualEntity> visualEntities;
-    private TankFiringThread fire;
+    private final int framerate = Constants.VisualConstants.FRAME_RATE;
+    private final List<Tank> tanks;
+    private final List<Bullet> bullets;
+    private final TankFiringThread firingThread;
     
-    public Animator(JPanel panel, Vector<VisualEntity> visualEntities){
+    public Animator(JPanel panel, List<Tank> tanks, List<Bullet> bullets){
         this.panel = panel;
-        this.visualEntities = visualEntities;
-        fire = new TankFiringThread(visualEntities);
+        this.tanks = tanks;
+        this.bullets = bullets;
+        firingThread = new TankFiringThread(tanks,bullets);
         running = true;
     }
     
     @Override
     public void run(){
-        Engine.Tank tank;
-        Engine.Bullet bullet;
-        fire.start();
+        firingThread.start();
         
         while(running){
             
-            //DO ENTITY UPDATES    
-            for(int i = 0; i < visualEntities.size(); i++) {
-                if(visualEntities.get(i) instanceof VisualTank){
-                    tank = (Engine.Tank) visualEntities.get(i);
-                    tank.Rotate(1);
-                    tank.rotateCannon(1);
-                    tank.MoveFront();
-                }
-                
-                if(visualEntities.get(i) instanceof VisualBullet){
-                    bullet = (Engine.Bullet) visualEntities.get(i);
-                    
-                   if(bullet.getX() > Constants.VisualEngineConstants.ENGINE_WIDTH || bullet.getX() < 0 ||
-                            bullet.getY() > Constants.VisualEngineConstants.ENGINE_HEIGHT || bullet.getY() < 0)
-                        visualEntities.remove(i);   //if the bullet is no longer on the screen, it's removed
+            //DO ENTITY UPDATES
+            for (Tank tankAux : tanks) {
+                tankAux.rotateCannon(-0.1);
+                tankAux.rotate(0.1);
+            }
+            synchronized(bullets){
+                List<Bullet> bulletsToBeRemoved = Collections.synchronizedList(new LinkedList<Bullet>());
+                for(Bullet bulletAux: bullets){
+                    if(bulletAux.getX() > Constants.VisualConstants.ENGINE_WIDTH || bulletAux.getX() < 0 ||
+                            bulletAux.getY() > Constants.VisualConstants.ENGINE_HEIGHT || bulletAux.getY() < 0){
+                        //if the bullet is no longer on the screen, it's removed
+                        bulletsToBeRemoved.add(bulletAux);
+                    }
                     else{
-                        bullet.MoveFront();
+                        bulletAux.moveFront();
                     }
                 }
+                for(Bullet bulletAux:bulletsToBeRemoved){
+                    bullets.remove(bulletAux);
+                }
             }
-            //
              
             panel.repaint();    //done with updates, start painting
             
@@ -61,7 +66,7 @@ public class Animator extends Thread{
                 Thread.sleep(1000/framerate);
             }
             catch(InterruptedException iex){
-                iex.printStackTrace();
+                ConsoleFrame.sendMessage("Animator", "Thread interrupted");
             }
         }
     }
@@ -72,7 +77,7 @@ public class Animator extends Thread{
      */
     
     public void stopAnimation(){
-        fire.stopFiring();
+        firingThread.stopFiring();
         running = false;
     }
 }

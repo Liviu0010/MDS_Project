@@ -23,7 +23,6 @@ public class MainFrame extends JFrame implements FrameConstants{
         this.setSize(FRAME_WIDTH, FRAME_HEIGHT);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(false);
-        
         this.add(new MainMenuPanel(this));
     }
     
