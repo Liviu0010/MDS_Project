@@ -99,8 +99,8 @@ public class Main implements ApplicationState{
         }
         
         if(isServer){
-            ServerDispatcher.getInstance().start(MasterServerConstants.PORT, true, null);
             ConsoleFrame.sendMessage(Main.class.getName(),"Initializing ServerDispatcher");
+            ServerDispatcher.getInstance().start(MasterServerConstants.PORT, true, null);
         }
     }
 }
