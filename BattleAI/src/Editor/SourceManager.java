@@ -47,7 +47,7 @@ public final class SourceManager {
             if(!sourceFolder.canWrite()){
                 throw new IOException("Can't write to designated folder!");
             }
-            ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Creating for source index file");
+            ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Creating source index file");
             File sourceIndex = new File(sourceFolderPath+"/sourcesIndex.txt");
             sourceIndex.createNewFile();
             
