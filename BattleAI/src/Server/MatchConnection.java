@@ -91,11 +91,9 @@ public class MatchConnection extends Connection {
             try {
                 if (!clientSocket.isInputShutdown()) {
                     object = inputStream.readObject();
-                    System.out.print("Received....");
-                    if (object instanceof RegularClientRequest)
-                        System.out.println("Regular client request");
+                   
+                    
                     if (object instanceof ClientRequest) {
-                        System.out.println("Received client request");
                         // Request has been received so the connection is active
                         activeConnection = true;
 
@@ -105,10 +103,10 @@ public class MatchConnection extends Connection {
                     }
                 }
 
-            } catch (IOException ex) {
+            } catch (IOException | ClassNotFoundException ex) {
                 Logger.getLogger(MatchConnection.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ClassNotFoundException ex) {
-                Logger.getLogger(MatchConnection.class.getName()).log(Level.SEVERE, null, ex);
+                threadRunning = false;
+                activeConnection = false;
             }
         }
             
