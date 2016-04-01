@@ -106,6 +106,7 @@ public class ServerDispatcher implements Runnable {
                 public void run() {
                     for (int i = 0; i < activeConnections.size(); i++)
                         if (!activeConnections.get(i).isActive()) {
+                                System.out.println("removing");
                                 activeConnections.remove(i);
                                 i--;
                         }
@@ -193,6 +194,7 @@ public class ServerDispatcher implements Runnable {
         for (Connection connection: activeConnections) {
             if (connection.isActive() && connection instanceof MatchConnection) {
                 matchConnection = (MatchConnection)connection;
+                System.out.println("Sent match: " + matchConnection.getActiveMatch().getTitle());
                 activeMatches.add(matchConnection.getActiveMatch());
             }
         }

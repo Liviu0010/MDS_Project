@@ -82,10 +82,10 @@ public class RegularConnection extends Connection {
                                     request, inputStream, outputStream);
                     }
                 }
-            } catch (ClassNotFoundException ex) {
+            } catch (ClassNotFoundException | IOException ex) {
                 Logger.getLogger(MatchConnection.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(RegularConnection.class.getName()).log(Level.SEVERE, null, ex);
+                threadRunning = false;
+                activeConnection = false;
             }
         }
             
