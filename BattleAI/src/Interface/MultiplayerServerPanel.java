@@ -1,5 +1,14 @@
 package Interface;
 
+import Client.ConnectionHandler;
+import Server.Match;
+import Server.RegularClientRequest;
+import Server.RegularRequestType;
+import java.io.IOException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
 /**
  *
  * @author Dragos-Alexandru
@@ -7,7 +16,7 @@ package Interface;
 public class MultiplayerServerPanel extends javax.swing.JPanel {
 
     private final MainFrame rootFrame;
-    
+    private int a = 0;
     /**
      * Creates new form MultiplayerServerBrowser
      * @param rootFrame
@@ -161,6 +170,23 @@ public class MultiplayerServerPanel extends javax.swing.JPanel {
 
     private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
         // TODO add your handling code here:
+        if (a == 1)
+            System.out.println("Ok");
+        DefaultListModel<String> dlm = new DefaultListModel<>();
+        try {
+            ConnectionHandler.getInstance().sendToMasterServer(new RegularClientRequest(RegularRequestType.GET_MATCH_LIST));
+            List<Match> activeMatches = (List<Match>)ConnectionHandler.getInstance().readFromMasterServer();
+            for (Match match: activeMatches)
+                dlm.addElement(match.getTitle());
+            listAvailableMatches.setModel(dlm);
+            
+        } catch (IOException ex) {
+            Logger.getLogger(MultiplayerServerPanel.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(MultiplayerServerPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        a++;
+        
     }//GEN-LAST:event_refreshButtonActionPerformed
 
 

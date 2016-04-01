@@ -56,7 +56,7 @@ public class Match implements Serializable {
     /**
      * @return Returns the port on which the match is hosted.
      */
-    private int getPORT() {
+    public int getPort() {
         return PORT;
     }
     
