@@ -27,8 +27,32 @@ import javax.swing.JOptionPane;
 public final class SourceManager {
     
     private static final String sourceFolderPath = "source/";
+    private static final String inteligentFolderPath = "";
     private static List<Source> sources = new ArrayList<>();
     private static SourceManager instance;
+    
+    private static final String inteligenceTemplate = ""
+            + "package AI;\n" +
+                "\n" +
+                "import Engine.Tank;\n" +
+                "\n" +
+                "public class AI implements Inteligence{\n" +
+                "\n" +
+                "    public AI(){}\n" +
+                "    \n" +
+                "    @Override\n" +
+                "    public void gotHitByBullet() {}\n" +
+                "\n" +
+                "    @Override\n" +
+                "    public void hitArenaWall() {}\n" +
+                "\n" +
+                "    @Override\n" +
+                "    public void hitEnemyTank() {}\n" +
+                "\n" +
+                "    @Override\n" +
+                "    public void detectedEnemyTank(Tank enemy) {}\n" +
+                "    \n" +
+                "}";
     
     private SourceManager() throws IOException{
         
@@ -132,8 +156,21 @@ public final class SourceManager {
         }
     }
     
+    /**
+     * This method does not work properly, it needs to get the actual ai source
+     * now it gets a string hard coded in this class
+     * @return inteligenceTemplate
+     */
+    public String getInteligenceTemplate(){
+        File inteligent = new File(inteligentFolderPath);
+        //System.out.println(inteligent.getAbsolutePath());
+        
+        return inteligenceTemplate;
+    }
+    
     public static void main(String[] args){
         SourceManager sourceManager = SourceManager.getInstance();
+        
     }
     
     
