@@ -73,7 +73,7 @@ public class ServerDispatcher implements Runnable {
                     }
                 };
                 
-                masterServerNotifier.scheduleAtFixedRate(notification, 0, 1000); //MasterServerConstants.PACKET_DELAY / 2);
+                masterServerNotifier.scheduleAtFixedRate(notification, 0, MasterServerConstants.PACKET_DELAY);
             }
             
             return true;
