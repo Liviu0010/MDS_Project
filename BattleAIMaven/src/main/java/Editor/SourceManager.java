@@ -16,6 +16,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -26,13 +27,16 @@ import javax.swing.JOptionPane;
  */
 public final class SourceManager {
     
-    private static final String sourceFolderPath = "source/";
+    private static final String SOURCE_FOLDER_PATH = "Inteligence/";
+    private static final String AI_TEMPLATE_PATH = "../Inteligence/res/AITemplate.txt";
     private static List<Source> sources = new ArrayList<>();
     private static SourceManager instance;
     
+    private static String AI_TEMPLATE_CONTENT = "";
+    
     private SourceManager() throws IOException{
         
-        File sourceFolder = new File(sourceFolderPath);
+        File sourceFolder = new File(SOURCE_FOLDER_PATH);
         ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Searching for source folder at "+sourceFolder.getAbsolutePath());
         
         if(!sourceFolder.exists()){
@@ -46,7 +50,7 @@ public final class SourceManager {
                 throw new IOException("Can't write to designated folder!");
             }
             ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Creating source index file");
-            File sourceIndex = new File(sourceFolderPath+"/sourcesIndex.txt");
+            File sourceIndex = new File(SOURCE_FOLDER_PATH+"/sourcesIndex.txt");
             sourceIndex.createNewFile();
             
             try (FileOutputStream fOutput = new FileOutputStream(sourceIndex); 
@@ -60,7 +64,7 @@ public final class SourceManager {
         }else{
             ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Source folder exists");
             ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Searching for source index file");
-            File sourceIndex = new File(sourceFolderPath+"/sourcesIndex.txt");
+            File sourceIndex = new File(SOURCE_FOLDER_PATH+"/sourcesIndex.txt");
             if(!sourceIndex.exists()){
                 ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Creating source index file");
                 sourceIndex.createNewFile();
@@ -110,7 +114,7 @@ public final class SourceManager {
     }
     
     public void moveFileToSourceFolder(File file){
-        File newSource = new File(sourceFolderPath+file.getName());
+        File newSource = new File(SOURCE_FOLDER_PATH+file.getName());
         try {
             newSource.createNewFile();
             try (FileReader fileReader = new FileReader(file); 
@@ -132,8 +136,29 @@ public final class SourceManager {
         }
     }
     
-    public static void main(String[] args){
-        SourceManager sourceManager = SourceManager.getInstance();
+    /**
+     * This method returns the content of the predefined AI template
+     * @return inteligenceTemplate
+     */
+    public String getInteligenceTemplate(){
+        URL resource = this.getClass().getResource(AI_TEMPLATE_PATH);
+        
+        if(resource != null){
+            File template = new File((this.getClass().getResource(AI_TEMPLATE_PATH)).getFile());
+            try (FileReader fileReader = new FileReader(template);
+                    BufferedReader bufferedReader = new BufferedReader(fileReader)){
+                while(bufferedReader.ready()){
+                    AI_TEMPLATE_CONTENT += bufferedReader.readLine()+"\n";
+                }
+            }catch (IOException ex){
+                    ConsoleFrame.sendMessage(this.getClass().getCanonicalName(), "Failed to read template");
+                    JOptionPane.showMessageDialog(null, "Failed to read AI template","Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }else{
+            ConsoleFrame.sendMessage(this.getClass().getCanonicalName(), "Could not find AI template!");
+            JOptionPane.showMessageDialog(null, "Failed to find AI template","Error", JOptionPane.ERROR_MESSAGE);
+        }
+        return AI_TEMPLATE_CONTENT;
     }
     
     

@@ -67,3 +67,4 @@ nbactions.xml
 .nb-gradle/
 build.xml
 manifest.mf
+/BattleAIMaven/target/
