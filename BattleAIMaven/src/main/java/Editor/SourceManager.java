@@ -16,6 +16,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -26,8 +27,8 @@ import javax.swing.JOptionPane;
  */
 public final class SourceManager {
     
-    private static final String SOURCE_FOLDER_PATH = "userSources/";
-    private static final String AI_TEMPLATE_PATH = "target/classes/AITemplate.txt";
+    private static final String SOURCE_FOLDER_PATH = "Inteligence/";
+    private static final String AI_TEMPLATE_PATH = "../Inteligence/res/AITemplate.txt";
     private static List<Source> sources = new ArrayList<>();
     private static SourceManager instance;
     
@@ -140,8 +141,10 @@ public final class SourceManager {
      * @return inteligenceTemplate
      */
     public String getInteligenceTemplate(){
-        File template = new File(AI_TEMPLATE_PATH);
-        if(template.exists()){
+        URL resource = this.getClass().getResource(AI_TEMPLATE_PATH);
+        
+        if(resource != null){
+            File template = new File((this.getClass().getResource(AI_TEMPLATE_PATH)).getFile());
             try (FileReader fileReader = new FileReader(template);
                     BufferedReader bufferedReader = new BufferedReader(fileReader)){
                 while(bufferedReader.ready()){
@@ -152,7 +155,7 @@ public final class SourceManager {
                     JOptionPane.showMessageDialog(null, "Failed to read AI template","Error", JOptionPane.ERROR_MESSAGE);
             }
         }else{
-            ConsoleFrame.sendMessage(this.getClass().getCanonicalName(), "Could not find AI template");
+            ConsoleFrame.sendMessage(this.getClass().getCanonicalName(), "Could not find AI template!");
             JOptionPane.showMessageDialog(null, "Failed to find AI template","Error", JOptionPane.ERROR_MESSAGE);
         }
         return AI_TEMPLATE_CONTENT;

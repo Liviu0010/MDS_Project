@@ -71,7 +71,8 @@ public class Main implements ApplicationState{
                 public void run() {
                     ConsoleFrame.sendMessage(Main.class.getName(),"Initializing MainFrame");
                     mainFrame = MainFrame.getInstance();
-                    mainFrame.start();
+                    mainFrame.setLocationRelativeTo(null);
+                    mainFrame.setVisible(true);
                 }
             });
         }

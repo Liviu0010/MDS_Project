@@ -1,8 +1,6 @@
 package Interface;
 
 import Editor.Editor;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingWorker;
@@ -114,9 +112,7 @@ public class MainMenuPanel extends JPanel {
 
     private void editorButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editorButtonActionPerformed
         rootFrame.setVisible(false);
-        
-        Editor editor = new Editor(rootFrame);
-        editor.start();
+        Editor editor= new Editor(rootFrame);
         
     }//GEN-LAST:event_editorButtonActionPerformed
 

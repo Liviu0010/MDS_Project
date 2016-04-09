@@ -1,47 +1,39 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Editor;
 
 import java.awt.Color;
-import java.awt.event.MouseAdapter;
+import java.awt.Component;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 /**
  *
- * @author Dragos-Alexandru
+ * @author Alexandra-Pc
  */
-public class EditorMenuListener extends MouseAdapter{
-
-    
-    
-    @Override
-    public void mouseEntered(MouseEvent e) {
-        super.mouseEntered(e);
-        e.getComponent().setBackground(Color.orange);
-    }
+public class EditorMenuListener implements MouseListener{
 
     @Override
-    public void mouseExited(MouseEvent e) {
-        super.mouseExited(e);
-        e.getComponent().setBackground(Color.white);
+    public void mouseClicked(MouseEvent e) {
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-        super.mousePressed(e);
-        e.getComponent().setBackground(Color.blue);
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        super.mouseReleased(e);
-        if(e.getComponent().contains(e.getPoint())){
-            e.getComponent().setBackground(Color.orange);
-        }else{
-            e.getComponent().setBackground(Color.white);
-        }
     }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        Component menuItem = e.getComponent();
+        menuItem.setBackground(Color.WHITE);
+        menuItem.setForeground(Color.BLACK);
+        
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        e.getComponent().setBackground(Color.BLACK);
+    }
+    
 }
