@@ -1,4 +1,8 @@
-
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package Editor;
 
 import Interface.MainFrame;
@@ -10,6 +14,7 @@ import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.plaf.BorderUIResource;
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 
@@ -27,6 +32,7 @@ public final class Editor extends JFrame {
     private JMenuItem saveButton;
     private JMenuItem compileButton;
     
+    private String inteligenceTemplate;
     private RSyntaxTextArea sourceArea;
     
     /**
@@ -51,6 +57,8 @@ public final class Editor extends JFrame {
         }
         });
         
+        inteligenceTemplate = SourceManager.getInstance().getInteligenceTemplate();
+        
         newButton = new JMenuItem("New");
         newButton.setBackground(Color.BLACK);
         newButton.setForeground(Color.WHITE);
@@ -74,6 +82,7 @@ public final class Editor extends JFrame {
         menuBar = new JMenuBar();
         menuBar.setLayout(new GridLayout(1,4));
         menuBar.setBackground(Color.BLACK);
+
         menuBar.add(newButton);
         menuBar.add(openButton);
         menuBar.add(saveButton);
@@ -81,16 +90,17 @@ public final class Editor extends JFrame {
         
         sourceArea = new RSyntaxTextArea();
         sourceArea.setDocument(new RSyntaxDocument (RSyntaxTextArea.SYNTAX_STYLE_JAVA));
+        sourceArea.setDocument(new RSyntaxDocument(RSyntaxTextArea.SYNTAX_STYLE_JAVA));
+        sourceArea.append(inteligenceTemplate);
         sourceArea.setSyntaxEditingStyle(RSyntaxTextArea.SYNTAX_STYLE_JAVA);
         sourceArea.setAutoIndentEnabled(true);
         sourceArea.setCodeFoldingEnabled(true);
         sourceArea.setMarkOccurrences(true);
         sourceArea.setActiveLineRange(3, 10);
+        sourceArea.setBorder(new BorderUIResource.LineBorderUIResource(Color.white, 4));
         
         this.setVisible(true);
         this.add(menuBar, BorderLayout.NORTH);
         this.add(sourceArea, BorderLayout.CENTER);
     }
-    
-    
 }
