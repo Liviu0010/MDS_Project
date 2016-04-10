@@ -33,7 +33,8 @@ public class EditorMenuListener implements MouseListener{
 
     @Override
     public void mouseExited(MouseEvent e) {
-        e.getComponent().setBackground(Color.BLACK);
+        Component menuItem = e.getComponent();
+        menuItem.setBackground(Color.BLACK);
+        menuItem.setForeground(Color.WHITE);
     }
-    
 }
