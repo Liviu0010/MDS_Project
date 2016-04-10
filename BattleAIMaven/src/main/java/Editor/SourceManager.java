@@ -42,11 +42,12 @@ public final class SourceManager {
             ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Creating source folder");
             sourceFolder.mkdir();
             checkReadWrite(sourceFolder);
-            writeSourceFileIndex(sourceFolder);
+            File sourceIndex = new File(PathConstants.USER_SOURCES_INDEX_PATH);
+            writeSourceFileIndex(sourceIndex);
         }else{
             ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Source folder exists");
             ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Searching for source index file");
-            File sourceIndex = new File(SOURCE_FOLDER_PATH+"/sourcesIndex.txt");
+            File sourceIndex = new File(PathConstants.USER_SOURCES_INDEX_PATH);
             if(!sourceIndex.exists()){
                 writeSourceFileIndex(sourceIndex);
             }else{
@@ -71,7 +72,6 @@ public final class SourceManager {
                 instance = new SourceManager();
             } catch (IOException ex) {
                 ConsoleFrame.sendMessage(SourceManager.class.getSimpleName(), ex.getMessage());
-                ex.printStackTrace();
                 System.exit(-1);
             }
         }
