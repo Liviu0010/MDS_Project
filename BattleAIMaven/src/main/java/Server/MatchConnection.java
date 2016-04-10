@@ -77,7 +77,7 @@ public class MatchConnection extends Connection {
                 }
             }
         };
-        connectionHandler.scheduleAtFixedRate(handleConnections, 0, 
+        connectionHandler.scheduleAtFixedRate(handleConnections, MasterServerConstants.PACKET_DELAY * 2, 
                 MasterServerConstants.PACKET_DELAY * 2);
     }
     
@@ -101,12 +101,16 @@ public class MatchConnection extends Connection {
                         if (object instanceof HostMatchRequest) 
                             activeMatch = ((HostMatchRequest)object).getMatch();
                     }
+                    
+                    Thread.sleep(MasterServerConstants.PACKET_DELAY);
                 }
 
             } catch (IOException | ClassNotFoundException ex) {
                 Logger.getLogger(MatchConnection.class.getName()).log(Level.SEVERE, null, ex);
                 threadRunning = false;
                 activeConnection = false;
+            } catch (InterruptedException ex) {
+                Logger.getLogger(MatchConnection.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
             
