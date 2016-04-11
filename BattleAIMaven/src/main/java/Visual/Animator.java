@@ -40,8 +40,15 @@ public class Animator extends Thread{
             
             //DO ENTITY UPDATES
             for (Tank tankAux : tanks) {
-                tankAux.rotateCannon(-0.1);
-                tankAux.rotate(0.1);
+                tankAux.rotateCannon(-0.2);
+                tankAux.rotate(0.5);
+                
+                if(tankAux.getLife() - 0.3 > 0)
+                    tankAux.setLife(tankAux.getLife()-0.3);
+                else
+                    tankAux.setLife(100);
+                
+               // tankAux.moveFront();
             }
             synchronized(bullets){
                 List<Bullet> bulletsToBeRemoved = Collections.synchronizedList(new LinkedList<Bullet>());
