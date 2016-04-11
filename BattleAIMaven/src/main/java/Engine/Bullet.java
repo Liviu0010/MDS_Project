@@ -59,7 +59,8 @@ final public class Bullet extends GameEntity implements TransformInterface, Draw
         //g2.drawImage(sprite, (int)x, (int)y,null);    //disabled for now
                                                        //8-9 FPS at ~1300 objects
         g2.setColor(Color.red);
-        g2.fillRect((int)x, (int)y, 4, 4);  //drawing rectangles is less costly than drawing images
+        g2.fillRect((int)x, (int)y, (int)VisualConstants.BULLET_WIDTH, (int)VisualConstants.BULLET_HEIGHT);  
+        //drawing rectangles is less costly than drawing images
                                             // 60 FPS at ~1300 objects
                                             //6-9 FPS at ~18000 objects
         
