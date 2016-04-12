@@ -3,6 +3,7 @@ package Engine;
 import Constants.VisualConstants;
 import Visual.VisualPanel;
 import static Visual.VisualPanel.cannonSprite;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -153,6 +154,13 @@ public class Tank extends GameEntity implements MovementInterface, TransformInte
         g2.setTransform(at); 
         
         cannon.draw(g);
+        
+        //draw health bar
+        g2.setColor(Color.RED);
+        g2.fillRect((int)x-2, (int)y-10,(int)VisualConstants.HEALTH_BAR_WIDTH, (int)VisualConstants.HEALTH_BAR_HEIGHT);
+        g2.setColor(Color.decode("#0FB81A"));   //this is green
+        g2.fillRect((int)x-2, (int)y-10, (int) (life/100*VisualConstants.HEALTH_BAR_WIDTH), (int)VisualConstants.HEALTH_BAR_HEIGHT);
+        //end
         
         /*g2.rotate(Math.toRadians(90), cannon.getX()+10, cannon.getY()+10);
         g2.rotate(Math.toRadians(cannon.getAngle()), cannon.getX()+10, cannon.getY()+10);

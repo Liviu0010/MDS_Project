@@ -36,7 +36,7 @@ public class TankFiringThread extends Thread{
                 }
             }
             try {
-                Thread.sleep((long)(Math.random()*500));    //random firing time (500 ms gets 20-30 bullets on the screen)
+                Thread.sleep((long)(Math.random()*100));    //random firing time (500 ms gets 20-30 bullets on the screen)
             } catch (InterruptedException ex) {
                 ConsoleFrame.sendMessage("TankFiringThread", "Sleep interrupted");
             }
