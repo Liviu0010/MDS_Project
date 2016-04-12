@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 /**
  *
  * @author Dragos-Alexandru
@@ -17,6 +19,7 @@ public class MultiplayerServerPanel extends javax.swing.JPanel {
 
     private final MainFrame rootFrame;
     private int a = 0;
+    private List<Match> activeMatches;
     /**
      * Creates new form MultiplayerServerBrowser
      * @param rootFrame
@@ -26,6 +29,23 @@ public class MultiplayerServerPanel extends javax.swing.JPanel {
         this.rootFrame = rootFrame;
         
         initComponents();
+        listAvailableMatches.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                players.setText("Players");
+                listPlayers.setModel(new DefaultListModel<>());
+                int selected = e.getFirstIndex();
+                if(activeMatches.size() > selected){
+                    Match selectedMatch = activeMatches.get(selected);
+                    players.setText("Players "+selectedMatch.getNumberOfPlayers()+ "/" + selectedMatch.getMaxNumberOfPlayers());
+                    DefaultListModel<String> dlm = new DefaultListModel<>();
+                    for(String player:selectedMatch.getPlayerList()){
+                        dlm.addElement(player);
+                    }
+                    listPlayers.setModel(dlm);
+                }
+            }
+        });
     }
 
     /**
@@ -175,14 +195,12 @@ public class MultiplayerServerPanel extends javax.swing.JPanel {
         DefaultListModel<String> dlm = new DefaultListModel<>();
         try {
             ConnectionHandler.getInstance().sendToMasterServer(new RegularClientRequest(RegularRequestType.GET_MATCH_LIST));
-            List<Match> activeMatches = (List<Match>)ConnectionHandler.getInstance().readFromMasterServer();
+            activeMatches = (List<Match>)ConnectionHandler.getInstance().readFromMasterServer();
             for (Match match: activeMatches)
                 dlm.addElement(match.getTitle());
             listAvailableMatches.setModel(dlm);
             
-        } catch (IOException ex) {
-            Logger.getLogger(MultiplayerServerPanel.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
+        } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(MultiplayerServerPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
         a++;
