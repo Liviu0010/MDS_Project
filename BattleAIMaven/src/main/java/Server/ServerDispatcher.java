@@ -142,16 +142,13 @@ public class ServerDispatcher implements Runnable {
                                     (ClientRequest)object,
                                     objectInputStream, 
                                     objectOutputStream);
-                } catch (IOException ex) {
-                    Logger.getLogger(ServerDispatcher.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (ClassNotFoundException ex) {
+                } catch (IOException | ClassNotFoundException ex) {
                     Logger.getLogger(ServerDispatcher.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
             
         } catch (IOException ex) {
-            Logger.getLogger(ServerDispatcher.class.getName()).log(Level.SEVERE, null, ex);
-            ConsoleFrame.sendMessage(getClass().getName(),
+            ConsoleFrame.sendMessage(getClass().getSimpleName(),
                     "Failed to start master server.\n" + ex.getMessage());
         }
 

@@ -20,7 +20,7 @@ public final class ConsoleFrame extends JFrame {
      */
     private ConsoleFrame() {
         initComponents();
-        printMessage("Console", "***Welcome to BattleAI Console***");
+        printMessage("Console", "***Welcome to BattleAI Console***\n");
     }
     
     public static ConsoleFrame getInstance(){
@@ -108,7 +108,6 @@ public final class ConsoleFrame extends JFrame {
      *  Metoda sincronizata ce afiseaza un mesaj pe consola (Statica)
      * @param className
      * @param message
-     * @param isMasterServer
      */
     public synchronized static void sendMessage(String className, String message){
         if(showConsole){
