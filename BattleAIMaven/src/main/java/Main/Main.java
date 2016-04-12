@@ -99,8 +99,12 @@ public class Main implements ApplicationState{
         }
         
         if(isServer){
+            ConsoleFrame.sendMessage(Main.class.getCanonicalName(), "Initializing Database");
+            Database.DatabaseHandler.getInstance();
+            ConsoleFrame.sendMessage(Main.class.getCanonicalName(), "Database ready");
             ConsoleFrame.sendMessage(Main.class.getName(),"Initializing ServerDispatcher");
             ServerDispatcher.getInstance().start(MasterServerConstants.PORT, true, null);
+            ConsoleFrame.sendMessage(Main.class.getName(),"ServerDispatcher ready");
         }
     }
 }

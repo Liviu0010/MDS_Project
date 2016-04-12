@@ -2,6 +2,8 @@ package Server;
 
 import java.io.Serializable;
 import java.util.AbstractCollection;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.TreeSet;
 
 public class Match implements Serializable {
@@ -31,7 +33,7 @@ public class Match implements Serializable {
         this.OWNER = OWNER;
         this.maxNumberOfPlayers = maxNumberOfPlayers;
 
-        players = new TreeSet<String>();
+        players = new TreeSet<>();
         players.add(OWNER);
     }
     
@@ -79,6 +81,10 @@ public class Match implements Serializable {
      */
     public int getMaxNumberOfPlayers() {
         return maxNumberOfPlayers;
+    }
+    
+    public List<String> getPlayerList(){
+        return new LinkedList<>(players);
     }
     
     /**
