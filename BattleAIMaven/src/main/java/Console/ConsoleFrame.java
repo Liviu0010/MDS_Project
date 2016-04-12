@@ -1,6 +1,7 @@
 package Console;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /**
  *  Clasa singleton prin care se vor afisa toate mesajele importante ale serverului sau
@@ -119,6 +120,10 @@ public final class ConsoleFrame extends JFrame {
     
     private synchronized static void sendMessageStandardOutput(String className, String message){
         System.out.println(" "+className+": "+message+"\n");
+    }
+    
+    public synchronized static void showError(String message){
+        JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

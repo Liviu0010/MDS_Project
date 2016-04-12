@@ -132,9 +132,7 @@ public final class SourceManager {
             }
         } catch (IOException ex) {
             ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed to create file "+file.getName());
-            JOptionPane.showMessageDialog(null, ex.getMessage(), 
-                    "Failed to create file "+file.getName(), 
-                    JOptionPane.ERROR_MESSAGE);
+            ConsoleFrame.showError("Failed to create file "+file.getName());
         }
     }
     
@@ -152,11 +150,11 @@ public final class SourceManager {
                 }
             }catch (IOException ex){
                     ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed to read template");
-                    JOptionPane.showMessageDialog(null, "Failed to read AI template","Error", JOptionPane.ERROR_MESSAGE);
+                    ConsoleFrame.showError("Failed to read AI template");
             }
         }else{
             ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Could not find AI template at " + template.getAbsolutePath());
-            JOptionPane.showMessageDialog(null, "Failed to find AI template","Error", JOptionPane.ERROR_MESSAGE);
+            ConsoleFrame.showError("Failed to find AI template");
         }
         return AI_TEMPLATE_CONTENT;
     }

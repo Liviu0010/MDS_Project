@@ -5,6 +5,7 @@
  */
 package Server;
 
+import Console.ConsoleFrame;
 import Constants.MasterServerConstants;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -12,8 +13,6 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -31,6 +30,7 @@ public class MatchConnection extends Connection {
         this.activeMatch = activeMatch;
     }
     
+    @Override
     public void start() {
         threadRunning = true;
         new Thread(this).start();
@@ -106,11 +106,11 @@ public class MatchConnection extends Connection {
                 }
 
             } catch (IOException | ClassNotFoundException ex) {
-                Logger.getLogger(MatchConnection.class.getName()).log(Level.SEVERE, null, ex);
+                ConsoleFrame.sendMessage(MatchConnection.class.getSimpleName(), "Failed to read message or client disconnected");
                 threadRunning = false;
                 activeConnection = false;
             } catch (InterruptedException ex) {
-                Logger.getLogger(MatchConnection.class.getName()).log(Level.SEVERE, null, ex);
+                ConsoleFrame.sendMessage(MatchConnection.class.getSimpleName(), "Sleeping thread interrupted");
             }
         }
             
