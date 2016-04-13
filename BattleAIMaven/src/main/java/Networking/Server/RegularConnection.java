@@ -1,16 +1,13 @@
 package Networking.Server;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.net.Socket;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import Constants.MasterServerConstants;
 import Networking.Requests.HostMatch;
 import Networking.Requests.Request;
 import Networking.Requests.RequestType;
-import java.io.ObjectOutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

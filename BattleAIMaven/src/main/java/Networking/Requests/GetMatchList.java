@@ -5,7 +5,6 @@
  */
 package Networking.Requests;
 
-import Networking.Requests.Request;
 import Networking.Server.Match;
 import Networking.Server.ServerDispatcher;
 import java.io.IOException;
