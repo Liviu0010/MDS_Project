@@ -3,7 +3,7 @@ package Main;
 import Console.ConsoleFrame;
 import Constants.MasterServerConstants;
 import Interface.MainFrame;
-import Server.ServerDispatcher;
+import Networking.Server.ServerDispatcher;
 import java.awt.EventQueue;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -133,7 +133,7 @@ public class Main implements ApplicationState{
             Database.DatabaseHandler.getInstance(DB_USER,DB_PASS);
             ConsoleFrame.sendMessage(Main.class.getSimpleName(), "Database ready");
             ConsoleFrame.sendMessage(Main.class.getSimpleName(),"Initializing ServerDispatcher");
-            ServerDispatcher.getInstance().start(MasterServerConstants.PORT, true, null);
+            ServerDispatcher.getInstance().start(Constants.MasterServerConstants.PORT);
             ConsoleFrame.sendMessage(Main.class.getSimpleName(),"ServerDispatcher ready");
         }
     }

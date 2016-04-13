@@ -2,9 +2,8 @@ package Interface;
 
 import Client.ConnectionHandler;
 import Console.ConsoleFrame;
-import Server.Match;
-import Server.RegularClientRequest;
-import Server.RegularRequestType;
+import Networking.Requests.GetMatchList;
+import Networking.Server.Match;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -215,7 +214,7 @@ public class MultiplayerServerPanel extends javax.swing.JPanel {
             protected List<Match> doInBackground() throws Exception {
                 List<Match> matches = new LinkedList<>();
                 try {
-                    ConnectionHandler.getInstance().sendToMasterServer(new RegularClientRequest(RegularRequestType.GET_MATCH_LIST));
+                    ConnectionHandler.getInstance().sendToMasterServer(new GetMatchList());
                     matches = (List<Match>)ConnectionHandler.getInstance().readFromMasterServer();
                 } catch (IOException | ClassNotFoundException ex) {
                     Logger.getLogger(MultiplayerServerPanel.class.getName()).log(Level.SEVERE, null, ex);
