@@ -44,7 +44,7 @@ public class VisualPanel extends javax.swing.JPanel {
             ConsoleFrame.sendMessage("VisualPanel", "Failed to get sprites");
         }
 
-        for(int i = 0; i<50; i++)
+        for(int i = 0; i<20; i++)
         tanks.add(new Tank(Math.random()*1000%Constants.VisualConstants.ENGINE_WIDTH, 
                 Math.random()*1000%Constants.VisualConstants.ENGINE_HEIGHT, 2, 100, 0, 100,"Tank1", tankSprite, cannonSprite));
 
