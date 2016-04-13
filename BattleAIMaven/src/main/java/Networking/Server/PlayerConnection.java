@@ -3,41 +3,32 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Server;
+package Networking.Server;
 
-import Console.ConsoleFrame;
 import Constants.MasterServerConstants;
+import Networking.Requests.HostMatch;
+import Networking.Requests.Request;
+import Networking.Requests.RequestType;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author root
  */
-public class MatchConnection extends Connection {
+public class PlayerConnection extends Connection {
     
-    private Match activeMatch;
-    
-    public MatchConnection(Socket clientSocket, 
-            Match activeMatch,
-            ObjectInputStream inputStream,
-            ObjectOutputStream outputStream) throws IOException {
-        super(clientSocket, inputStream, outputStream);
-        this.activeMatch = activeMatch;
+    public PlayerConnection(Socket clientSocket) throws IOException {
+        super(clientSocket);
     }
     
-    @Override
     public void start() {
         threadRunning = true;
         new Thread(this).start();
-    }
-    
-    public Match getActiveMatch() {
-        return activeMatch;
     }
     
     private void startConnectionHandler() {
@@ -92,33 +83,21 @@ public class MatchConnection extends Connection {
                 if (!clientSocket.isInputShutdown()) {
                     object = inputStream.readObject();
                    
+                    activeConnection = true;
                     
-                    if (object instanceof ClientRequest) {
-                        // Request has been received so the connection is active
-                        activeConnection = true;
-
-                        // Update the activeMatch in case of such request
-                        if (object instanceof HostMatchRequest) 
-                            activeMatch = ((HostMatchRequest)object).getMatch();
-                    }
+                    Request request = (Request)object;
+                    request.execute(outputStream);
                     
                     Thread.sleep(MasterServerConstants.PACKET_DELAY);
                 }
 
             } catch (IOException | ClassNotFoundException ex) {
-                ConsoleFrame.sendMessage(MatchConnection.class.getSimpleName(), "Failed to read message or client disconnected");
+                Logger.getLogger(MatchConnection.class.getName()).log(Level.SEVERE, null, ex);
                 threadRunning = false;
                 activeConnection = false;
             } catch (InterruptedException ex) {
-                ConsoleFrame.sendMessage(MatchConnection.class.getSimpleName(), "Sleeping thread interrupted");
+                Logger.getLogger(MatchConnection.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-            
-        /*try {
-            //clientSocket.close();
-        } catch (IOException ex) {
-            Logger.getLogger(MatchConnection.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
-       
     }
 }

@@ -2,7 +2,7 @@ package Interface;
 
 import Client.ConnectionHandler;
 import Console.ConsoleFrame;
-import Server.Match;
+import Networking.Server.Match;
 import java.awt.Color;
 import javax.swing.SwingWorker;
 

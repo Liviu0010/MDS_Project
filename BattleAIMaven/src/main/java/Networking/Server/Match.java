@@ -1,4 +1,4 @@
-package Server;
+package Networking.Server;
 
 import java.io.Serializable;
 import java.util.AbstractCollection;
@@ -33,7 +33,7 @@ public class Match implements Serializable {
         this.OWNER = OWNER;
         this.maxNumberOfPlayers = maxNumberOfPlayers;
 
-        players = new TreeSet<>();
+        players = new TreeSet<String>();
         players.add(OWNER);
     }
     
