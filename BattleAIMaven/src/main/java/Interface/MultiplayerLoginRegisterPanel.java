@@ -1,9 +1,5 @@
 package Interface;
 
-import Client.ConnectionHandler;
-import java.io.IOException;
-import javax.swing.JOptionPane;
-
 /**
  *
  * @author Dragos-Alexandru

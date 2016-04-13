@@ -3,9 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Server;
+package Networking.Server;
 
 import Constants.MasterServerConstants;
+import Networking.Requests.HostMatch;
+import Networking.Requests.Request;
+import Networking.Requests.RequestType;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -24,11 +27,12 @@ public class MatchConnection extends Connection {
     private Match activeMatch;
     
     public MatchConnection(Socket clientSocket, 
-            Match activeMatch,
             ObjectInputStream inputStream,
-            ObjectOutputStream outputStream) throws IOException {
+            ObjectOutputStream outputStream,
+            Match activeMatch)  {
         super(clientSocket, inputStream, outputStream);
         this.activeMatch = activeMatch;
+        this.start();
     }
     
     public void start() {
@@ -92,15 +96,14 @@ public class MatchConnection extends Connection {
                 if (!clientSocket.isInputShutdown()) {
                     object = inputStream.readObject();
                    
+                    activeConnection = true;
                     
-                    if (object instanceof ClientRequest) {
-                        // Request has been received so the connection is active
-                        activeConnection = true;
-
-                        // Update the activeMatch in case of such request
-                        if (object instanceof HostMatchRequest) 
-                            activeMatch = ((HostMatchRequest)object).getMatch();
-                    }
+                    Request request = (Request)object;
+                    request.execute(outputStream);
+                    
+                    // Update the activeMatch in case of such request
+                    if (request.getType() == RequestType.HOST_MATCH)
+                        activeMatch = ((HostMatch)object).getMatch();
                     
                     Thread.sleep(MasterServerConstants.PACKET_DELAY);
                 }
@@ -113,12 +116,5 @@ public class MatchConnection extends Connection {
                 Logger.getLogger(MatchConnection.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-            
-        /*try {
-            //clientSocket.close();
-        } catch (IOException ex) {
-            Logger.getLogger(MatchConnection.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
-       
     }
 }
