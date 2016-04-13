@@ -1,15 +1,12 @@
 package Engine;
 
 import Constants.VisualConstants;
-import Visual.VisualPanel;
-import static Visual.VisualPanel.cannonSprite;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Shape;
 import java.awt.geom.*;
-import java.math.*;
 
 public class Tank extends GameEntity implements MovementInterface, TransformInterface, Drawable {    
     protected Image tankSprite;

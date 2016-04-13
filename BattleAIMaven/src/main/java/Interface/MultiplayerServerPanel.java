@@ -1,14 +1,17 @@
 package Interface;
 
 import Client.ConnectionHandler;
+import Console.ConsoleFrame;
 import Server.Match;
 import Server.RegularClientRequest;
 import Server.RegularRequestType;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
+import javax.swing.SwingWorker;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 /**
@@ -18,7 +21,6 @@ import javax.swing.event.ListSelectionListener;
 public class MultiplayerServerPanel extends javax.swing.JPanel {
 
     private final MainFrame rootFrame;
-    private int a = 0;
     private List<Match> activeMatches;
     /**
      * Creates new form MultiplayerServerBrowser
@@ -32,8 +34,6 @@ public class MultiplayerServerPanel extends javax.swing.JPanel {
         listAvailableMatches.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                players.setText("Players");
-                listPlayers.setModel(new DefaultListModel<>());
                 int selected = e.getFirstIndex();
                 if(activeMatches.size() > selected){
                     Match selectedMatch = activeMatches.get(selected);
@@ -189,24 +189,41 @@ public class MultiplayerServerPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_backButtonActionPerformed
 
     private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
-        // TODO add your handling code here:
-        if (a == 1)
-            System.out.println("Ok");
-        DefaultListModel<String> dlm = new DefaultListModel<>();
+        
+        players.setText("Players");
+        listPlayers.setModel(new DefaultListModel<>());
+        
+        RefreshWorker worker = new RefreshWorker();
         try {
-            ConnectionHandler.getInstance().sendToMasterServer(new RegularClientRequest(RegularRequestType.GET_MATCH_LIST));
-            activeMatches = (List<Match>)ConnectionHandler.getInstance().readFromMasterServer();
-            for (Match match: activeMatches)
+            DefaultListModel<String> dlm = new DefaultListModel<>();
+            activeMatches = worker.doInBackground();
+            for(Match match: activeMatches)
                 dlm.addElement(match.getTitle());
             listAvailableMatches.setModel(dlm);
-            
-        } catch (IOException | ClassNotFoundException ex) {
-            Logger.getLogger(MultiplayerServerPanel.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed to refresh match list");
+            ConsoleFrame.showError("Failed to refresh match list");
         }
-        a++;
-        
     }//GEN-LAST:event_refreshButtonActionPerformed
 
+    /**
+     * This worker gets the match list from the master server
+     */
+    public class RefreshWorker extends SwingWorker<List<Match>, Object>{
+
+            @Override
+            protected List<Match> doInBackground() throws Exception {
+                List<Match> matches = new LinkedList<>();
+                try {
+                    ConnectionHandler.getInstance().sendToMasterServer(new RegularClientRequest(RegularRequestType.GET_MATCH_LIST));
+                    matches = (List<Match>)ConnectionHandler.getInstance().readFromMasterServer();
+                } catch (IOException | ClassNotFoundException ex) {
+                    Logger.getLogger(MultiplayerServerPanel.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                return matches;
+            }
+
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton backButton;

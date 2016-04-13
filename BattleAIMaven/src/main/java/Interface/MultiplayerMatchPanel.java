@@ -15,6 +15,7 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
     public MultiplayerMatchPanel(MainFrame rootFrame) {
         initComponents();
         this.chatOutputArea.setEditable(false);
+        this.serverNameLabel.setText(rootFrame.localServerName);
         this.rootFrame = rootFrame;
     }
 
@@ -27,7 +28,7 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
+        serverNameLabel = new javax.swing.JLabel();
         scrollAvailable = new javax.swing.JScrollPane();
         listAvailableScripts = new javax.swing.JList();
         jLabel2 = new javax.swing.JLabel();
@@ -47,8 +48,8 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
         setMaximumSize(new java.awt.Dimension(600, 400));
         setMinimumSize(new java.awt.Dimension(600, 400));
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
-        jLabel1.setText("Server name");
+        serverNameLabel.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        serverNameLabel.setText("Server name");
 
         listAvailableScripts.setMaximumSize(new java.awt.Dimension(40, 80));
         listAvailableScripts.setMinimumSize(new java.awt.Dimension(40, 80));
@@ -136,7 +137,7 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
                                     .addGroup(layout.createSequentialGroup()
                                         .addGap(46, 46, 46)
-                                        .addComponent(jLabel1)
+                                        .addComponent(serverNameLabel)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                                 .addComponent(scrollPlayersAndScripts, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(chatOutputScroll)))
@@ -162,7 +163,7 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
                                 .addComponent(scrollPlayersAndScripts, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(8, 8, 8))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel1)
+                                .addComponent(serverNameLabel)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -211,7 +212,6 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
     private javax.swing.JTextField chatInputField;
     private javax.swing.JTextArea chatOutputArea;
     private javax.swing.JScrollPane chatOutputScroll;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JList listAvailableScripts;
@@ -220,6 +220,7 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
     private javax.swing.JScrollPane scrollAvailable;
     private javax.swing.JScrollPane scrollPlayersAndScripts;
     private javax.swing.JButton sendButton;
+    private javax.swing.JLabel serverNameLabel;
     private javax.swing.JButton startButton;
     // End of variables declaration//GEN-END:variables
 }

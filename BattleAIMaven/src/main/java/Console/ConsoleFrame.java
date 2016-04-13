@@ -1,6 +1,7 @@
 package Console;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /**
  *  Clasa singleton prin care se vor afisa toate mesajele importante ale serverului sau
@@ -20,7 +21,7 @@ public final class ConsoleFrame extends JFrame {
      */
     private ConsoleFrame() {
         initComponents();
-        printMessage("Console", "***Welcome to BattleAI Console***");
+        printMessage("Console", "***Welcome to BattleAI Console***\n");
     }
     
     public static ConsoleFrame getInstance(){
@@ -108,7 +109,6 @@ public final class ConsoleFrame extends JFrame {
      *  Metoda sincronizata ce afiseaza un mesaj pe consola (Statica)
      * @param className
      * @param message
-     * @param isMasterServer
      */
     public synchronized static void sendMessage(String className, String message){
         if(showConsole){
@@ -120,6 +120,10 @@ public final class ConsoleFrame extends JFrame {
     
     private synchronized static void sendMessageStandardOutput(String className, String message){
         System.out.println(" "+className+": "+message+"\n");
+    }
+    
+    public synchronized static void showError(String message){
+        JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
