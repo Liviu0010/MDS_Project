@@ -1,8 +1,6 @@
 package Database;
 
 import java.sql.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * DatabaseHandler is a singleton class, the instance of which handles the
@@ -11,23 +9,29 @@ import java.util.logging.Logger;
 public class DatabaseHandler {
 
     // JDBC driver name and database URL
-    private static final String JDBC_Driver = "com.mysql.jdbc.Driver";
+    private static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
     private static final String DB_URL = "jdbc:mysql://localhost/";
 
     //  Database attributes
-    private static final String USER = "root";
-    private static final String PASS = "Hai_sa_programam";
-    private static final String dbName = "Test1"; 
+    private String USER = "root";
+    private String PASS = "";
+    private static final String DB_NAME = "Test1"; 
 
     Connection conn;
-
-    private static DatabaseHandler instance = new DatabaseHandler();
-
-    public static DatabaseHandler getInstance() {
+    
+    private static DatabaseHandler instance;
+    
+    public static DatabaseHandler getInstance(String USER, String PASS) {
+        if(instance == null){
+            instance = new DatabaseHandler(USER,PASS);
+        }
         return instance;
     }
 
-    private DatabaseHandler() {
+    private DatabaseHandler(String USER, String PASS) {
+        this.USER = USER;
+        this.PASS = PASS;
+        
         if (createDatabase() == true){
             createTables();
         }
@@ -38,7 +42,7 @@ public class DatabaseHandler {
      */
     private void preliminaries() {
         try {
-            Class.forName(JDBC_Driver);
+            Class.forName(JDBC_DRIVER);
             conn = DriverManager.getConnection(DB_URL, USER, PASS);
         } catch (SQLException se) {
             // Handle errors for JDBC   
@@ -70,7 +74,7 @@ public class DatabaseHandler {
         try {
             stmt = conn.createStatement();
 
-            String sql = "CREATE DATABASE " + dbName;
+            String sql = "CREATE DATABASE " + DB_NAME;
             stmt.executeUpdate(sql);
 
         }  catch (SQLException sqlException) {
@@ -103,7 +107,7 @@ public class DatabaseHandler {
         try {
             stmt = conn.createStatement();
 
-            String sqlQuery = "USE "+ dbName;
+            String sqlQuery = "USE "+ DB_NAME;
             stmt.executeUpdate(sqlQuery);
             
             //create PLAYER_BD
@@ -130,10 +134,10 @@ public class DatabaseHandler {
                     + " player_name VARCHAR(255) not NULL, "
                     + " PRIMARY KEY ( id_match, player_name ), "
                     + " FOREIGN KEY (id_match) REFERENCES "
-                    + dbName + ".MATCHES_BD(id_match) "
+                    + DB_NAME + ".MATCHES_BD(id_match) "
                     + " ON DELETE CASCADE ON UPDATE CASCADE, "
                     + " FOREIGN KEY (player_name) REFERENCES "
-                    + dbName + ".PLAYER_BD(name) "
+                    + DB_NAME + ".PLAYER_BD(name) "
                     + " ON DELETE CASCADE ON UPDATE CASCADE) ";
             stmt.executeUpdate(sqlQuery);
             

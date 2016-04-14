@@ -1,9 +1,9 @@
 package Client;
 
 import Constants.MasterServerConstants;
-import Server.ClientRequest;
-import Server.Match;
-import Server.ServerDispatcher;
+import Networking.Server.Match;
+import Networking.Requests.Request;
+import Networking.Server.ClientServerDispatcher;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -16,15 +16,21 @@ public class ConnectionHandler {
     private static ConnectionHandler instance = new ConnectionHandler();
     
     private Socket masterServerSocket;
-    private Socket matchSocket;
     private ObjectInputStream masterServerInputStream;
     private ObjectOutputStream masterServerOutputStream;
+    
+    private Socket matchSocket;
+    private ObjectInputStream matchInputStream;
+    private ObjectOutputStream matchOutputStream;
+    
     private boolean isHost;
     
     private ConnectionHandler() {
         masterServerSocket = null;
         matchSocket = null;
         isHost = false;
+        
+        matchSocket = null;
     };
     
     public static ConnectionHandler getInstance() {
@@ -42,14 +48,14 @@ public class ConnectionHandler {
     
     public boolean hostMatch(Match activeMatch) {
         if (!isHost) {
-            if (ServerDispatcher.getInstance().start(activeMatch.getPort(), false, activeMatch))
+            if (ClientServerDispatcher.getInstance().start(activeMatch.getPort(), activeMatch))
                 isHost = true;
         }
         
         return isHost;
     }
          
-    public void sendToMasterServer(ClientRequest request) throws IOException {
+    public void sendToMasterServer(Request request) throws IOException {
         if (masterServerSocket == null)
             connectToMasterServer();
         try {
@@ -75,6 +81,22 @@ public class ConnectionHandler {
             result = masterServerInputStream.readObject();
         }
         return result;
+    }
+    
+    public void connectToMatch(Match match) throws IOException {
+        matchSocket = new Socket(match.getIP(), match.getPort());
+        matchOutputStream = new ObjectOutputStream(matchSocket.getOutputStream());
+        matchOutputStream.flush();
+        matchInputStream = new ObjectInputStream(matchSocket.getInputStream());
+    }
+    
+    public Object readFromMatch() throws IOException, ClassNotFoundException {
+        Object object = matchInputStream.readObject();
+        return object;
+    }
+    
+    public void sendToMatch(Request request) throws IOException {
+        matchOutputStream.writeObject(request);
     }
     
 }
