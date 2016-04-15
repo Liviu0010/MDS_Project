@@ -1,7 +1,9 @@
 package Interface;
 
 import Console.ConsoleFrame;
+import Networking.Server.Player;
 import Security.Guard;
+import java.util.concurrent.ExecutionException;
 import javax.swing.SwingWorker;
 
 /**
@@ -124,12 +126,13 @@ public class MultiplayerLoginRegisterPanel extends javax.swing.JPanel {
     private void loginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginButtonActionPerformed
         LoginWorker worker = new LoginWorker();
         try {
-            if(worker.doInBackground()){
+            worker.execute();
+            if(worker.get()){
                 if (!connectToMasterServer())
                     return;
                 rootFrame.changePanel(new MultiplayerServerPanel(rootFrame));
             }
-        } catch (Exception ex) {
+        } catch (InterruptedException | ExecutionException ex) {
             ConsoleFrame.showError(ex.getMessage());
         }
     }//GEN-LAST:event_loginButtonActionPerformed
@@ -151,26 +154,22 @@ public class MultiplayerLoginRegisterPanel extends javax.swing.JPanel {
         return true;
     }
     
-    public class LoginWorker extends SwingWorker<Boolean, Object>{
+    private class LoginWorker extends SwingWorker<Boolean, Object>{
 
         @Override
         protected Boolean doInBackground() throws Exception {
-            boolean succes = false;
+            //This should start false
+            boolean success = true;
             String username = usernameField.getText();
             String password = Guard.scramblePassword(String.valueOf(passwordField.getPassword()));
             passwordField.setText("");
             
             if(checkUsername(username)){
-                /*Username and password are good, Alex, do your magic
-                here ->
-                
-                succes = ...
-                
-                <- to here
-                */
+                Player.getInstance().setUsername(username);
+                success = true;
             }
             
-            return succes;
+            return success;
         }
         
         private boolean checkUsername(String username){

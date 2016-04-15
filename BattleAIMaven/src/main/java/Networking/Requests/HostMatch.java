@@ -14,7 +14,7 @@ import java.io.ObjectOutputStream;
  */
 public class HostMatch extends Request {
 
-    private Match match;
+    private volatile Match match;
     
     public HostMatch(Match match) {
         super(RequestType.HOST_MATCH);

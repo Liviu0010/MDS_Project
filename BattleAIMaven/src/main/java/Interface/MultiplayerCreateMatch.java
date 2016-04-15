@@ -3,7 +3,9 @@ package Interface;
 import Client.ConnectionHandler;
 import Console.ConsoleFrame;
 import Networking.Server.Match;
+import Networking.Server.Player;
 import java.awt.Color;
+import java.util.concurrent.ExecutionException;
 import javax.swing.SwingWorker;
 
 /**
@@ -12,10 +14,13 @@ import javax.swing.SwingWorker;
  */
 public class MultiplayerCreateMatch extends javax.swing.JPanel {
 
-    private MainFrame rootFrame;
+    private final MainFrame rootFrame;
+    
+    private Match createdMatch;
     
     /**
      * Creates new form MultiplayerCreateMatch
+     * @param rootFrame
      */
     public MultiplayerCreateMatch(MainFrame rootFrame) {
         initComponents();
@@ -151,15 +156,16 @@ public class MultiplayerCreateMatch extends javax.swing.JPanel {
         CreateServerWorker worker = new CreateServerWorker();
         
         try {
-            if(worker.doInBackground()){
+            worker.execute();
+            if(worker.get()){
                 if(rootFrame.localServerName == null){
                     rootFrame.localServerName = serverNameField.getText();
                 }else{
                     ConsoleFrame.showError("Already opened a server");
                 }
-                rootFrame.changePanel(new MultiplayerMatchPanel(rootFrame));
+                rootFrame.changePanel(new MultiplayerMatchPanel(rootFrame, createdMatch));
             }
-        } catch (Exception ex) {
+        } catch (InterruptedException | ExecutionException ex) {
             ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed to create match");
             ConsoleFrame.showError("Failed to create match");
         }
@@ -173,14 +179,14 @@ public class MultiplayerCreateMatch extends javax.swing.JPanel {
     /**
      * This worker creates a local server and registers it with the master server
      */
-    public class CreateServerWorker extends SwingWorker<Boolean, Object>{
+    private class CreateServerWorker extends SwingWorker<Boolean, Object>{
 
             @Override
             protected Boolean doInBackground() throws Exception {
-                Match activeMatch = new Match(serverNameField.getText(),
+                createdMatch = new Match(serverNameField.getText(),
                         "localhost", Integer.parseInt(serverPortField.getText()),
-                        "test", 20);
-                Boolean succes = ConnectionHandler.getInstance().hostMatch(activeMatch);
+                        Player.getInstance().getUsername(), 20);
+                Boolean succes = ConnectionHandler.getInstance().hostMatch(createdMatch);
                 
                 return succes;
             }

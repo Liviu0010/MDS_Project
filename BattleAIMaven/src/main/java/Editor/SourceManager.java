@@ -19,7 +19,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -108,13 +107,31 @@ public final class SourceManager {
                     ObjectOutputStream oOutput = new ObjectOutputStream(fOutput)) {
                 ConsoleFrame.sendMessage(this.getClass().getSimpleName(), 
                         "Writing empty source list to source index file");
+                sources.add(new Source("Test1", "GOOD"));
+                sources.add(new Source("package User_Sources;","Test2", "GOOD"));
+                sources.add(new Source("Test3", "GOOD"));
+                sources.add(new Source("Test4", "GOOD"));
+                sources.add(new Source("Test test test", "Test5", "BAD"));
                 oOutput.writeObject(sources);
             }
-        }else{
-            
         }
     }
     
+    public List<Source> getSourceList(){
+        File sourceIndex = new File(PathConstants.USER_SOURCES_INDEX_PATH);
+        try {
+            return readSourceFileIndex(sourceIndex);
+        } catch (IOException ex) {
+            ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed to read source list "+ex.getMessage());
+            ConsoleFrame.showError("Failed to read source list");
+            return (new ArrayList<>());
+        }
+    }
+    
+    /**
+     * Moves files to the source folder
+     * @param file 
+     */
     public void moveFileToSourceFolder(File file){
         File newSource = new File(SOURCE_FOLDER_PATH+file.getName());
         try {
@@ -136,6 +153,39 @@ public final class SourceManager {
         }
     }
     
+    /**
+     * Creates a source file in the Compiler package and returns the file
+     * @param source
+     * @return 
+     */
+    public File createSourceFile(Source source){
+        File sourceFile = new File(SOURCE_FOLDER_PATH+source.getName()+".java");
+        ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Creating file at "+sourceFile.getAbsolutePath());
+        try {
+            sourceFile.createNewFile();
+            try (FileWriter fileWriter = new FileWriter(sourceFile); 
+                    BufferedWriter writer = new BufferedWriter(fileWriter)) {
+                
+                String stringAux;
+                stringAux = source.getContent();
+                writer.write(stringAux);
+            }
+            return sourceFile;
+        } catch (IOException ex) {
+            ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed to create file "+source.getName());
+            ConsoleFrame.showError("Failed to create file "+source.getName());
+        }
+        return null;
+    }
+    
+    public boolean deleteSourceFile(File source){
+        boolean success = true;
+        ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Deleting file at "+source.getAbsolutePath());
+        if(source.exists()){
+            success = source.delete();
+        }
+        return success;
+    }
     /**
      * This method returns the content of the predefined AI template
      * @return inteligenceTemplate

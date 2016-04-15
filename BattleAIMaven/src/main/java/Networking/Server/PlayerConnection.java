@@ -1,12 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Networking.Server;
 
 import Constants.MasterServerConstants;
 import Networking.Requests.Request;
+import Networking.Requests.RequestType;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Timer;
@@ -15,18 +11,17 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
- * @author root
+ * PlayerConnection handles the continuous connection between a player and a match.
+ * The match requires every player to send requests each PACKET_DELAY milliseconds
+ * in order to check if the connection is still active. This class starts a thread 
+ * the constructor running its own run method in order to read and
+ * handle requests. The connection is deemed inactive if a period of PACKET_DELAY * 2 
+ * milliseconds have passed and no request has been received!
  */
 public class PlayerConnection extends Connection {
     
     public PlayerConnection(Socket clientSocket) throws IOException {
         super(clientSocket);
-    }
-    
-    public void start() {
-        threadRunning = true;
-        new Thread(this).start();
     }
     
     private void startConnectionHandler() {
@@ -43,15 +38,17 @@ public class PlayerConnection extends Connection {
         TimerTask handleConnections = new TimerTask() {
             @Override
             public void run() {
-                if (!threadRunning) {
+                 if (!threadRunning) {
                     connectionHandler.cancel();
                     return;
                 }
                 
-                if (activeConnection)
-                    activeConnection = false;
-                else {
+                int level = inactivityLevel.incrementAndGet();
+                
+                if (level == MAX_INACTIVITY_LEVEL) {
                     // Shut down the thread
+                    System.out.println("closing");
+                    activeConnection = false;
                     threadRunning = false;
                     try {
                         /* Close the input stream of the socket. This also 
@@ -72,6 +69,7 @@ public class PlayerConnection extends Connection {
     
     @Override
     public void run() {
+        threadRunning = true;
         startConnectionHandler();
         
         Object object = null;
@@ -81,20 +79,17 @@ public class PlayerConnection extends Connection {
                 if (!clientSocket.isInputShutdown()) {
                     object = inputStream.readObject();
                    
-                    activeConnection = true;
+                     // decrease level by 1 but remain non-negative
+                    inactivityLevel.updateAndGet(i -> i > 0 ? i - 1 : i);
                     
                     Request request = (Request)object;
                     request.execute(outputStream);
-                    
-                    Thread.sleep(MasterServerConstants.PACKET_DELAY);
                 }
 
             } catch (IOException | ClassNotFoundException ex) {
                 Logger.getLogger(MatchConnection.class.getName()).log(Level.SEVERE, null, ex);
                 threadRunning = false;
                 activeConnection = false;
-            } catch (InterruptedException ex) {
-                Logger.getLogger(MatchConnection.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
