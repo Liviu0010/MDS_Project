@@ -28,7 +28,7 @@ public class GetMatchList extends Request {
         try {
             List<Match> matches =
                     ServerDispatcher.getInstance().getActiveMatches();
-            //outputStream.reset();
+            outputStream.reset();
             outputStream.writeObject(matches);
             outputStream.flush();
         } catch (IOException ex) {
