@@ -1,6 +1,7 @@
 package Interface;
 
 import Console.ConsoleFrame;
+import Networking.Server.Player;
 import Security.Guard;
 import javax.swing.SwingWorker;
 
@@ -162,18 +163,11 @@ public class MultiplayerLoginRegisterPanel extends javax.swing.JPanel {
             passwordField.setText("");
             
             if(checkUsername(username)){
-                rootFrame.login(username, password);
-                
-                /*Username and password are good, Alex, do your magic
-                here ->
-                
-                succes = ...
-                
-                <- to here
-                */
+                Player.getInstance().setUsername(username);
+                success = true;
             }
             
-            return succes;
+            return success;
         }
         
         private boolean checkUsername(String username){

@@ -14,4 +14,6 @@ public final class RequestType {
     public final static int GET_MATCH_LIST = 1;
     public final static int HOST_MATCH = 2;
     public final static int CHAT_MESSAGE = 3;
+    public final static int PLAYER_CONNECT = 4;
+    public final static int ADD_PLAYER = 5;
 }
