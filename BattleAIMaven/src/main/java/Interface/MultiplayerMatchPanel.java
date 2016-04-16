@@ -3,6 +3,7 @@ package Interface;
 import Console.ConsoleFrame;
 import Editor.Source;
 import Editor.SourceManager;
+import Networking.Server.Player;
 import java.awt.Color;
 import java.util.List;
 import javax.swing.DefaultListModel;
@@ -208,11 +209,11 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
     private void selectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectButtonActionPerformed
         int index = listAvailableScripts.getSelectedIndex();
         if(selectedSource != null){
-            playerSelectionModel.removeElement(rootFrame.getUser().getUsername()+" / "+selectedSource.getName());
+            playerSelectionModel.removeElement(Player.getInstance().getUsername()+" / "+selectedSource.getName());
         }
         try{
             selectedSource = sourceList.get(index);
-            playerSelectionModel.addElement(rootFrame.getUser().getUsername()+" / "+selectedSource.getName());
+            playerSelectionModel.addElement(Player.getInstance().getUsername()+" / "+selectedSource.getName());
             listPlayersAndScripts.setModel(playerSelectionModel);
         }catch(IndexOutOfBoundsException ex){
             ConsoleFrame.showError("Select script, please");

@@ -6,7 +6,9 @@
 package Networking.Server;
 
 import Constants.MasterServerConstants;
+import Networking.Requests.AddPlayer;
 import Networking.Requests.HostMatch;
+import Networking.Requests.PlayerConnect;
 import Networking.Requests.Request;
 import Networking.Requests.RequestType;
 import java.io.IOException;
@@ -101,9 +103,10 @@ public class MatchConnection extends Connection {
                     Request request = (Request)object;
                     request.execute(outputStream);
                     
-                    // Update the activeMatch in case of such request
-                    if (request.getType() == RequestType.HOST_MATCH)
-                        activeMatch = ((HostMatch)object).getMatch();
+                    if (request.getType() == RequestType.ADD_PLAYER) {
+                        AddPlayer player = (AddPlayer)request;
+                        activeMatch.addPlayer(player.getUsername());
+                    }
                     
                     Thread.sleep(MasterServerConstants.PACKET_DELAY);
                 }

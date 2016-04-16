@@ -1,13 +1,20 @@
 package Client;
 
 import Constants.MasterServerConstants;
+import Networking.Requests.HostMatch;
+import Networking.Requests.PlayerConnect;
+import Networking.Requests.RegisterActivity;
 import Networking.Server.Match;
 import Networking.Requests.Request;
 import Networking.Server.ClientServerDispatcher;
+import Networking.Server.Player;
+import Networking.Server.ServerDispatcher;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -55,7 +62,7 @@ public class ConnectionHandler {
         return isHost;
     }
          
-    public void sendToMasterServer(Request request) throws IOException {
+    public synchronized void sendToMasterServer(Request request) throws IOException {
         if (masterServerSocket == null)
             connectToMasterServer();
         try {
@@ -88,6 +95,24 @@ public class ConnectionHandler {
         matchOutputStream = new ObjectOutputStream(matchSocket.getOutputStream());
         matchOutputStream.flush();
         matchInputStream = new ObjectInputStream(matchSocket.getInputStream());
+        matchOutputStream.writeObject(new PlayerConnect(Player.getInstance().getUsername()));
+        matchOutputStream.flush();
+        Timer t = new Timer();
+        
+        TimerTask notification = new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    System.out.println("Send Acknowledgement");
+                    matchOutputStream.writeObject(new RegisterActivity());
+                    matchOutputStream.flush();
+                } catch (IOException ex) {
+                    Logger.getLogger(ServerDispatcher.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        };
+        
+        t.scheduleAtFixedRate(notification, 0, MasterServerConstants.PACKET_DELAY);
     }
     
     public Object readFromMatch() throws IOException, ClassNotFoundException {
@@ -97,6 +122,7 @@ public class ConnectionHandler {
     
     public void sendToMatch(Request request) throws IOException {
         matchOutputStream.writeObject(request);
+        matchOutputStream.flush();
     }
     
 }

@@ -1,9 +1,10 @@
 package Networking.Server;
 
 import java.io.Serializable;
-import java.util.AbstractCollection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 
 public class Match implements Serializable {
@@ -14,7 +15,7 @@ public class Match implements Serializable {
     private final String OWNER;
     
     // The list of players in the match
-    private AbstractCollection<String> players;
+    private Set<String> players;
     
     private int maxNumberOfPlayers;
     
@@ -33,7 +34,7 @@ public class Match implements Serializable {
         this.OWNER = OWNER;
         this.maxNumberOfPlayers = maxNumberOfPlayers;
 
-        players = new TreeSet<String>();
+        players = Collections.synchronizedSet(new TreeSet<String>());
         players.add(OWNER);
     }
     
@@ -74,6 +75,14 @@ public class Match implements Serializable {
      */
     public int getNumberOfPlayers() {
         return players.size();
+    }
+    
+    public void addPlayer(String username) {
+        players.add(username);
+    }
+    
+    public void removePlayer(Player player) {
+        players.remove(player.getUsername());
     }
     
     /**

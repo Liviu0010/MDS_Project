@@ -5,28 +5,27 @@
  */
 package Networking.Requests;
 
-import Networking.Server.Match;
 import java.io.ObjectOutputStream;
 
 /**
  *
  * @author root
  */
-public class HostMatch extends Request {
+public class AddPlayer extends Request {
 
-    private volatile Match match;
+    private String username;
     
-    public HostMatch(Match match) {
-        super(RequestType.HOST_MATCH);
-        this.match = match;
+    public AddPlayer(String username) {
+        super(RequestType.ADD_PLAYER);
+        this.username = username;
     }
     
-    public Match getMatch() {
-        return match;
-    }
-
     @Override
     public void execute(ObjectOutputStream outputStream) {
+    }
+    
+    public String getUsername() {
+        return username;
     }
     
 }
