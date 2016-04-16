@@ -8,8 +8,6 @@ package Networking.Requests;
 import java.io.ObjectOutputStream;
 
 /**
- *
- * @author root
  */
 public class AddPlayer extends Request {
 

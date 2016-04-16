@@ -6,16 +6,13 @@
 package Networking.Requests;
 
 import Client.ConnectionHandler;
-import Networking.Server.ClientServerDispatcher;
-import Networking.Server.Player;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
- * @author root
+ * This request is sent when attempting to connect to a match.
  */
 public class PlayerConnect extends Request {
 
@@ -29,7 +26,7 @@ public class PlayerConnect extends Request {
     @Override
     public void execute(ObjectOutputStream outputStream) {
         try {
-            System.out.println("Sending to master server");
+            // Ask master server to update match
             ConnectionHandler.getInstance().sendToMasterServer(new AddPlayer(username));
         } catch (IOException ex) {
             Logger.getLogger(PlayerConnect.class.getName()).log(Level.SEVERE, null, ex);
