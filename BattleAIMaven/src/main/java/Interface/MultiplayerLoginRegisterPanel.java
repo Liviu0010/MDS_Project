@@ -1,6 +1,7 @@
 package Interface;
 
 import Console.ConsoleFrame;
+import Networking.Server.Player;
 import Security.Guard;
 import javax.swing.SwingWorker;
 
@@ -155,22 +156,17 @@ public class MultiplayerLoginRegisterPanel extends javax.swing.JPanel {
 
         @Override
         protected Boolean doInBackground() throws Exception {
-            boolean succes = false;
+            boolean success = false;
             String username = usernameField.getText();
             String password = Guard.scramblePassword(String.valueOf(passwordField.getPassword()));
             passwordField.setText("");
             
             if(checkUsername(username)){
-                /*Username and password are good, Alex, do your magic
-                here ->
-                
-                succes = ...
-                
-                <- to here
-                */
+                Player.getInstance().setUsername(username);
+                success = true;
             }
             
-            return succes;
+            return success;
         }
         
         private boolean checkUsername(String username){

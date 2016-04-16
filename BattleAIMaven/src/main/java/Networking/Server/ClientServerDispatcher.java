@@ -5,6 +5,7 @@
  */
 package Networking.Server;
 
+import Client.ConnectionHandler;
 import Console.ConsoleFrame;
 import Constants.MasterServerConstants;
 import Networking.Requests.HostMatch;
@@ -24,7 +25,7 @@ import java.util.logging.Logger;
  */
 public class ClientServerDispatcher extends ServerDispatcher {
     
-    private Match activeMatch;
+    private volatile Match activeMatch;
     private static ClientServerDispatcher instance;
     
     private ClientServerDispatcher() {
@@ -41,31 +42,21 @@ public class ClientServerDispatcher extends ServerDispatcher {
         Timer masterServerNotifier = new Timer();
                 
         TimerTask notification = new TimerTask() {
-            private Socket masterServerSocket = null;
-            private ObjectOutputStream objectOutputStream = null;
+            private boolean matchRegistered = false;
+            
             @Override
             public void run() {
-                if (masterServerSocket == null)
-                    try {
-                        masterServerSocket = new Socket(MasterServerConstants.IP, MasterServerConstants.PORT);
-                        System.out.println("Connection established");
-                       objectOutputStream = 
-                            new ObjectOutputStream(masterServerSocket.getOutputStream());
-                        objectOutputStream.flush();
-                        objectOutputStream.writeObject(new HostMatch(activeMatch));
-                        objectOutputStream.flush();
-                } catch (IOException ex) {
-                    Logger.getLogger(ServerDispatcher.class.getName()).log(Level.SEVERE, null, ex);
-                    this.cancel();
-                }
-
                 try {
-                    System.out.println("Send Acknowledgement");
-                    objectOutputStream.writeObject(new RegisterActivity());
-                    objectOutputStream.flush();
+                    if (!matchRegistered) {
+                        ConnectionHandler.getInstance().sendToMasterServer(new HostMatch(activeMatch));
+                        matchRegistered = true;
+                    }
+                    ConnectionHandler.getInstance().sendToMasterServer(new RegisterActivity());
                 } catch (IOException ex) {
-                    Logger.getLogger(ServerDispatcher.class.getName()).log(Level.SEVERE, null, ex);
+                    this.cancel();
+                    Logger.getLogger(ClientServerDispatcher.class.getName()).log(Level.SEVERE, null, ex);
                 }
+                
             }
         };
 
@@ -106,8 +97,13 @@ public class ClientServerDispatcher extends ServerDispatcher {
         for (Connection i: activeConnections)
             try {
                 i.getOutputStream().writeObject(object);
+                i.getOutputStream().flush();
             } catch (IOException ex) {
                 Logger.getLogger(ClientServerDispatcher.class.getName()).log(Level.SEVERE, null, ex);
             }
+    }
+    
+    public Match getActiveMatch() {
+        return activeMatch;
     }
 }

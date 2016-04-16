@@ -20,7 +20,9 @@ import javax.swing.event.ListSelectionListener;
 public class MultiplayerServerPanel extends javax.swing.JPanel {
 
     private final MainFrame rootFrame;
-    private List<Match> activeMatches;
+    private volatile List<Match> activeMatches;
+    private int selected;
+    
     /**
      * Creates new form MultiplayerServerBrowser
      * @param rootFrame
@@ -33,18 +35,28 @@ public class MultiplayerServerPanel extends javax.swing.JPanel {
         listAvailableMatches.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                int selected = e.getFirstIndex();
-                if(activeMatches.size() > selected){
+                selected = listAvailableMatches.getSelectedIndex();
+                
+                if (selected == -1) {
+                    listAvailableMatches.setSelectedIndex(0);
+                    selected = 0;
+                }
+                
+                DefaultListModel<String> dlm = new DefaultListModel<>();
+                
+                if (!activeMatches.isEmpty()) {
                     Match selectedMatch = activeMatches.get(selected);
                     players.setText("Players "+selectedMatch.getNumberOfPlayers()+ "/" + selectedMatch.getMaxNumberOfPlayers());
-                    DefaultListModel<String> dlm = new DefaultListModel<>();
-                    for(String player:selectedMatch.getPlayerList()){
+               
+                    for(String player:selectedMatch.getPlayerList())
                         dlm.addElement(player);
-                    }
-                    listPlayers.setModel(dlm);
                 }
+                
+                listPlayers.setModel(dlm);
             }
         });
+        
+        refreshButtonActionPerformed(null);
     }
 
     /**
@@ -176,7 +188,14 @@ public class MultiplayerServerPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void joinMatchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_joinMatchButtonActionPerformed
-        rootFrame.changePanel(new MultiplayerMatchPanel(rootFrame));
+        Match selectedMatch = activeMatches.get(selected);
+        try {
+            ConnectionHandler.getInstance().connectToMatch(selectedMatch);
+            rootFrame.changePanel(new MultiplayerMatchPanel(rootFrame));
+        } catch (IOException ex) {
+            Logger.getLogger(MultiplayerServerPanel.class.getName()).log(Level.SEVERE, null, ex);
+            ConsoleFrame.showError("Failed to connect to match.");
+        }
     }//GEN-LAST:event_joinMatchButtonActionPerformed
 
     private void createMatchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createMatchButtonActionPerformed
@@ -210,17 +229,17 @@ public class MultiplayerServerPanel extends javax.swing.JPanel {
      */
     public class RefreshWorker extends SwingWorker<List<Match>, Object>{
 
-            @Override
-            protected List<Match> doInBackground() throws Exception {
-                List<Match> matches = new LinkedList<>();
-                try {
-                    ConnectionHandler.getInstance().sendToMasterServer(new GetMatchList());
-                    matches = (List<Match>)ConnectionHandler.getInstance().readFromMasterServer();
-                } catch (IOException | ClassNotFoundException ex) {
-                    Logger.getLogger(MultiplayerServerPanel.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                return matches;
+        @Override
+        protected List<Match> doInBackground() throws Exception {
+            List<Match> matches = new LinkedList<>();
+            try {
+                ConnectionHandler.getInstance().sendToMasterServer(new GetMatchList());
+                matches = (List<Match>)ConnectionHandler.getInstance().readFromMasterServer();
+            } catch (IOException | ClassNotFoundException ex) {
+                Logger.getLogger(MultiplayerServerPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
+            return matches;
+        }
 
     }
 
