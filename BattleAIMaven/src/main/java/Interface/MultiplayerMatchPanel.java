@@ -1,13 +1,21 @@
 package Interface;
 
+import Client.ConnectionHandler;
 import Console.ConsoleFrame;
 import Editor.Source;
 import Editor.SourceManager;
+import Networking.Requests.Request;
 import Networking.Server.Player;
 import java.awt.Color;
+import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingWorker;
 
 /**
  *
@@ -23,12 +31,17 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
     private final DefaultListModel playerSelectionModel = new DefaultListModel();
     private boolean ready = false;
     
+    private Boolean listenForRequests = false;
+    private LinkedList<Request> requestsList = new LinkedList<>();
+    
     /**
      * Creates new form MultiplayerMatchPanel
      * @param rootFrame
      */
     public MultiplayerMatchPanel(MainFrame rootFrame) {
         initComponents();
+        this.selectButton.setFocusable(false);
+        this.readyButton.setFocusable(false);
         this.chatOutputArea.setEditable(false);
         this.serverNameLabel.setText(rootFrame.localServerName);
         this.rootFrame = rootFrame;
@@ -42,6 +55,14 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
         try{
             listAvailableScripts.setSelectedIndex(0);
         }catch(IndexOutOfBoundsException ex){}
+        
+        ListenerWorker worker = new ListenerWorker(listenForRequests);
+        try {
+            worker.doInBackground();
+        } catch (Exception ex) {
+            ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed to listen for requests");
+            ConsoleFrame.showError("Failed to listen for requests");
+        }
     }
 
     /**
@@ -231,7 +252,7 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_readyButtonActionPerformed
 
     private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
-        
+        setWorkerStatus(false);
     }//GEN-LAST:event_startButtonActionPerformed
 
     private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendButtonActionPerformed
@@ -239,9 +260,85 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_sendButtonActionPerformed
 
     private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
+        setWorkerStatus(false);
         rootFrame.changePanel(new MultiplayerServerPanel(rootFrame));
     }//GEN-LAST:event_backButtonActionPerformed
 
+    /**
+     * This worker listens for requests given by the match server
+     */
+    public class ListenerWorker extends SwingWorker<Void,List<Request>>{
+        
+        private final Boolean continueToListen;
+        
+        public ListenerWorker(Boolean continueToListen){
+            this.continueToListen = continueToListen;
+        }
+        
+        /**
+         * Continues to listen for requests from match server
+         * @return 
+         */
+        @Override
+        protected Void doInBackground(){
+            
+            boolean listen = true;
+            
+            while(listen){
+                
+                try {
+                    Object request = (Object)ConnectionHandler.getInstance().readFromMatch();
+                    
+                    //Adauga request-ul in coada
+                    synchronized(requestsList){
+                        requestsList.add((Request)request);
+                    }
+                    listen = checkStatus();
+                } catch (IOException | ClassNotFoundException ex) {
+                    ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed to read from match");
+                }
+            }
+            return null;
+        }
+        
+        /**
+         * Checks if worker should stop
+         * @return 
+         */
+        private boolean checkStatus(){
+            boolean shouldContinue;
+            
+            synchronized(continueToListen){
+                shouldContinue = continueToListen;
+            }
+            
+            return shouldContinue;
+        }
+    }
+    
+    /**
+     * Sets the worker to stop or continue listening
+     * @param value 
+     */
+    private void setWorkerStatus(boolean value){
+        synchronized(listenForRequests){
+            listenForRequests = value;
+        }
+        
+    }
+    
+    /**
+     * Returns the next request that must be processed
+     * @return
+     * @throws NoSuchElementException 
+     */
+    private Request getRequest() throws NoSuchElementException{
+        Request newRequest;
+        synchronized(requestsList){
+            newRequest = requestsList.pop();
+        }
+        return newRequest;
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton backButton;
