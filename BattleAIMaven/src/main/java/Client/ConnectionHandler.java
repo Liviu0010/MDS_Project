@@ -33,12 +33,16 @@ public class ConnectionHandler {
     private ObjectInputStream matchInputStream;
     private ObjectOutputStream matchOutputStream;
     
-    private boolean isHost;
+    private boolean host;
+    
+    public boolean isHost() {
+        return host;
+    }
     
     private ConnectionHandler() {
         masterServerSocket = null;
         matchSocket = null;
-        isHost = false;
+        host = false;
         
         matchSocket = null;
     };
@@ -57,12 +61,12 @@ public class ConnectionHandler {
     }
     
     public boolean hostMatch(Match activeMatch) {
-        if (!isHost) {
-            if (ClientServerDispatcher.getInstance().start(activeMatch.getPort(), activeMatch))
-                isHost = true;
+        if (!host) {
+            if (ClientServerDispatcher.getInstance().start(activeMatch.getPort(), activeMatch)) 
+                host = true;
         }
         
-        return isHost;
+        return host;
     }
          
     /**

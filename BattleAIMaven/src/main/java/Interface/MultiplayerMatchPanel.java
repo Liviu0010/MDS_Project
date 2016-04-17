@@ -62,6 +62,7 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
         } catch (Exception ex) {
             ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed to listen for requests");
             ConsoleFrame.showError("Failed to listen for requests");
+            ex.printStackTrace();
         }
     }
 
@@ -282,7 +283,10 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
         @Override
         protected Void doInBackground(){
             
-            boolean listen = true;
+            boolean listen = false;
+            
+            if (!ConnectionHandler.getInstance().isHost())
+                listen = true;
             
             while(listen){
                 
