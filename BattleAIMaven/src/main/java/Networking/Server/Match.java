@@ -45,6 +45,10 @@ public class Match implements Serializable {
         return title;
     }
 
+    /**
+     * Sets the title of the match.
+     * @param title Title of the match.
+     */
     public void setTitle(String title) {
         this.title = title;
     }
@@ -77,12 +81,20 @@ public class Match implements Serializable {
         return players.size();
     }
     
+    /**
+     * Adds a player to the match.
+     * @param username Name of the player who will be added to the match.
+     */
     public void addPlayer(String username) {
         players.add(username);
     }
     
-    public void removePlayer(Player player) {
-        players.remove(player.getUsername());
+    /**
+     * Removes a player from the match.
+     * @param username Name of the player who will be removed from the match.
+     */
+    public void removePlayer(String username) {
+        players.remove(username);
     }
     
     /**
@@ -92,6 +104,9 @@ public class Match implements Serializable {
         return maxNumberOfPlayers;
     }
     
+    /**
+     * @return A list of players currently in the match.
+     */
     public List<String> getPlayerList(){
         return new LinkedList<>(players);
     }

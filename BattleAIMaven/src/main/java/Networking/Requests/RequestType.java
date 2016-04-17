@@ -6,8 +6,7 @@
 package Networking.Requests;
 
 /**
- *
- * @author root
+ * This class contains final static integer fields representing a type of request.
  */
 public final class RequestType {
     public final static int REGISTER_ACTIVITY = 0;

@@ -1,7 +1,6 @@
 package Client;
 
 import Constants.MasterServerConstants;
-import Networking.Requests.HostMatch;
 import Networking.Requests.PlayerConnect;
 import Networking.Requests.RegisterActivity;
 import Networking.Server.Match;
@@ -18,6 +17,10 @@ import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * This class handles two type of connections, the connection to the master 
+ * server and the connection to a match.
+ */
 public class ConnectionHandler {
     
     private static ConnectionHandler instance = new ConnectionHandler();
@@ -62,6 +65,11 @@ public class ConnectionHandler {
         return isHost;
     }
          
+    /**
+     * Attempts to send a request to master server.
+     * @param request Request send to the master server.
+     * @throws IOException 
+     */
     public synchronized void sendToMasterServer(Request request) throws IOException {
         if (masterServerSocket == null)
             connectToMasterServer();
@@ -76,6 +84,12 @@ public class ConnectionHandler {
         masterServerOutputStream.flush();
     }
     
+    /**
+     * Attempt to read an object from the master server.
+     * @return Object read from master server.
+     * @throws IOException
+     * @throws ClassNotFoundException 
+     */
     public Object readFromMasterServer() throws IOException, ClassNotFoundException {
         if (masterServerSocket == null)
             connectToMasterServer();
