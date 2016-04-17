@@ -9,7 +9,6 @@ import java.io.ObjectOutputStream;
 
 /**
  *
- * @author root
  */
 public class RegisterActivity extends Request {
 

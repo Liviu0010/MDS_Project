@@ -8,8 +8,7 @@ package Networking.Server;
 import java.io.Serializable;
 
 /**
- *
- * @author root
+ * Singleton class representing the currently logged in player.
  */
 public class Player implements Serializable {
     
@@ -25,10 +24,18 @@ public class Player implements Serializable {
         return instance;
     }
     
+    /**
+     * Sets the player username.
+     * @param username 
+     */
     public void setUsername(String username) {
         this.username = username;
     }
     
+    /**
+     * Gets the player username.
+     * @return 
+     */
     public String getUsername() {
         return username;
     }
