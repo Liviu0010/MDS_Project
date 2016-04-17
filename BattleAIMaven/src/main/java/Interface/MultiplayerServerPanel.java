@@ -201,11 +201,11 @@ public class MultiplayerServerPanel extends javax.swing.JPanel {
 
     private void joinMatchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_joinMatchButtonActionPerformed
         Match selectedMatch = activeMatches.get(selected);
+        JoinWorker worker = new JoinWorker(selectedMatch);
         try {
-            ConnectionHandler.getInstance().connectToMatch(selectedMatch);
+            boolean success = worker.doInBackground();
             rootFrame.changePanel(new MultiplayerMatchPanel(rootFrame));
-        } catch (IOException ex) {
-            Logger.getLogger(MultiplayerServerPanel.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
             ConsoleFrame.showError("Failed to connect to match.");
         }
     }//GEN-LAST:event_joinMatchButtonActionPerformed
@@ -236,10 +236,27 @@ public class MultiplayerServerPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_refreshButtonActionPerformed
 
+    public class JoinWorker extends SwingWorker<Boolean, Void>{
+
+        Match selectedMatch;
+        
+        private JoinWorker(Match selectedMatch){
+            this.selectedMatch = selectedMatch;
+        }
+        
+        @Override
+        protected Boolean doInBackground() throws Exception {
+            ConnectionHandler.getInstance().connectToMatch(selectedMatch);
+            return true;
+        }
+        
+    }
+    
+    
     /**
      * This worker gets the match list from the master server
      */
-    public class RefreshWorker extends SwingWorker<List<Match>, Object>{
+    public class RefreshWorker extends SwingWorker<List<Match>, Void>{
 
         @Override
         protected List<Match> doInBackground() throws Exception {

@@ -1,5 +1,6 @@
 package Client;
 
+import Console.ConsoleFrame;
 import Constants.MasterServerConstants;
 import Networking.Requests.PlayerConnect;
 import Networking.Requests.RegisterActivity;
@@ -121,7 +122,7 @@ public class ConnectionHandler {
                     matchOutputStream.writeObject(new RegisterActivity());
                     matchOutputStream.flush();
                 } catch (IOException ex) {
-                    Logger.getLogger(ServerDispatcher.class.getName()).log(Level.SEVERE, null, ex);
+                    ConsoleFrame.sendMessage(this.getClass().getSimpleName(), ex.getMessage());
                 }
             }
         };
