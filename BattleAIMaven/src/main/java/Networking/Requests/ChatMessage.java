@@ -26,4 +26,8 @@ public class ChatMessage extends Request {
         ClientServerDispatcher.getInstance().broadcast(this);
     }
     
+    public String getMessage() {
+        return message;
+    }
+    
 }

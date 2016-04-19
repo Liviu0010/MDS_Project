@@ -11,6 +11,7 @@ import Constants.MasterServerConstants;
 import Networking.Requests.HostMatch;
 import Networking.Requests.RegisterActivity;
 import Networking.Requests.Request;
+import Networking.Requests.RequestType;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
@@ -119,6 +120,7 @@ public class ClientServerDispatcher extends ServerDispatcher {
     public void broadcast(Request request) {
         for (Connection i: activeConnections)
             try {
+                i.getOutputStream().reset();
                 i.getOutputStream().writeObject(request);
                 i.getOutputStream().flush();
             } catch (IOException ex) {
