@@ -11,9 +11,7 @@ import Constants.MasterServerConstants;
 import Networking.Requests.HostMatch;
 import Networking.Requests.RegisterActivity;
 import Networking.Requests.Request;
-import Networking.Requests.RequestType;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Timer;
@@ -90,6 +88,7 @@ public class ClientServerDispatcher extends ServerDispatcher {
      * Starts the loop which handles incoming connections.
      * @param serverSocket The server socket to which the clients will connect to.
      */
+    @Override
     protected void listenForConnections(ServerSocket serverSocket) {
         while (isRunning) {
             try {

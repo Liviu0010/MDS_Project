@@ -75,6 +75,8 @@ public class ServerDispatcher implements Runnable {
                 for (int i = 0; i < activeConnections.size(); i++)
                     if (!activeConnections.get(i).isActive()) {
                             System.out.println("removing");
+                            ConsoleFrame.sendMessage(TimerTask.class.getSimpleName(),
+                                    "Removing connection with "+activeConnections.get(i).getClientSocket().getInetAddress());
                             activeConnections.remove(i);
                             i--;
                     }
@@ -98,12 +100,15 @@ public class ServerDispatcher implements Runnable {
     }
     
     public List<Match> getActiveMatches() throws IOException {
-        List<Match> activeMatches = new LinkedList<Match>();
+        List<Match> activeMatches = new LinkedList<>();
         
         MatchConnection matchConnection = null;
         for (Connection connection: activeConnections) {
             if (connection.isActive() && connection instanceof MatchConnection) {
                 matchConnection = (MatchConnection)connection;
+                ConsoleFrame.sendMessage(this.getClass().getSimpleName(),
+                        "Sent match: " + matchConnection.getActiveMatch().getTitle()
+                        +" to " + connection.getClientSocket().getInetAddress());
                 System.out.println("Sent match: " + matchConnection.getActiveMatch().getTitle());
                 activeMatches.add(matchConnection.getActiveMatch());
             }
@@ -112,7 +117,19 @@ public class ServerDispatcher implements Runnable {
         return activeMatches;
     }
     
+    public List<String> getLocalConnections(){
+        List<String> connections = new LinkedList<>();
+        
+        for(Connection connection:activeConnections){
+            if(connection.isActive()){
+                connections.add(connection.getClientSocket().getInetAddress().getHostAddress());
+            }
+        }
+        return connections;
+    }
+    
     public void addConnection(Connection connection) {
         activeConnections.add(connection);
+        ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Added connection with "+connection.getClientSocket().getInetAddress());
     }
 }

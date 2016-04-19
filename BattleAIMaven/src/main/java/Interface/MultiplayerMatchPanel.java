@@ -7,16 +7,23 @@ import Editor.SourceManager;
 import Networking.Requests.ChatMessage;
 import Networking.Requests.Request;
 import Networking.Requests.RequestType;
+import Networking.Server.Match;
 import Networking.Server.Player;
 import java.awt.Color;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+import javax.swing.text.DefaultCaret;
 
 /**
  *
@@ -45,6 +52,11 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
         this.selectButton.setFocusable(false);
         this.readyButton.setFocusable(false);
         this.chatOutputArea.setEditable(false);
+        this.chatOutputArea.setLineWrap(true);
+        this.chatOutputScroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        DefaultCaret caret = (DefaultCaret)this.chatOutputArea.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+        
         this.serverNameLabel.setText(rootFrame.localServerName);
         this.rootFrame = rootFrame;
         
@@ -69,6 +81,16 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
             ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed to listen for requests");
             ConsoleFrame.showError("Failed to listen for requests");
         }
+        
+        chatInputField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                super.keyTyped(e);
+                if(e.getKeyChar() == 10){
+                    sendButtonActionPerformed(null);
+                }
+            }
+        });
     }
 
     /**

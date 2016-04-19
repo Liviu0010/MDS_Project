@@ -8,17 +8,14 @@ import Networking.Server.Match;
 import Networking.Requests.Request;
 import Networking.Server.ClientServerDispatcher;
 import Networking.Server.Player;
-import Networking.Server.ServerDispatcher;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import sun.nio.ch.Secrets;
 
 /**
  * This class handles two type of connections, the connection to the master 
@@ -26,7 +23,7 @@ import sun.nio.ch.Secrets;
  */
 public class ConnectionHandler {
     
-    private static ConnectionHandler instance = new ConnectionHandler();
+    private final static ConnectionHandler instance = new ConnectionHandler();
     
     private Socket masterServerSocket;
     private ObjectInputStream masterServerInputStream;
@@ -135,14 +132,14 @@ public class ConnectionHandler {
             if (attempt == 7)
                 throw ex;
         }
-           
+        
         matchOutputStream = new ObjectOutputStream(matchSocket.getOutputStream());
         matchOutputStream.flush();
         matchInputStream = new ObjectInputStream(matchSocket.getInputStream());
         matchOutputStream.writeObject(new PlayerConnect(Player.getInstance().getUsername()));
         matchOutputStream.flush();
-        Timer t = new Timer();
         
+        Timer t = new Timer();
         TimerTask notification = new TimerTask() {
             @Override
             public void run() {
@@ -155,7 +152,6 @@ public class ConnectionHandler {
                 }
             }
         };
-        
         t.scheduleAtFixedRate(notification, 0, MasterServerConstants.PACKET_DELAY);
     }
     
