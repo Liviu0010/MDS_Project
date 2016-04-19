@@ -11,11 +11,13 @@ import Networking.Server.ServerDispatcher;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import sun.nio.ch.Secrets;
 
 /**
  * This class handles two type of connections, the connection to the master 
@@ -62,8 +64,14 @@ public class ConnectionHandler {
     
     public boolean hostMatch(Match activeMatch) {
         if (!host) {
-            if (ClientServerDispatcher.getInstance().start(activeMatch.getPort(), activeMatch)) 
-                host = true;
+            if (ClientServerDispatcher.getInstance().start(activeMatch.getPort(), activeMatch)) {
+                try {
+                    host = true;
+                    connectToMatch(activeMatch);
+                } catch (IOException ex) {
+                        Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
         }
         
         return host;
@@ -109,7 +117,24 @@ public class ConnectionHandler {
     }
     
     public void connectToMatch(Match match) throws IOException {
-        matchSocket = new Socket(match.getIP(), match.getPort());
+        
+        int attempt = 1;
+        while (attempt <= 6)
+        try {
+            matchSocket = new Socket(match.getIP(), match.getPort());
+            attempt = 7;
+        } catch (IOException ex) {
+            try {
+                Thread.sleep(500);
+                attempt++;
+            } catch (InterruptedException ex1) {
+                Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex1);
+            }
+            
+            if (attempt == 7)
+                throw ex;
+        }
+           
         matchOutputStream = new ObjectOutputStream(matchSocket.getOutputStream());
         matchOutputStream.flush();
         matchInputStream = new ObjectInputStream(matchSocket.getInputStream());
@@ -139,6 +164,7 @@ public class ConnectionHandler {
     }
     
     public void sendToMatch(Request request) throws IOException {
+        matchOutputStream.reset();
         matchOutputStream.writeObject(request);
         matchOutputStream.flush();
     }

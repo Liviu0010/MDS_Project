@@ -4,7 +4,9 @@ import Client.ConnectionHandler;
 import Console.ConsoleFrame;
 import Editor.Source;
 import Editor.SourceManager;
+import Networking.Requests.ChatMessage;
 import Networking.Requests.Request;
+import Networking.Requests.RequestType;
 import Networking.Server.Player;
 import java.awt.Color;
 import java.io.IOException;
@@ -15,6 +17,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 /**
@@ -257,7 +260,18 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_startButtonActionPerformed
 
     private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendButtonActionPerformed
+        String input = "";
         
+        if (!chatInputField.getText().equals("")) {
+            try {
+                input = Player.getInstance().getUsername() + ": " + 
+                        chatInputField.getText() + "\n";
+                ConnectionHandler.getInstance().sendToMatch(new ChatMessage(input));
+            } catch (IOException ex) {
+                Logger.getLogger(MultiplayerMatchPanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            chatInputField.setText("");
+        }
     }//GEN-LAST:event_sendButtonActionPerformed
 
     private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
@@ -283,23 +297,25 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
         @Override
         protected Void doInBackground(){
             
-            boolean listen = false;
-            
-            if (!ConnectionHandler.getInstance().isHost())
-                listen = true;
+            boolean listen = true;
             
             while(listen){
                 
                 try {
-                    Object request = (Object)ConnectionHandler.getInstance().readFromMatch();
+                    Request request = (Request)ConnectionHandler.getInstance().readFromMatch();
                     
-                    //Adauga request-ul in coada
-                    synchronized(requestsList){
-                        requestsList.add((Request)request);
-                    }
-                    listen = checkStatus();
+                    if (request.getType() == RequestType.CHAT_MESSAGE)
+                        SwingUtilities.invokeLater(new Runnable() {
+ 
+                            @Override
+                            public void run() {
+                                chatOutputArea.append(((ChatMessage)request).getMessage());
+                            }
+                        });
+                    
                 } catch (IOException | ClassNotFoundException ex) {
                     ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed to read from match");
+                    listen = false;
                 }
             }
             return null;
