@@ -34,12 +34,6 @@ public class MatchConnection extends Connection {
             Match activeMatch)  {
         super(clientSocket, inputStream, outputStream);
         this.activeMatch = activeMatch;
-        this.start();
-    }
-    
-    public void start() {
-        threadRunning = true;
-        new Thread(this).start();
     }
     
      /**
@@ -99,6 +93,7 @@ public class MatchConnection extends Connection {
     
     @Override
     public void run() {
+        threadRunning = true;
         startConnectionHandler();
         
         Object object = null;

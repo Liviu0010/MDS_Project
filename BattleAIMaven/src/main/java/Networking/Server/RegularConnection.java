@@ -34,16 +34,7 @@ public class RegularConnection extends Connection {
      */
     public RegularConnection(Socket clientSocket) throws IOException {
         super(clientSocket);
-        this.start();
         switchedConnection = false;
-    }
-    
-    /**
-     * Starts the main thread
-     */
-    private void start() {
-        threadRunning = true;
-        new Thread(this).start();
     }
     
     /**
@@ -86,6 +77,7 @@ public class RegularConnection extends Connection {
     
     @Override
     public void run() {
+        threadRunning = true;
         startConnectionHandler();
         
         Object object = null;
