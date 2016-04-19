@@ -3,6 +3,7 @@ package Interface;
 import Client.ConnectionHandler;
 import Console.ConsoleFrame;
 import Networking.Server.Match;
+import Networking.Server.Player;
 import java.awt.Color;
 import javax.swing.SwingWorker;
 
@@ -12,10 +13,11 @@ import javax.swing.SwingWorker;
  */
 public class MultiplayerCreateMatch extends javax.swing.JPanel {
 
-    private MainFrame rootFrame;
+    private final MainFrame rootFrame;
     
     /**
      * Creates new form MultiplayerCreateMatch
+     * @param rootFrame
      */
     public MultiplayerCreateMatch(MainFrame rootFrame) {
         initComponents();
@@ -179,7 +181,7 @@ public class MultiplayerCreateMatch extends javax.swing.JPanel {
             protected Boolean doInBackground() throws Exception {
                 Match activeMatch = new Match(serverNameField.getText(),
                         "localhost", Integer.parseInt(serverPortField.getText()),
-                        "test", 20);
+                        Player.getInstance().getUsername(), 20);
                 Boolean succes = ConnectionHandler.getInstance().hostMatch(activeMatch);
                 
                 return succes;

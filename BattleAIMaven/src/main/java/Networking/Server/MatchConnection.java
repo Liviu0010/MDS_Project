@@ -1,12 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Networking.Server;
 
 import Constants.MasterServerConstants;
-import Networking.Requests.HostMatch;
+import Networking.Requests.AddPlayer;
 import Networking.Requests.Request;
 import Networking.Requests.RequestType;
 import java.io.IOException;
@@ -19,8 +14,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
- * @author root
+ * MatchConnection handles the continuous connection between a
+ * hosted match and the master server. The master server requires the host of 
+ * the match to send requests each PACKET_DELAY milliseconds in order
+ * to check if the connection is still active. This class starts a thread 
+ * the constructor running its own run method in order to read and
+ * handle requests.
+ * The connection is deemed inactive if a period of PACKET_DELAY * 2 
+ * milliseconds have passed and no request has been received!
  */
 public class MatchConnection extends Connection {
     
@@ -40,10 +41,17 @@ public class MatchConnection extends Connection {
         new Thread(this).start();
     }
     
+     /**
+     * @return Returns the match associated with this connection.
+     */
     public Match getActiveMatch() {
         return activeMatch;
     }
     
+     /**
+     * Starts a handler which takes care of connection activity, marking it
+     * active or inactive.
+     */
     private void startConnectionHandler() {
         Timer connectionHandler = new Timer();
         
@@ -101,9 +109,11 @@ public class MatchConnection extends Connection {
                     Request request = (Request)object;
                     request.execute(outputStream);
                     
-                    // Update the activeMatch in case of such request
-                    if (request.getType() == RequestType.HOST_MATCH)
-                        activeMatch = ((HostMatch)object).getMatch();
+                    if (request.getType() == RequestType.ADD_PLAYER) {
+                        AddPlayer player = (AddPlayer)request;
+                        // add player to the active match
+                        activeMatch.addPlayer(player.getUsername());
+                    }
                     
                     Thread.sleep(MasterServerConstants.PACKET_DELAY);
                 }

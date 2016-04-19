@@ -6,16 +6,6 @@ import java.net.Socket;
 
 import java.io.ObjectOutputStream;
 
-/** 
- * MatchConnection handles the connection between a
- * hosted match and the master server. The master server requires the host of 
- * the match to send requests each PACKET_DELAY milliseconds in order
- * to check if the connection is still active. This class starts a thread 
- * the constructor running its own run method in order to read and
- * handle those requests.
- * The connection is deemed inactive if a period of PACKET_DELAY * 2 
- * milliseconds have passed and no request has been received!
- */
 public abstract class Connection implements Runnable {
     
     protected Socket clientSocket;
@@ -26,6 +16,8 @@ public abstract class Connection implements Runnable {
     protected boolean activeConnection;
     
     /**
+     * This constructor opens an output stream and an input stream on the 
+     * provided socket.
      * @param clientSocket The client socket associated with the connection.
      * @param match The active match object to be used for the connection.
      */
@@ -37,6 +29,12 @@ public abstract class Connection implements Runnable {
         activeConnection = true;
     }
     
+    /**
+     * This constructor does not open new streams but makes use of existing ones.
+     * @param clientSocket
+     * @param inputStream
+     * @param outputStream 
+     */
     public Connection(Socket clientSocket, ObjectInputStream inputStream,
             ObjectOutputStream outputStream) {
         this.clientSocket = clientSocket;
@@ -52,10 +50,16 @@ public abstract class Connection implements Runnable {
         return clientSocket;
     }
     
+    /**
+     * @return Returns an output stream associated with the current opened socket.
+     */
     public ObjectOutputStream getOutputStream() {
         return outputStream;
     }
     
+    /**
+     * @return Returns an input stream associated with the current opened socket.
+     */
     public ObjectInputStream getInputStream() {
         return inputStream;
     }

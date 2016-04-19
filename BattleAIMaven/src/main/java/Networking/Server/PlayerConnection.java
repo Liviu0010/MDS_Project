@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Networking.Server;
 
 import Constants.MasterServerConstants;
@@ -15,13 +10,18 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
- * @author root
+ * PlayerConnection handles the continuous connection between a player and a match.
+ * The match requires every player to send requests each PACKET_DELAY milliseconds
+ * in order to check if the connection is still active. This class starts a thread 
+ * the constructor running its own run method in order to read and
+ * handle requests. The connection is deemed inactive if a period of PACKET_DELAY * 2 
+ * milliseconds have passed and no request has been received!
  */
 public class PlayerConnection extends Connection {
     
     public PlayerConnection(Socket clientSocket) throws IOException {
         super(clientSocket);
+        this.start();
     }
     
     public void start() {
