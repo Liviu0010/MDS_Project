@@ -93,7 +93,9 @@ public class ClientServerDispatcher extends ServerDispatcher {
         while (isRunning) {
             try {
                 Socket clientSocket = serverSocket.accept();
-                activeConnections.add(new PlayerConnection(clientSocket));
+                PlayerConnection playerConnection = new PlayerConnection(clientSocket);
+                THREAD_POOL.execute(playerConnection);
+                activeConnections.add(playerConnection);
             } catch (IOException ex) {
                 Logger.getLogger(ServerDispatcher.class.getName()).log(Level.SEVERE, null, ex);
             }

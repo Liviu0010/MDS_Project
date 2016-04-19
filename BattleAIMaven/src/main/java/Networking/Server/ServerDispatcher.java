@@ -11,6 +11,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import Constants.MasterServerConstants;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,8 +24,10 @@ public class ServerDispatcher implements Runnable {
     protected boolean isRunning = false;
     protected Thread mainThread;
     protected int port;
+    protected final ExecutorService THREAD_POOL;
     
     protected ServerDispatcher() {
+        THREAD_POOL = Executors.newCachedThreadPool();
     }
     
     public static ServerDispatcher getInstance() {
@@ -57,7 +61,7 @@ public class ServerDispatcher implements Runnable {
         while (isRunning) {
             try {
                 Socket clientSocket = serverSocket.accept();
-                activeConnections.add(new RegularConnection(clientSocket));
+                addConnection(new RegularConnection(clientSocket));
             } catch (IOException ex) {
                 Logger.getLogger(ServerDispatcher.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -129,6 +133,7 @@ public class ServerDispatcher implements Runnable {
     }
     
     public void addConnection(Connection connection) {
+        THREAD_POOL.execute(connection);
         activeConnections.add(connection);
         ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Added connection with "+connection.getClientSocket().getInetAddress());
     }

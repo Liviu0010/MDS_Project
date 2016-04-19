@@ -22,12 +22,6 @@ public class PlayerConnection extends Connection {
     
     public PlayerConnection(Socket clientSocket) throws IOException {
         super(clientSocket);
-        this.start();
-    }
-    
-    public void start() {
-        threadRunning = true;
-        new Thread(this).start();
     }
     
     private void startConnectionHandler() {
@@ -75,6 +69,7 @@ public class PlayerConnection extends Connection {
     
     @Override
     public void run() {
+        threadRunning = true;
         startConnectionHandler();
         
         Object object = null;
