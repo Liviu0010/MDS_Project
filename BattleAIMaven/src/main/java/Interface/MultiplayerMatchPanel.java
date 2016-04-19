@@ -5,6 +5,7 @@ import Console.ConsoleFrame;
 import Editor.Source;
 import Editor.SourceManager;
 import Networking.Requests.Request;
+import Networking.Server.Match;
 import Networking.Server.Player;
 import java.awt.Color;
 import java.io.IOException;
@@ -35,8 +36,9 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
     /**
      * Creates new form MultiplayerMatchPanel
      * @param rootFrame
+     * @param currentMatch
      */
-    public MultiplayerMatchPanel(MainFrame rootFrame) {
+    public MultiplayerMatchPanel(MainFrame rootFrame, Match currentMatch) {
         initComponents();
         this.selectButton.setFocusable(false);
         this.readyButton.setFocusable(false);
@@ -46,6 +48,10 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
         
         listAvailableScripts.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         sourceList = SourceManager.getInstance().getSourceList();
+        for(String player:currentMatch.getPlayerList()){
+            playerSelectionModel.addElement(player);
+        }
+        listPlayersAndScripts.setModel(playerSelectionModel);
         for(Source source:sourceList){
             listModel.addElement(source.toListString());
         }
@@ -60,7 +66,6 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
         } catch (Exception ex) {
             ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed to listen for requests");
             ConsoleFrame.showError("Failed to listen for requests");
-            ex.printStackTrace();
         }
     }
 

@@ -8,6 +8,7 @@ import Networking.Server.Player;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
@@ -203,9 +204,12 @@ public class MultiplayerServerPanel extends javax.swing.JPanel {
         Match selectedMatch = activeMatches.get(selected);
         JoinWorker worker = new JoinWorker(selectedMatch);
         try {
-            boolean success = worker.doInBackground();
-            rootFrame.changePanel(new MultiplayerMatchPanel(rootFrame));
-        } catch (Exception ex) {
+            worker.execute();
+            boolean success = worker.get();
+            if(success){
+                rootFrame.changePanel(new MultiplayerMatchPanel(rootFrame, selectedMatch));
+            }
+        } catch (InterruptedException | ExecutionException ex) {
             ConsoleFrame.showError("Failed to connect to match.");
         }
     }//GEN-LAST:event_joinMatchButtonActionPerformed
@@ -226,17 +230,18 @@ public class MultiplayerServerPanel extends javax.swing.JPanel {
         RefreshWorker worker = new RefreshWorker();
         try {
             DefaultListModel<String> dlm = new DefaultListModel<>();
-            activeMatches = worker.doInBackground();
+            worker.execute();
+            activeMatches = worker.get();
             for(Match match: activeMatches)
                 dlm.addElement(match.toListMatch());
             listAvailableMatches.setModel(dlm);
-        } catch (Exception ex) {
+        } catch (InterruptedException | ExecutionException ex) {
             ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed to refresh match list");
             ConsoleFrame.showError("Failed to refresh match list");
         }
     }//GEN-LAST:event_refreshButtonActionPerformed
 
-    public class JoinWorker extends SwingWorker<Boolean, Void>{
+    private class JoinWorker extends SwingWorker<Boolean, Void>{
 
         Match selectedMatch;
         
