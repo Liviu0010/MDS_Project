@@ -48,14 +48,11 @@ public abstract class Compiler {
                 sourceInstance = sourceClass.newInstance();
                 ConsoleFrame.sendMessage(Compiler.class.getSimpleName(), "Created instance of "+sourceInstance.getClass().getSimpleName());
             } catch (MalformedURLException ex) {
-                Logger.getLogger(Compiler.class.getName()).log(Level.SEVERE, null, ex);
                 ConsoleFrame.sendMessage(Compiler.class.getSimpleName(), "Failed to create new URLClassLoader");
             } catch (ClassNotFoundException ex) {
                 ConsoleFrame.sendMessage(Compiler.class.getSimpleName(), "Failed to get class of compiled source");
-                Logger.getLogger(Compiler.class.getName()).log(Level.SEVERE, null, ex);
             } catch (InstantiationException | IllegalAccessException ex) {
                 ConsoleFrame.sendMessage(Compiler.class.getSimpleName(), "Failed to get instantiate source class");
-                Logger.getLogger(Compiler.class.getName()).log(Level.SEVERE, null, ex);
             }finally{
                 SourceManager.getInstance().deleteSourceFile(sourceFile);
             }
