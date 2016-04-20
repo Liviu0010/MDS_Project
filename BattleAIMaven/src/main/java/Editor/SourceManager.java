@@ -107,11 +107,11 @@ public final class SourceManager {
                     ObjectOutputStream oOutput = new ObjectOutputStream(fOutput)) {
                 ConsoleFrame.sendMessage(this.getClass().getSimpleName(), 
                         "Writing empty source list to source index file");
-                sources.add(new Source("Test test test", "Test1", "Dragos"));
-                sources.add(new Source("Test test test", "Test2", "Tanase"));
-                sources.add(new Source("Test test test", "Test3", "Alex"));
-                sources.add(new Source("Test test test", "Test4", "Liviu"));
-                sources.add(new Source("Test test test", "Test5", "Alexandra"));
+                sources.add(new Source("Test1", "GOOD"));
+                sources.add(new Source("package User_Sources;","Test2", "GOOD"));
+                sources.add(new Source("Test3", "GOOD"));
+                sources.add(new Source("Test4", "GOOD"));
+                sources.add(new Source("Test test test", "Test5", "BAD"));
                 oOutput.writeObject(sources);
             }
         }
@@ -153,6 +153,39 @@ public final class SourceManager {
         }
     }
     
+    /**
+     * Creates a source file in the Compiler package and returns the file
+     * @param source
+     * @return 
+     */
+    public File createSourceFile(Source source){
+        File sourceFile = new File(SOURCE_FOLDER_PATH+source.getName()+".java");
+        ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Creating file at "+sourceFile.getAbsolutePath());
+        try {
+            sourceFile.createNewFile();
+            try (FileWriter fileWriter = new FileWriter(sourceFile); 
+                    BufferedWriter writer = new BufferedWriter(fileWriter)) {
+                
+                String stringAux;
+                stringAux = source.getContent();
+                writer.write(stringAux);
+            }
+            return sourceFile;
+        } catch (IOException ex) {
+            ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed to create file "+source.getName());
+            ConsoleFrame.showError("Failed to create file "+source.getName());
+        }
+        return null;
+    }
+    
+    public boolean deleteSourceFile(File source){
+        boolean success = true;
+        ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Deleting file at "+source.getAbsolutePath());
+        if(source.exists()){
+            success = source.delete();
+        }
+        return success;
+    }
     /**
      * This method returns the content of the predefined AI template
      * @return inteligenceTemplate
