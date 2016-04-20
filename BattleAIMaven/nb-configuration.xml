@@ -18,7 +18,6 @@ Without this configuration present, some functionality in the IDE may be limited
                 <property name="sc"/>
                 <property name="root"/>
             </configuration>
-            <configuration id="compiler" profiles=""/>
         </configurations>
     </config-data>
 </project-shared-configuration>

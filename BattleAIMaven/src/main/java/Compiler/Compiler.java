@@ -46,6 +46,7 @@ public abstract class Compiler {
                 CLASS_LOADER = URLClassLoader.newInstance(new URL[] { sourceFile.toURI().toURL() });
                 Class<?> sourceClass = Class.forName("User_Sources."+source.getName(),true,CLASS_LOADER);
                 sourceInstance = sourceClass.newInstance();
+                ConsoleFrame.sendMessage(Compiler.class.getSimpleName(), "Created instance of "+sourceInstance.getClass().getSimpleName());
             } catch (MalformedURLException ex) {
                 Logger.getLogger(Compiler.class.getName()).log(Level.SEVERE, null, ex);
                 ConsoleFrame.sendMessage(Compiler.class.getSimpleName(), "Failed to create new URLClassLoader");
@@ -56,8 +57,6 @@ public abstract class Compiler {
                 ConsoleFrame.sendMessage(Compiler.class.getSimpleName(), "Failed to get instantiate source class");
                 Logger.getLogger(Compiler.class.getName()).log(Level.SEVERE, null, ex);
             }finally{
-                
-                ConsoleFrame.sendMessage(Compiler.class.getSimpleName(), "Create instance of "+sourceInstance.getClass().getSimpleName());
                 SourceManager.getInstance().deleteSourceFile(sourceFile);
             }
         }

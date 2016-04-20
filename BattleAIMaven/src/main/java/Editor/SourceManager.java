@@ -108,7 +108,7 @@ public final class SourceManager {
                 ConsoleFrame.sendMessage(this.getClass().getSimpleName(), 
                         "Writing empty source list to source index file");
                 sources.add(new Source("Test1", "GOOD"));
-                sources.add(new Source("package User_Sources;","Test2", "GOOD"));
+                sources.add(new Source("package User_Sources;","Test2", "BAD"));
                 sources.add(new Source("Test3", "GOOD"));
                 sources.add(new Source("Test4", "GOOD"));
                 sources.add(new Source("Test test test", "Test5", "BAD"));
