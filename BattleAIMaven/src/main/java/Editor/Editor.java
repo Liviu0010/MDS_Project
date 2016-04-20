@@ -23,7 +23,7 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
  * his code for an robot
  */
 public final class Editor extends JFrame {
-    private MainFrame frame;
+    private final MainFrame frame;
     
     private final JMenuBar menuBar;
     

@@ -30,7 +30,6 @@ public class RegularConnection extends Connection {
     
     /**
      * @param clientSocket The client socket associated with the connection.
-     * @param match The active match object to be used for the connection.
      */
     public RegularConnection(Socket clientSocket) throws IOException {
         super(clientSocket);

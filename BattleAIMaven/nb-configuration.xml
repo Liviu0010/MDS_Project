@@ -11,8 +11,13 @@ Without this configuration present, some functionality in the IDE may be limited
             <configuration id="server" profiles="">
                 <property name="s"/>
             </configuration>
-            <configuration id="server_console" profiles=""/>
-            <configuration id="server_console_db" profiles=""/>
+            <configuration id="server_console" profiles="">
+                <property name="sc"/>
+            </configuration>
+            <configuration id="server_console_db" profiles="">
+                <property name="sc"/>
+                <property name="root"/>
+            </configuration>
         </configurations>
     </config-data>
 </project-shared-configuration>
