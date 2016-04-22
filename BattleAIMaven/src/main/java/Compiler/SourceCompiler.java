@@ -3,12 +3,13 @@ package Compiler;
 import Console.ConsoleFrame;
 import Editor.Source;
 import Editor.SourceManager;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Scanner;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 
@@ -22,17 +23,25 @@ import javax.tools.ToolProvider;
  *
  * @author Dragos-Alexandru
  */
-public abstract class Compiler {
+public abstract class SourceCompiler {
     
     private final static JavaCompiler COMPILER = ToolProvider.getSystemJavaCompiler();
     private static URLClassLoader CLASS_LOADER;
     
-    private static File compileSource(Source source){
+    private static String lastError = "";
+    
+    public static File compileSource(Source source){
         File sourceFile = SourceManager.getInstance().createSourceFile(source);
-        
-        int fail = COMPILER.run(null, null, null, sourceFile.getPath());
+        ByteArrayOutputStream errorOStream = new ByteArrayOutputStream();
+        int fail = COMPILER.run(null, null, errorOStream, sourceFile.getPath());
         if(fail != 0){
             SourceManager.getInstance().deleteSourceFile(sourceFile);
+            ByteArrayInputStream errorIStream = new ByteArrayInputStream(errorOStream.toByteArray());
+            Scanner s = new Scanner(errorIStream);
+            lastError = "";
+            while(s.hasNextLine()){
+                lastError += "\n" + s.nextLine();
+            }
             return null;
         }
         return sourceFile;
@@ -46,13 +55,13 @@ public abstract class Compiler {
                 CLASS_LOADER = URLClassLoader.newInstance(new URL[] { sourceFile.toURI().toURL() });
                 Class<?> sourceClass = Class.forName("User_Sources."+source.getName(),true,CLASS_LOADER);
                 sourceInstance = sourceClass.newInstance();
-                ConsoleFrame.sendMessage(Compiler.class.getSimpleName(), "Created instance of "+sourceInstance.getClass().getSimpleName());
+                ConsoleFrame.sendMessage(SourceCompiler.class.getSimpleName(), "Created instance of "+sourceInstance.getClass().getSimpleName());
             } catch (MalformedURLException ex) {
-                ConsoleFrame.sendMessage(Compiler.class.getSimpleName(), "Failed to create new URLClassLoader");
+                ConsoleFrame.sendMessage(SourceCompiler.class.getSimpleName(), "Failed to create new URLClassLoader");
             } catch (ClassNotFoundException ex) {
-                ConsoleFrame.sendMessage(Compiler.class.getSimpleName(), "Failed to get class of compiled source");
+                ConsoleFrame.sendMessage(SourceCompiler.class.getSimpleName(), "Failed to get class of compiled source");
             } catch (InstantiationException | IllegalAccessException ex) {
-                ConsoleFrame.sendMessage(Compiler.class.getSimpleName(), "Failed to get instantiate source class");
+                ConsoleFrame.sendMessage(SourceCompiler.class.getSimpleName(), "Failed to get instantiate source class");
             }finally{
                 SourceManager.getInstance().deleteSourceFile(sourceFile);
             }
@@ -60,6 +69,10 @@ public abstract class Compiler {
         
         return sourceInstance;
         
+    }
+    
+    public static String getLastError(){
+        return lastError;
     }
     
 }

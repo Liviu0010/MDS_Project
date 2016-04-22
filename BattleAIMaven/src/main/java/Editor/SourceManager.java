@@ -60,7 +60,7 @@ public final class SourceManager {
                 ConsoleFrame.sendMessage(this.getClass().getSimpleName(), sourceAux.toString());
             }
         }
-        
+        readIntelligenceTemplate();
         ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "SourceManager is set to go");
     }
     
@@ -93,7 +93,6 @@ public final class SourceManager {
                 ObjectInputStream oInput = new ObjectInputStream(fInput)){
             ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Reading from source index file");
             auxSource = (ArrayList<Source>)oInput.readObject();
-
         } catch (ClassNotFoundException ex) {
             ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Couldn't read from source index");
         }
@@ -190,7 +189,7 @@ public final class SourceManager {
      * This method returns the content of the predefined AI template
      * @return inteligenceTemplate
      */
-    public String getInteligenceTemplate(){
+    private String readIntelligenceTemplate(){
         File template = new File(PathConstants.AI_TEMPLATE);
         if(template.exists()){
             try (FileReader fileReader = new FileReader(template);
@@ -205,6 +204,13 @@ public final class SourceManager {
         }else{
             ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Could not find AI template at " + template.getAbsolutePath());
             ConsoleFrame.showError("Failed to find AI template");
+        }
+        return AI_TEMPLATE_CONTENT;
+    }
+    
+    public String getIntelligenceTemplate(){
+        if(AI_TEMPLATE_CONTENT.isEmpty()){
+            readIntelligenceTemplate();
         }
         return AI_TEMPLATE_CONTENT;
     }

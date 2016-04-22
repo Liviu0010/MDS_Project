@@ -29,11 +29,11 @@ public class CompilerTest {
         List<Source> sourceList = SourceManager.getInstance().getSourceList();
         for(Source source:sourceList){
             if(source.getAuthor().equals("GOOD")){
-                Object result = Compiler.getInstanceOfSource(source);
+                Object result = SourceCompiler.getInstanceOfSource(source);
                 String expResultClassName = source.getName();
                 assertEquals(result.getClass().getSimpleName(), expResultClassName);
             }else{
-                Object result = Compiler.getInstanceOfSource(source);
+                Object result = SourceCompiler.getInstanceOfSource(source);
                 assertNull(result);
             }
         }
