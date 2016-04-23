@@ -1,5 +1,6 @@
 package Engine;
 
+import Networking.Requests.EntityUpdateRequest;
 import Client.ConnectionHandler;
 import Compiler.SourceCompiler;
 import Editor.Source;

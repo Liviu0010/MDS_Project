@@ -1,5 +1,6 @@
-package Engine;
+package Networking.Requests;
 
+import Engine.GameEntity;
 import Networking.Requests.Request;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
