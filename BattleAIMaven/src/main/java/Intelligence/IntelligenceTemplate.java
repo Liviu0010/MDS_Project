@@ -7,6 +7,10 @@ public class IntelligenceTemplate extends TankCapsule implements Inteligence{
     
     public boolean anaAreMere;
     
+    public IntelligenceTemplate(){
+        super();
+    }
+    
     public void run(){
         
         

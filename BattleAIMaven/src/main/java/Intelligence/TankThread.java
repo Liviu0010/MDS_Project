@@ -24,7 +24,7 @@ public class TankThread extends Thread{
             
             try {
                 synchronized(semaphore){
-                    while(semaphore.isRed())
+                    while(semaphore.isGreen())
                         semaphore.wait();
                 }
             } catch (InterruptedException ex) {
