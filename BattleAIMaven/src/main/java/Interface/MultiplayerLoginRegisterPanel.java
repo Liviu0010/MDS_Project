@@ -23,7 +23,7 @@ public class MultiplayerLoginRegisterPanel extends javax.swing.JPanel {
         this.rootFrame = rootFrame;
         
         initComponents();
-        
+        this.usernameField.setText(Player.getInstance().getUsername());
     }
 
     /**
