@@ -6,7 +6,6 @@
 package Networking.Server;
 
 import Client.ConnectionHandler;
-import Console.ConsoleFrame;
 import Constants.MasterServerConstants;
 import Networking.Requests.HostMatch;
 import Networking.Requests.RegisterActivity;
@@ -53,6 +52,12 @@ public class ClientServerDispatcher extends ServerDispatcher {
             
             @Override
             public void run() {
+                if (!isRunning) {
+                    this.cancel();
+                    System.out.println("Cancelling");
+                    return;
+                }
+                
                 try {
                     if (!matchRegistered) {
                         // Register match with the master server 
@@ -80,8 +85,9 @@ public class ClientServerDispatcher extends ServerDispatcher {
      */
     public boolean start(int port, Match match) {
         this.activeMatch = match;
+        boolean result = this.start(port);
         startMasterServerNotifier();
-        return this.start(port);
+        return result;
     }
     
     /**
@@ -104,21 +110,14 @@ public class ClientServerDispatcher extends ServerDispatcher {
     
     @Override
     public void run() {
-        try (ServerSocket serverSocket = 
-                    new ServerSocket(port)) {
-            startConnectionCleaner();
-            listenForConnections(serverSocket);
-        } catch (IOException ex) {
-            Logger.getLogger(ServerDispatcher.class.getName()).log(Level.SEVERE, null, ex);
-            ConsoleFrame.sendMessage(getClass().getName(),
-                    "Failed to start master server.\n" + ex.getMessage());
-        }
+        startConnectionCleaner();
+        listenForConnections(serverSocket);
     }
     
     /** Send a request to all clients connected to this match. 
      * @param request The request which will be broadcasted to all connected players.
      */
-    public void broadcast(Request request) {
+    public synchronized void broadcast(Request request) {
         for (Connection i: activeConnections)
             try {
                 i.getOutputStream().reset();
