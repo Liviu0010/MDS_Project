@@ -5,17 +5,18 @@
  */
 package Networking.Requests;
 
-import Networking.Server.ClientServerDispatcher;
 import java.io.ObjectOutputStream;
 
 /**
+ *
+ * @author root
  */
-public class AddPlayer extends Request {
+public class RemovePlayer extends Request {
 
-    private final String username;
+    private String username;
     
-    public AddPlayer(String username) {
-        super(RequestType.ADD_PLAYER);
+    public RemovePlayer(String username) {
+        super(RequestType.REMOVE_PLAYER);
         this.username = username;
     }
     
@@ -26,5 +27,4 @@ public class AddPlayer extends Request {
     public String getUsername() {
         return username;
     }
-    
 }

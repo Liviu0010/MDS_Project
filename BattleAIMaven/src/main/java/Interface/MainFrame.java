@@ -13,7 +13,7 @@ import javax.swing.JPanel;
  */
 public class MainFrame extends JFrame implements FrameConstants{
     
-    public static MainFrame instance;
+    private static MainFrame instance;
     public String localServerName = null;
     
     

@@ -1,8 +1,9 @@
 package Networking.Server;
 
+import Client.ConnectionHandler;
 import Constants.MasterServerConstants;
+import Networking.Requests.PlayerConnect;
 import Networking.Requests.Request;
-import Networking.Requests.RequestType;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Timer;
@@ -20,8 +21,13 @@ import java.util.logging.Logger;
  */
 public class PlayerConnection extends Connection {
     
+    private String username;
+    private boolean identityConfirmed;
+    
     public PlayerConnection(Socket clientSocket) throws IOException {
         super(clientSocket);
+        username = "Anonymous";
+        identityConfirmed = false;
     }
     
     private void startConnectionHandler() {
@@ -84,6 +90,11 @@ public class PlayerConnection extends Connection {
                     
                     Request request = (Request)object;
                     request.execute(outputStream);
+                    
+                    if (!identityConfirmed) {
+                        identityConfirmed = true;
+                        username = ((PlayerConnect)request).getUsername();
+                    }
                 }
 
             } catch (IOException | ClassNotFoundException ex) {
@@ -91,6 +102,12 @@ public class PlayerConnection extends Connection {
                 threadRunning = false;
                 activeConnection = false;
             }
+        }
+        
+        try {
+            ConnectionHandler.getInstance().sendToMatch(new PlayerConnect(username, true));
+        } catch (IOException ex) {
+            Logger.getLogger(PlayerConnection.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

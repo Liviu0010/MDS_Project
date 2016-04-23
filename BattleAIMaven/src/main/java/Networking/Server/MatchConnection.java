@@ -2,6 +2,7 @@ package Networking.Server;
 
 import Constants.MasterServerConstants;
 import Networking.Requests.AddPlayer;
+import Networking.Requests.RemovePlayer;
 import Networking.Requests.Request;
 import Networking.Requests.RequestType;
 import java.io.IOException;
@@ -116,20 +117,18 @@ public class MatchConnection extends Connection {
                     
                     if (request.getType() == RequestType.ADD_PLAYER) {
                         AddPlayer player = (AddPlayer)request;
-                        // add player to the active match
                         activeMatch.addPlayer(player.getUsername());
+                    } else if (request.getType() == RequestType.REMOVE_PLAYER) {
+                        RemovePlayer player = (RemovePlayer)request;
+                        activeMatch.removePlayer(player.getUsername());
                     }
-                    
-                    //Thread.sleep(MasterServerConstants.PACKET_DELAY);
                 }
 
             } catch (IOException | ClassNotFoundException ex) {
                 Logger.getLogger(MatchConnection.class.getName()).log(Level.SEVERE, null, ex);
                 threadRunning = false;
                 activeConnection = false;
-            } /*catch (InterruptedException ex) {
-                Logger.getLogger(MatchConnection.class.getName()).log(Level.SEVERE, null, ex);
-            }*/
+            }
         }
     }
 }
