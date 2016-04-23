@@ -1,17 +1,14 @@
-package Inteligence;
+package Intelligence;
 
 import Engine.Inteligence;
 import Engine.Tank; 
 
-public class InteligenceTemplate implements Inteligence{ 
+public class IntelligenceTemplate extends TankCapsule implements Inteligence{ 
     
     public boolean anaAreMere;
     
     public void run(){
         
-        while(true){
-            
-        }
         
     }
 
