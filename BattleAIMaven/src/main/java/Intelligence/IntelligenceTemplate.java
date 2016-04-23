@@ -1,5 +1,6 @@
 package Intelligence;
 
+import Engine.TankCapsule;
 import Engine.Inteligence;
 import Engine.Tank; 
 

@@ -1,8 +1,5 @@
 package Intelligence;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 public class TankThread extends Thread{
     private final IntelligenceTemplate intellT;
     private boolean running;
@@ -28,7 +25,7 @@ public class TankThread extends Thread{
                         semaphore.wait();
                 }
             } catch (InterruptedException ex) {
-                Logger.getLogger(TankThread.class.getName()).log(Level.SEVERE, null, ex);
+                Console.ConsoleFrame.sendMessage("TankThread", ex.getMessage());
             }
         }
     }
