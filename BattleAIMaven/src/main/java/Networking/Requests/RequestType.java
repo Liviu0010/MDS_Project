@@ -15,4 +15,5 @@ public final class RequestType {
     public final static int CHAT_MESSAGE = 3;
     public final static int PLAYER_CONNECT = 4;
     public final static int ADD_PLAYER = 5;
+    public final static int REMOVE_PLAYER = 6;
 }

@@ -4,7 +4,9 @@ import Client.ConnectionHandler;
 import Console.ConsoleFrame;
 import Editor.Source;
 import Editor.SourceManager;
+import Networking.Requests.AddPlayer;
 import Networking.Requests.ChatMessage;
+import Networking.Requests.RemovePlayer;
 import Networking.Requests.Request;
 import Networking.Requests.RequestType;
 import Networking.Server.Match;
@@ -62,8 +64,10 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
         
         listAvailableScripts.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         sourceList = SourceManager.getInstance().getSourceList();
-        for(String player:currentMatch.getPlayerList()){
-            playerSelectionModel.addElement(player);
+        if (!ConnectionHandler.getInstance().isHost()) {
+            for(String player:currentMatch.getPlayerList()){
+                playerSelectionModel.addElement(player);
+            }
         }
         listPlayersAndScripts.setModel(playerSelectionModel);
         for(Source source:sourceList){
@@ -329,13 +333,18 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
                 try {
                     Request request = (Request)ConnectionHandler.getInstance().readFromMatch();
                     
-                    if (request.getType() == RequestType.CHAT_MESSAGE)
+                    
                         SwingUtilities.invokeLater(new Runnable() {
- 
+
                             @Override
                             public void run() {
-                                chatOutputArea.append(((ChatMessage)request).getMessage());
-                    }
+                                if (request.getType() == RequestType.CHAT_MESSAGE)
+                                    chatOutputArea.append(((ChatMessage)request).getMessage());
+                                else if (request.getType() == RequestType.ADD_PLAYER) 
+                                    playerSelectionModel.addElement(((AddPlayer)request).getUsername());
+                                else if (request.getType() == RequestType.REMOVE_PLAYER)
+                                    playerSelectionModel.removeElement(((RemovePlayer)request).getUsername());
+                            }
                         });
                     
                 } catch (IOException | ClassNotFoundException ex) {
