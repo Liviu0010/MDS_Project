@@ -299,6 +299,7 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_sendButtonActionPerformed
 
     private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
+        ConnectionHandler.getInstance().disconnectFromMatch();
         setWorkerStatus(false);
         rootFrame.changePanel(new MultiplayerServerPanel(rootFrame));
     }//GEN-LAST:event_backButtonActionPerformed

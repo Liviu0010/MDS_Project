@@ -1,5 +1,7 @@
 package Engine;
+
 import java.io.Serializable;
+
 import Constants.EngineConstants;
 import Constants.VisualConstants;
 import Visual.VisualPanel;

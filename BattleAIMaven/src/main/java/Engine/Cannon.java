@@ -14,7 +14,9 @@ import java.awt.geom.AffineTransform;
 /**
  * A Cannon class used by an instance of Tank class to launch instances of Bullet class.
  */
+
 final public class Cannon extends GameEntity implements Serializable,TransformInterface, Drawable{
+
     private Image cannonSprite;
     
     /**

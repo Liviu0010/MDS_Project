@@ -54,6 +54,7 @@ public class ConnectionHandler {
     private void connectToMasterServer() throws IOException {
         masterServerSocket = new Socket(MasterServerConstants.IP, 
                 MasterServerConstants.PORT);
+        //masterServerSocket.setSoTimeout(2000);
         masterServerOutputStream = new ObjectOutputStream(masterServerSocket.getOutputStream());
         masterServerOutputStream.flush();
         masterServerInputStream = new ObjectInputStream(masterServerSocket.getInputStream());
@@ -149,10 +150,23 @@ public class ConnectionHandler {
                     matchOutputStream.flush();
                 } catch (IOException ex) {
                     ConsoleFrame.sendMessage(this.getClass().getSimpleName(), ex.getMessage());
+                    this.cancel();
                 }
             }
         };
         t.scheduleAtFixedRate(notification, 0, MasterServerConstants.PACKET_DELAY);
+    }
+    
+    public void disconnectFromMatch() {
+        try {
+            matchSocket.close();
+            if (host) {
+                ClientServerDispatcher.getInstance().stop();
+                host = false;
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public Object readFromMatch() throws IOException, ClassNotFoundException {
