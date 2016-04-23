@@ -25,6 +25,7 @@ public class ServerDispatcher implements Runnable {
     protected Thread mainThread;
     protected int port;
     protected final ExecutorService THREAD_POOL;
+    protected ServerSocket serverSocket;
     
     protected ServerDispatcher() {
         THREAD_POOL = Executors.newCachedThreadPool();
@@ -37,6 +38,12 @@ public class ServerDispatcher implements Runnable {
     public boolean start(int port) {
         if (!isRunning) {
             this.port = port;
+            try {
+                serverSocket = new ServerSocket(port);
+            } catch (IOException ex) {
+                Logger.getLogger(ServerDispatcher.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
+            }
             mainThread = new Thread(this);
             isRunning = true;
             mainThread.start();
@@ -46,11 +53,17 @@ public class ServerDispatcher implements Runnable {
         return false;
     }
 
-    public boolean stop() throws InterruptedException {
+    public boolean stop() {
         if (isRunning) {
             isRunning = false;
             activeConnections.clear();
-            mainThread.join();
+            try {
+                serverSocket.close();
+                mainThread.join();
+            } catch (IOException | InterruptedException ex) {
+                Logger.getLogger(ServerDispatcher.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
+            }
             return true;
         }
 
@@ -92,15 +105,8 @@ public class ServerDispatcher implements Runnable {
     
     @Override
     public void run() {        
-        try (ServerSocket serverSocket = 
-                    new ServerSocket(port)) {
-            startConnectionCleaner();
-            listenForConnections(serverSocket);
-        } catch (IOException ex) {
-            Logger.getLogger(ServerDispatcher.class.getName()).log(Level.SEVERE, null, ex);
-            ConsoleFrame.sendMessage(getClass().getName(),
-                    "Failed to start master server.\n" + ex.getMessage());
-        }
+        startConnectionCleaner();
+        listenForConnections(serverSocket);
     }
     
     public List<Match> getActiveMatches() throws IOException {
