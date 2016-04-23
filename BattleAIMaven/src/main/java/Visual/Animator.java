@@ -46,21 +46,19 @@ public class Animator extends Thread{
             updateDone = false;
             for (Tank tankAux : tanks) {
 
-                tankAux.rotateCannon((Math.random()*(Math.random()-0.5)*70)%360);
-                tankAux.rotate((Math.random()*(Math.random()-0.5)*300)%360);
+                //tankAux.moveFront();
+                tankAux.rotateCannon(1);
                 
-                lel = Math.random()*2;
-                
-                if (tankAux.getLife() - lel > 0) {
-                    tankAux.setLife(tankAux.getLife() - lel);
-                } else {
-                    tankAux.setLife(100);
-                }
-
-                tankAux.moveFront();
 
             } 
-            synchronized (bullets) {
+            for(int i = 0 ; i < tanks.size() ; i++){
+                for(int j = i+1 ; j < tanks.size() ; j++)
+                    if(tanks.get(i).collision(tanks.get(j)))
+                        System.out.print("intersectie intre "+tanks.get(i).toString()+" "+tanks.get(j).toString()+"\n");
+            }
+                
+                
+                synchronized (bullets) {
                 // List<Bullet> bulletsToBeRemoved = Collections.synchronizedList(new LinkedList<Bullet>());
                 for (Bullet bulletAux : bullets) {
                     if (!(bulletAux.getX() > Constants.VisualConstants.ENGINE_WIDTH || bulletAux.getX() < 0
