@@ -4,7 +4,9 @@ import Engine.Inteligence;
 import Engine.Tank; 
 
 public class InteligenceTemplate implements Inteligence{ 
-
+    
+    public boolean anaAreMere;
+    
     public void run(){
         
         while(true){

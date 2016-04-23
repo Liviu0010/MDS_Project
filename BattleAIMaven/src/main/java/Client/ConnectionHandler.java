@@ -1,5 +1,6 @@
 package Client;
 
+import Console.ConsoleFrame;
 import Constants.MasterServerConstants;
 import Networking.Requests.PlayerConnect;
 import Networking.Requests.RegisterActivity;
@@ -7,7 +8,6 @@ import Networking.Server.Match;
 import Networking.Requests.Request;
 import Networking.Server.ClientServerDispatcher;
 import Networking.Server.Player;
-import Networking.Server.ServerDispatcher;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -23,7 +23,7 @@ import java.util.logging.Logger;
  */
 public class ConnectionHandler {
     
-    private static ConnectionHandler instance = new ConnectionHandler();
+    private final static ConnectionHandler instance = new ConnectionHandler();
     
     private Socket masterServerSocket;
     private ObjectInputStream masterServerInputStream;
@@ -62,8 +62,14 @@ public class ConnectionHandler {
     
     public boolean hostMatch(Match activeMatch) {
         if (!host) {
-            if (ClientServerDispatcher.getInstance().start(activeMatch.getPort(), activeMatch)) 
-                host = true;
+            if (ClientServerDispatcher.getInstance().start(activeMatch.getPort(), activeMatch)) {
+                try {
+                    host = true;
+                    connectToMatch(activeMatch);
+                } catch (IOException ex) {
+                        Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
         }
         
         return host;
@@ -109,14 +115,31 @@ public class ConnectionHandler {
     }
     
     public void connectToMatch(Match match) throws IOException {
-        matchSocket = new Socket(match.getIP(), match.getPort());
+        
+        int attempt = 1;
+        while (attempt <= 6)
+        try {
+            matchSocket = new Socket(match.getIP(), match.getPort());
+            attempt = 7;
+        } catch (IOException ex) {
+            try {
+                Thread.sleep(500);
+                attempt++;
+            } catch (InterruptedException ex1) {
+                Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex1);
+            }
+            
+            if (attempt == 7)
+                throw ex;
+        }
+        
         matchOutputStream = new ObjectOutputStream(matchSocket.getOutputStream());
         matchOutputStream.flush();
         matchInputStream = new ObjectInputStream(matchSocket.getInputStream());
         matchOutputStream.writeObject(new PlayerConnect(Player.getInstance().getUsername()));
         matchOutputStream.flush();
-        Timer t = new Timer();
         
+        Timer t = new Timer();
         TimerTask notification = new TimerTask() {
             @Override
             public void run() {
@@ -125,11 +148,10 @@ public class ConnectionHandler {
                     matchOutputStream.writeObject(new RegisterActivity());
                     matchOutputStream.flush();
                 } catch (IOException ex) {
-                    Logger.getLogger(ServerDispatcher.class.getName()).log(Level.SEVERE, null, ex);
+                    ConsoleFrame.sendMessage(this.getClass().getSimpleName(), ex.getMessage());
                 }
             }
         };
-        
         t.scheduleAtFixedRate(notification, 0, MasterServerConstants.PACKET_DELAY);
     }
     
@@ -139,6 +161,7 @@ public class ConnectionHandler {
     }
     
     public void sendToMatch(Request request) throws IOException {
+        matchOutputStream.reset();
         matchOutputStream.writeObject(request);
         matchOutputStream.flush();
     }

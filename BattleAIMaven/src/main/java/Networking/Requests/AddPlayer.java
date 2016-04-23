@@ -11,7 +11,7 @@ import java.io.ObjectOutputStream;
  */
 public class AddPlayer extends Request {
 
-    private String username;
+    private final String username;
     
     public AddPlayer(String username) {
         super(RequestType.ADD_PLAYER);

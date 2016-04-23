@@ -60,7 +60,7 @@ public final class SourceManager {
                 ConsoleFrame.sendMessage(this.getClass().getSimpleName(), sourceAux.toString());
             }
         }
-        
+        readIntelligenceTemplate();
         ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "SourceManager is set to go");
     }
     
@@ -93,7 +93,6 @@ public final class SourceManager {
                 ObjectInputStream oInput = new ObjectInputStream(fInput)){
             ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Reading from source index file");
             auxSource = (ArrayList<Source>)oInput.readObject();
-
         } catch (ClassNotFoundException ex) {
             ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Couldn't read from source index");
         }
@@ -107,11 +106,11 @@ public final class SourceManager {
                     ObjectOutputStream oOutput = new ObjectOutputStream(fOutput)) {
                 ConsoleFrame.sendMessage(this.getClass().getSimpleName(), 
                         "Writing empty source list to source index file");
-                sources.add(new Source("Test test test", "Test1", "Dragos"));
-                sources.add(new Source("Test test test", "Test2", "Tanase"));
-                sources.add(new Source("Test test test", "Test3", "Alex"));
-                sources.add(new Source("Test test test", "Test4", "Liviu"));
-                sources.add(new Source("Test test test", "Test5", "Alexandra"));
+                sources.add(new Source("Test1", "GOOD"));
+                sources.add(new Source("package User_Sources;","Test2", "BAD"));
+                sources.add(new Source("Test3", "GOOD"));
+                sources.add(new Source("Test4", "GOOD"));
+                sources.add(new Source("Test test test", "Test5", "BAD"));
                 oOutput.writeObject(sources);
             }
         }
@@ -154,10 +153,43 @@ public final class SourceManager {
     }
     
     /**
+     * Creates a source file in the Compiler package and returns the file
+     * @param source
+     * @return 
+     */
+    public File createSourceFile(Source source){
+        File sourceFile = new File(SOURCE_FOLDER_PATH+source.getName()+".java");
+        ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Creating file at "+sourceFile.getAbsolutePath());
+        try {
+            sourceFile.createNewFile();
+            try (FileWriter fileWriter = new FileWriter(sourceFile); 
+                    BufferedWriter writer = new BufferedWriter(fileWriter)) {
+                
+                String stringAux;
+                stringAux = source.getContent();
+                writer.write(stringAux);
+            }
+            return sourceFile;
+        } catch (IOException ex) {
+            ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed to create file "+source.getName());
+            ConsoleFrame.showError("Failed to create file "+source.getName());
+        }
+        return null;
+    }
+    
+    public boolean deleteSourceFile(File source){
+        boolean success = true;
+        ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Deleting file at "+source.getAbsolutePath());
+        if(source.exists()){
+            success = source.delete();
+        }
+        return success;
+    }
+    /**
      * This method returns the content of the predefined AI template
      * @return inteligenceTemplate
      */
-    public String getInteligenceTemplate(){
+    private String readIntelligenceTemplate(){
         File template = new File(PathConstants.AI_TEMPLATE);
         if(template.exists()){
             try (FileReader fileReader = new FileReader(template);
@@ -172,6 +204,13 @@ public final class SourceManager {
         }else{
             ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Could not find AI template at " + template.getAbsolutePath());
             ConsoleFrame.showError("Failed to find AI template");
+        }
+        return AI_TEMPLATE_CONTENT;
+    }
+    
+    public String getIntelligenceTemplate(){
+        if(AI_TEMPLATE_CONTENT.isEmpty()){
+            readIntelligenceTemplate();
         }
         return AI_TEMPLATE_CONTENT;
     }

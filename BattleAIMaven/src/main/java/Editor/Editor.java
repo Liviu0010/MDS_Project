@@ -14,6 +14,12 @@ import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextPane;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.plaf.BorderUIResource;
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
@@ -23,7 +29,7 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
  * his code for an robot
  */
 public final class Editor extends JFrame {
-    private MainFrame frame;
+    private final MainFrame frame;
     
     private final JMenuBar menuBar;
     
@@ -32,8 +38,15 @@ public final class Editor extends JFrame {
     private final JMenuItem saveButton;
     private final JMenuItem compileButton;
     
-    private final String inteligenceTemplate;
+    private String inteligenceTemplate;
     private final RSyntaxTextArea sourceArea;
+    private final JScrollPane scrollSourceArea;
+    private final JTextArea compileResult;
+    private final JScrollPane scrollCompileResult;
+    private final JPanel sourcePanel;
+    
+    
+    private final String sourceName;
     
     /**
      * 
@@ -41,10 +54,42 @@ public final class Editor extends JFrame {
      */
     public Editor(MainFrame mainFrame){
         super("editor");
-        EditorMenuListener editorMenuListener = new EditorMenuListener();
         
         this.frame = mainFrame;
-        inteligenceTemplate = SourceManager.getInstance().getInteligenceTemplate();
+        inteligenceTemplate = SourceManager.getInstance().getIntelligenceTemplate();
+        
+        sourceName = JOptionPane.showInputDialog("Source name: ", "LocalSource");
+        
+        inteligenceTemplate = inteligenceTemplate.replaceFirst("<name>", sourceName);
+        
+        sourceArea = new RSyntaxTextArea();
+        sourceArea.setDocument(new RSyntaxDocument (RSyntaxTextArea.SYNTAX_STYLE_JAVA));
+        sourceArea.setDocument(new RSyntaxDocument(RSyntaxTextArea.SYNTAX_STYLE_JAVA));
+        sourceArea.append(inteligenceTemplate);
+        sourceArea.setSyntaxEditingStyle(RSyntaxTextArea.SYNTAX_STYLE_JAVA);
+        sourceArea.setAutoIndentEnabled(true);
+        sourceArea.setCodeFoldingEnabled(true);
+        sourceArea.setMarkOccurrences(true);
+        sourceArea.setActiveLineRange(3, 10);
+        sourceArea.setBorder(new BorderUIResource.LineBorderUIResource(Color.white, 4));
+        
+        scrollSourceArea = new JScrollPane();
+        scrollSourceArea.setViewportView(sourceArea);
+        
+        compileResult = new JTextArea();
+        compileResult.setEditable(false);
+        compileResult.setBorder(new BorderUIResource.LineBorderUIResource(Color.black));
+        compileResult.setLineWrap(true);
+        compileResult.setBackground(Color.black);
+        compileResult.setForeground(Color.GREEN);
+        
+        scrollCompileResult = new JScrollPane();
+        scrollCompileResult.setViewportView(compileResult);
+        scrollCompileResult.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        
+        sourcePanel = new JPanel(new GridLayout(2, 1));
+        
+        EditorMenuListener editorMenuListener = new EditorMenuListener();
         
         newButton = new JMenuItem("New");
         newButton.setBackground(Color.BLACK);
@@ -64,7 +109,7 @@ public final class Editor extends JFrame {
         compileButton = new JMenuItem("Compile");
         compileButton.setBackground(Color.BLACK);
         compileButton.setForeground(Color.WHITE);
-        compileButton.addMouseListener(editorMenuListener);
+        compileButton.addMouseListener(new EditorCompileListener(sourceName, sourceArea, compileResult));
         
         menuBar = new JMenuBar();
         menuBar.setLayout(new GridLayout(1,4));
@@ -74,17 +119,6 @@ public final class Editor extends JFrame {
         menuBar.add(openButton);
         menuBar.add(saveButton);
         menuBar.add(compileButton);
-        
-        sourceArea = new RSyntaxTextArea();
-        sourceArea.setDocument(new RSyntaxDocument (RSyntaxTextArea.SYNTAX_STYLE_JAVA));
-        sourceArea.setDocument(new RSyntaxDocument(RSyntaxTextArea.SYNTAX_STYLE_JAVA));
-        sourceArea.append(inteligenceTemplate);
-        sourceArea.setSyntaxEditingStyle(RSyntaxTextArea.SYNTAX_STYLE_JAVA);
-        sourceArea.setAutoIndentEnabled(true);
-        sourceArea.setCodeFoldingEnabled(true);
-        sourceArea.setMarkOccurrences(true);
-        sourceArea.setActiveLineRange(3, 10);
-        sourceArea.setBorder(new BorderUIResource.LineBorderUIResource(Color.white, 4));
         
         start();
     }
@@ -111,6 +145,8 @@ public final class Editor extends JFrame {
         
         this.setVisible(true);
         this.add(menuBar, BorderLayout.NORTH);
-        this.add(sourceArea, BorderLayout.CENTER);
+        sourcePanel.add(scrollSourceArea);
+        sourcePanel.add(scrollCompileResult);
+        this.add(sourcePanel, BorderLayout.CENTER);
     }
 }

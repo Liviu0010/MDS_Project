@@ -8,6 +8,7 @@ import Networking.Server.Player;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
@@ -201,11 +202,14 @@ public class MultiplayerServerPanel extends javax.swing.JPanel {
 
     private void joinMatchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_joinMatchButtonActionPerformed
         Match selectedMatch = activeMatches.get(selected);
+        JoinWorker worker = new JoinWorker(selectedMatch);
         try {
-            ConnectionHandler.getInstance().connectToMatch(selectedMatch);
-            rootFrame.changePanel(new MultiplayerMatchPanel(rootFrame));
-        } catch (IOException ex) {
-            Logger.getLogger(MultiplayerServerPanel.class.getName()).log(Level.SEVERE, null, ex);
+            worker.execute();
+            boolean success = worker.get();
+            if(success){
+                rootFrame.changePanel(new MultiplayerMatchPanel(rootFrame, selectedMatch));
+            }
+        } catch (InterruptedException | ExecutionException ex) {
             ConsoleFrame.showError("Failed to connect to match.");
         }
     }//GEN-LAST:event_joinMatchButtonActionPerformed
@@ -226,20 +230,38 @@ public class MultiplayerServerPanel extends javax.swing.JPanel {
         RefreshWorker worker = new RefreshWorker();
         try {
             DefaultListModel<String> dlm = new DefaultListModel<>();
-            activeMatches = worker.doInBackground();
+            worker.execute();
+            activeMatches = worker.get();
             for(Match match: activeMatches)
                 dlm.addElement(match.toListMatch());
             listAvailableMatches.setModel(dlm);
-        } catch (Exception ex) {
+        } catch (InterruptedException | ExecutionException ex) {
             ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed to refresh match list");
             ConsoleFrame.showError("Failed to refresh match list");
         }
     }//GEN-LAST:event_refreshButtonActionPerformed
 
+    private class JoinWorker extends SwingWorker<Boolean, Void>{
+
+        Match selectedMatch;
+        
+        private JoinWorker(Match selectedMatch){
+            this.selectedMatch = selectedMatch;
+        }
+        
+        @Override
+        protected Boolean doInBackground() throws Exception {
+            ConnectionHandler.getInstance().connectToMatch(selectedMatch);
+            return true;
+        }
+        
+    }
+    
+    
     /**
      * This worker gets the match list from the master server
      */
-    public class RefreshWorker extends SwingWorker<List<Match>, Object>{
+    public class RefreshWorker extends SwingWorker<List<Match>, Void>{
 
         @Override
         protected List<Match> doInBackground() throws Exception {

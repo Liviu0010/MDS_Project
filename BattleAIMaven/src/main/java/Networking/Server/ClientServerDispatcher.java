@@ -12,7 +12,6 @@ import Networking.Requests.HostMatch;
 import Networking.Requests.RegisterActivity;
 import Networking.Requests.Request;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Timer;
@@ -89,11 +88,14 @@ public class ClientServerDispatcher extends ServerDispatcher {
      * Starts the loop which handles incoming connections.
      * @param serverSocket The server socket to which the clients will connect to.
      */
+    @Override
     protected void listenForConnections(ServerSocket serverSocket) {
         while (isRunning) {
             try {
                 Socket clientSocket = serverSocket.accept();
-                activeConnections.add(new PlayerConnection(clientSocket));
+                PlayerConnection playerConnection = new PlayerConnection(clientSocket);
+                THREAD_POOL.execute(playerConnection);
+                activeConnections.add(playerConnection);
             } catch (IOException ex) {
                 Logger.getLogger(ServerDispatcher.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -119,6 +121,7 @@ public class ClientServerDispatcher extends ServerDispatcher {
     public void broadcast(Request request) {
         for (Connection i: activeConnections)
             try {
+                i.getOutputStream().reset();
                 i.getOutputStream().writeObject(request);
                 i.getOutputStream().flush();
             } catch (IOException ex) {

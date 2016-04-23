@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.net.Socket;
 
 import java.io.ObjectOutputStream;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class Connection implements Runnable {
     
@@ -13,6 +14,8 @@ public abstract class Connection implements Runnable {
     protected ObjectInputStream inputStream;
     protected Thread clientThread;
     protected volatile boolean threadRunning;
+    protected AtomicInteger inactivityLevel;
+    protected static final int MAX_INACTIVITY_LEVEL = 2;
     protected boolean activeConnection;
     
     /**
@@ -27,6 +30,7 @@ public abstract class Connection implements Runnable {
         outputStream.flush();
         inputStream = new ObjectInputStream(clientSocket.getInputStream());
         activeConnection = true;
+        inactivityLevel = new AtomicInteger(0);
     }
     
     /**
@@ -41,6 +45,7 @@ public abstract class Connection implements Runnable {
         this.inputStream = inputStream;
         this.outputStream = outputStream;
         activeConnection = true;
+        inactivityLevel = new AtomicInteger(0);
     }
     
     /**

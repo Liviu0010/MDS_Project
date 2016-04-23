@@ -15,18 +15,14 @@ import java.util.logging.Logger;
  * <pre>RegularConnection handles the interaction between clients who do not currently
  * host a match and the master server. These interactions involve registering,
  * logging in, requesting the match list etc. This type of connection is not 
- * continuous, meaning that it closes itself after a period of time.
- * More specifically the connection starts with 30 seconds left until closure.
- * If a request is made, then it adds 30 seconds to the timer up to a maximum
- * of 60 seconds left.
+ * continuous, meaning that it doesn't require a continuous stream of packet activity
+ * and it closes itself when inactivity level reaches maximum. Inactivity level
+ * decreases by one once a request is made but remains non-negative.
  * If a HostMatch request is made, this type of connection closes immediately
  * and a MatchConnection using current socket and existing streams is created.
  * </pre>
  */
 public class RegularConnection extends Connection {
-    
-    // variable used to count how many stacks of 30 seconds are left
-    private int ticksLeft;
     
     /* variable used to indicate whether this connection has been switched to
     a MatchConnection */
@@ -34,20 +30,10 @@ public class RegularConnection extends Connection {
     
     /**
      * @param clientSocket The client socket associated with the connection.
-     * @param match The active match object to be used for the connection.
      */
     public RegularConnection(Socket clientSocket) throws IOException {
         super(clientSocket);
-        this.start();
         switchedConnection = false;
-    }
-    
-    /**
-     * Starts the main thread
-     */
-    private void start() {
-        threadRunning = true;
-        new Thread(this).start();
     }
     
     /**
@@ -67,8 +53,8 @@ public class RegularConnection extends Connection {
                     return;
                 }
                 
-                // 0 seconds remaining and no ticks left so close the connection
-                if (ticksLeft == 0) {
+                // close connection if inactivity level has reached maximum
+                if (inactivityLevel.get() == MAX_INACTIVITY_LEVEL) {
                     threadRunning = false;
                     activeConnection = false;
                     connectionHandler.cancel();
@@ -80,7 +66,7 @@ public class RegularConnection extends Connection {
                     }
                 }
                 else
-                    ticksLeft--;
+                    inactivityLevel.incrementAndGet();
             }
         };
         
@@ -90,6 +76,7 @@ public class RegularConnection extends Connection {
     
     @Override
     public void run() {
+        threadRunning = true;
         startConnectionHandler();
         
         Object object = null;
@@ -100,9 +87,8 @@ public class RegularConnection extends Connection {
                 if (!clientSocket.isInputShutdown()) {
                     object = inputStream.readObject();
                     
-                    /* no more than 1 tick is allowed (maximum 60 seconds time 
-                    until it closes) */
-                    ticksLeft = Math.max(ticksLeft + 1, 1);
+                    // decrease inactivity level 
+                    inactivityLevel.updateAndGet(i -> i > 0 ? i - 1 : i);
                     
                     Request request = (Request)object;
                     request.execute(outputStream);

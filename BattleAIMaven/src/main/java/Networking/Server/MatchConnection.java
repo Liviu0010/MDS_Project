@@ -10,6 +10,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,12 +34,6 @@ public class MatchConnection extends Connection {
             Match activeMatch)  {
         super(clientSocket, inputStream, outputStream);
         this.activeMatch = activeMatch;
-        this.start();
-    }
-    
-    public void start() {
-        threadRunning = true;
-        new Thread(this).start();
     }
     
      /**
@@ -71,10 +66,12 @@ public class MatchConnection extends Connection {
                     return;
                 }
                 
-                if (activeConnection)
-                    activeConnection = false;
-                else {
+                int level = inactivityLevel.incrementAndGet();
+                
+                if (level == MAX_INACTIVITY_LEVEL) {
                     // Shut down the thread
+                    System.out.println("closing");
+                    activeConnection = false;
                     threadRunning = false;
                     try {
                         /* Close the input stream of the socket. This also 
@@ -89,12 +86,14 @@ public class MatchConnection extends Connection {
                 }
             }
         };
+        
         connectionHandler.scheduleAtFixedRate(handleConnections, MasterServerConstants.PACKET_DELAY * 2, 
                 MasterServerConstants.PACKET_DELAY * 2);
     }
     
     @Override
     public void run() {
+        threadRunning = true;
         startConnectionHandler();
         
         Object object = null;
@@ -104,7 +103,8 @@ public class MatchConnection extends Connection {
                 if (!clientSocket.isInputShutdown()) {
                     object = inputStream.readObject();
                    
-                    activeConnection = true;
+                    // decrease level by 1 but remain non-negative
+                    inactivityLevel.updateAndGet(i -> i > 0 ? i - 1 : i);
                     
                     Request request = (Request)object;
                     request.execute(outputStream);
@@ -115,16 +115,16 @@ public class MatchConnection extends Connection {
                         activeMatch.addPlayer(player.getUsername());
                     }
                     
-                    Thread.sleep(MasterServerConstants.PACKET_DELAY);
+                    //Thread.sleep(MasterServerConstants.PACKET_DELAY);
                 }
 
             } catch (IOException | ClassNotFoundException ex) {
                 Logger.getLogger(MatchConnection.class.getName()).log(Level.SEVERE, null, ex);
                 threadRunning = false;
                 activeConnection = false;
-            } catch (InterruptedException ex) {
+            } /*catch (InterruptedException ex) {
                 Logger.getLogger(MatchConnection.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            }*/
         }
     }
 }
