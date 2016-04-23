@@ -3,6 +3,7 @@ package Engine;
 import Constants.VisualConstants;
 import java.awt.Shape;
 import java.awt.geom.*;
+import java.util.ArrayList;
 import java.util.Random;
 /**
  * Game Entity class provides a framework for Bullet,Cannon and Tank classes
@@ -10,6 +11,8 @@ import java.util.Random;
  * origin in the top left
  */
 public abstract class GameEntity implements TransformInterface {
+    
+    static protected ArrayList<GameEntity> entityList;
     
     protected int id;
     //use Area so we can transform using affinetransformer
