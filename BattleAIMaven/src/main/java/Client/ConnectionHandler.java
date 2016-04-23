@@ -2,6 +2,8 @@ package Client;
 
 import Console.ConsoleFrame;
 import Constants.MasterServerConstants;
+import Interface.MainFrame;
+import Interface.MultiplayerServerPanel;
 import Networking.Requests.PlayerConnect;
 import Networking.Requests.RegisterActivity;
 import Networking.Server.Match;
@@ -16,6 +18,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.SwingUtilities;
 
 /**
  * This class handles two type of connections, the connection to the master 
@@ -54,7 +57,6 @@ public class ConnectionHandler {
     private void connectToMasterServer() throws IOException {
         masterServerSocket = new Socket(MasterServerConstants.IP, 
                 MasterServerConstants.PORT);
-        //masterServerSocket.setSoTimeout(2000);
         masterServerOutputStream = new ObjectOutputStream(masterServerSocket.getOutputStream());
         masterServerOutputStream.flush();
         masterServerInputStream = new ObjectInputStream(masterServerSocket.getInputStream());
@@ -139,19 +141,19 @@ public class ConnectionHandler {
         matchInputStream = new ObjectInputStream(matchSocket.getInputStream());
         matchOutputStream.writeObject(new PlayerConnect(Player.getInstance().getUsername()));
         matchOutputStream.flush();
-        
+  
         Timer t = new Timer();
         TimerTask notification = new TimerTask() {
             @Override
             public void run() {
                 try {
-                    System.out.println("Send Acknowledgement");
                     matchOutputStream.writeObject(new RegisterActivity());
                     matchOutputStream.flush();
                 } catch (IOException ex) {
                     ConsoleFrame.sendMessage(this.getClass().getSimpleName(), ex.getMessage());
-                    this.cancel();
+                    t.cancel();
                 }
+                System.out.println("Send acknowledgement");
             }
         };
         t.scheduleAtFixedRate(notification, 0, MasterServerConstants.PACKET_DELAY);
