@@ -1,14 +1,17 @@
 package Engine;
 
+import java.io.Serializable;
+
+import Constants.EngineConstants;
 import Constants.VisualConstants;
+import Visual.VisualPanel;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Shape;
 import java.awt.geom.*;
 
-public class Tank extends GameEntity implements MovementInterface, TransformInterface, Drawable {    
+public class Tank extends GameEntity implements Serializable,MovementInterface, TransformInterface, Drawable {    
     protected Image tankSprite;
     protected String playerName;
     protected double life;
@@ -23,27 +26,62 @@ public class Tank extends GameEntity implements MovementInterface, TransformInte
         staticId = 0;
     }
     
-    public Tank(double xPos, double yPos, double speed, double damage, double angle, double life, String playerName, Image tankSprite, Image cannonSprite) {
-        super(staticId,xPos, yPos, speed, damage, angle);
-        this.id = staticId;
-        staticId++;
-        this.tankSprite = tankSprite;
-        this.life = life;
+    public Tank(double xPos, double yPos,String playerName) {
+        super(staticId,xPos, yPos);
+        tankSprite  = VisualPanel.tankSprite;
+        this.id = staticId++;
+        this.life = 100;
         this.playerName = playerName;
         width = (int)VisualConstants.TANK_WIDTH;
         height = (int)VisualConstants.TANK_HEIGHT;
-        cannon = new Cannon(staticId, xPos, yPos, speed, damage, angle, cannonSprite);
+        cannon = new Cannon(staticId, xPos, yPos);
+        damage = EngineConstants.DAMAGE;
+        angle = EngineConstants.ANGLE;
+        speed = EngineConstants.TANK_SPEED;
+        life = EngineConstants.LIFE;
     }
-
+    
     public Tank() {
-        super(staticId,0,0,10,10,10);
-        id = staticId;
-        staticId++;
-        width = height = 100;
-        life = 100;
+        super(0,0,0);
+        int xPos, yPos;
+        
+        xPos = (int)(Math.random()*1000%VisualConstants.ENGINE_WIDTH);
+        yPos = (int)(Math.random()*1000%VisualConstants.ENGINE_HEIGHT);
+        
+        synchronized (this) {
+            for (int i = 0; i < GameEntity.entityList.size(); i++) {
+                Tank tank = (Tank) GameEntity.entityList.get(i);
+
+                if (Math.sqrt((tank.getX() - xPos) * (tank.getX() - xPos) + (tank.getY() - yPos) * (tank.getY() - yPos)) < 30) {
+                    xPos = (int) (Math.random() * 1000) % VisualConstants.ENGINE_WIDTH;
+                    yPos = (int) (Math.random() * 1000) % VisualConstants.ENGINE_HEIGHT;
+                    i = 0;
+                }
+            }
+        }
+        
+        
+        //super(staticId,xPos, yPos);
+        this.x = xPos;
+        this.y = yPos;
+        
+        tankSprite  = VisualPanel.tankSprite;
+        this.id = staticId++;
+        this.life = 100;
+        this.playerName = playerName;
         width = (int)VisualConstants.TANK_WIDTH;
         height = (int)VisualConstants.TANK_HEIGHT;
+        cannon = new Cannon(staticId, xPos, yPos);
+        damage = EngineConstants.DAMAGE;
+        angle = EngineConstants.ANGLE;
+        speed = EngineConstants.TANK_SPEED;
+        life = EngineConstants.LIFE;
+        
+        synchronized(this){
+            GameEntity.entityList.add(this);
+        }
     }
+    
     /**
      *  Gets the id of the tan
      * @return a integer value representing the id of the tank.
@@ -84,10 +122,6 @@ public class Tank extends GameEntity implements MovementInterface, TransformInte
         cannon.rotate(degrees);
     }
     
-    @Override
-    public void resize(double sx, double sy){
-        
-    }
     @Override
     public void moveUp() {
         setY(getY()-1);
@@ -133,11 +167,6 @@ public class Tank extends GameEntity implements MovementInterface, TransformInte
      */
     public Bullet fire() {
         return cannon.fire();
-    }
-
-    @Override
-    public Shape getShape() {
-        return null;
     }
 
     @Override

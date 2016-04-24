@@ -1,12 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Networking.Server;
 
 import Constants.MasterServerConstants;
-import Networking.Requests.HostMatch;
+import Networking.Requests.AddPlayer;
+import Networking.Requests.RemovePlayer;
 import Networking.Requests.Request;
 import Networking.Requests.RequestType;
 import java.io.IOException;
@@ -15,12 +11,19 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
- * @author root
+ * MatchConnection handles the continuous connection between a
+ * hosted match and the master server. The master server requires the host of 
+ * the match to send requests each PACKET_DELAY milliseconds in order
+ * to check if the connection is still active. This class starts a thread 
+ * the constructor running its own run method in order to read and
+ * handle requests.
+ * The connection is deemed inactive if a period of PACKET_DELAY * 2 
+ * milliseconds have passed and no request has been received!
  */
 public class MatchConnection extends Connection {
     
@@ -32,18 +35,19 @@ public class MatchConnection extends Connection {
             Match activeMatch)  {
         super(clientSocket, inputStream, outputStream);
         this.activeMatch = activeMatch;
-        this.start();
     }
     
-    public void start() {
-        threadRunning = true;
-        new Thread(this).start();
-    }
-    
+     /**
+     * @return Returns the match associated with this connection.
+     */
     public Match getActiveMatch() {
         return activeMatch;
     }
     
+     /**
+     * Starts a handler which takes care of connection activity, marking it
+     * active or inactive.
+     */
     private void startConnectionHandler() {
         Timer connectionHandler = new Timer();
         
@@ -60,20 +64,27 @@ public class MatchConnection extends Connection {
             public void run() {
                 if (!threadRunning) {
                     connectionHandler.cancel();
+                    try {
+                        clientSocket.close();
+                    } catch (IOException ex) {
+                        Logger.getLogger(MatchConnection.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     return;
                 }
                 
-                if (activeConnection)
-                    activeConnection = false;
-                else {
+                int level = inactivityLevel.incrementAndGet();
+                
+                if (level == MAX_INACTIVITY_LEVEL) {
                     // Shut down the thread
+                    System.out.println("closing");
+                    activeConnection = false;
                     threadRunning = false;
                     try {
                         /* Close the input stream of the socket. This also 
                         forces readObject() to exit if it's still waiting for 
                         an object to be read from the stream.
                         */
-                        clientSocket.shutdownInput();
+                        clientSocket.close();
                         System.out.println("Closed input");
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -81,12 +92,14 @@ public class MatchConnection extends Connection {
                 }
             }
         };
+        
         connectionHandler.scheduleAtFixedRate(handleConnections, MasterServerConstants.PACKET_DELAY * 2, 
                 MasterServerConstants.PACKET_DELAY * 2);
     }
     
     @Override
     public void run() {
+        threadRunning = true;
         startConnectionHandler();
         
         Object object = null;
@@ -96,24 +109,25 @@ public class MatchConnection extends Connection {
                 if (!clientSocket.isInputShutdown()) {
                     object = inputStream.readObject();
                    
-                    activeConnection = true;
+                    // decrease level by 1 but remain non-negative
+                    inactivityLevel.updateAndGet(i -> i > 0 ? i - 1 : i);
                     
                     Request request = (Request)object;
                     request.execute(outputStream);
                     
-                    // Update the activeMatch in case of such request
-                    if (request.getType() == RequestType.HOST_MATCH)
-                        activeMatch = ((HostMatch)object).getMatch();
-                    
-                    Thread.sleep(MasterServerConstants.PACKET_DELAY);
+                    if (request.getType() == RequestType.ADD_PLAYER) {
+                        AddPlayer player = (AddPlayer)request;
+                        activeMatch.addPlayer(player.getUsername());
+                    } else if (request.getType() == RequestType.REMOVE_PLAYER) {
+                        RemovePlayer player = (RemovePlayer)request;
+                        activeMatch.removePlayer(player.getUsername());
+                    }
                 }
 
             } catch (IOException | ClassNotFoundException ex) {
                 Logger.getLogger(MatchConnection.class.getName()).log(Level.SEVERE, null, ex);
                 threadRunning = false;
                 activeConnection = false;
-            } catch (InterruptedException ex) {
-                Logger.getLogger(MatchConnection.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
