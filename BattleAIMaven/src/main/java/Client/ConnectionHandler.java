@@ -65,7 +65,7 @@ public class ConnectionHandler {
     
     public boolean hostMatch(Match activeMatch) {
         if (!host) {
-            if (ClientServerDispatcher.getInstance().start(activeMatch.getPort(), activeMatch)) {
+            if (ClientServerDispatcher.getInstance().start(activeMatch)) {
                 try {
                     host = true;
                     connectToMatch(activeMatch);

@@ -19,9 +19,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 
 /**
- *
+ * This class is a singleton and manages all the sources on the local machine
  * @author Dragos-Alexandru
  */
 public final class SourceManager {
@@ -64,6 +65,10 @@ public final class SourceManager {
         ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "SourceManager is set to go");
     }
     
+    /**
+     * Gets instance of the singleton class, if is null then it instantiates it
+     * @return The static instance of the SourceManager
+     */
     public static SourceManager getInstance(){
         if(instance == null){
             try {
@@ -77,6 +82,11 @@ public final class SourceManager {
         return instance;
     }
     
+    /**
+     * Checks if the application has read/write permissions on the local machine
+     * @param sourceFolder
+     * @throws IOException 
+     */
     private void checkReadWrite(File sourceFolder) throws IOException{
         ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Testing read/write permissions source folder");
         if(!sourceFolder.canRead()){
@@ -87,6 +97,12 @@ public final class SourceManager {
         }
     }
     
+    /**
+     * Reads the list from the sourceIndex file
+     * @param sourceIndex
+     * @return A list of sources in the sourceIndex
+     * @throws IOException 
+     */
     private List<Source> readSourceFileIndex(File sourceIndex) throws IOException{
         List<Source> auxSource = null;
         try (FileInputStream fInput = new FileInputStream(sourceIndex);
@@ -99,6 +115,11 @@ public final class SourceManager {
         return auxSource;
     }
     
+    /**
+     * Creates the sourceIndex file and populates it with dummy sources
+     * @param sourceIndex
+     * @throws IOException
+     */
     private void writeSourceFileIndex(File sourceIndex) throws IOException{
         ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Creating source index file");
         if(sourceIndex.createNewFile()){
@@ -116,6 +137,10 @@ public final class SourceManager {
         }
     }
     
+    /**
+     * Gets the source list from the sourceIndex file
+     * @return A list of sources on the local machine
+     */
     public List<Source> getSourceList(){
         File sourceIndex = new File(PathConstants.USER_SOURCES_INDEX_PATH);
         try {
@@ -128,34 +153,38 @@ public final class SourceManager {
     }
     
     /**
-     * Moves files to the source folder
-     * @param file 
+     * Saves file to the source folder
+     * @param source 
+     * @return  true if save was succesfull and false otherwise
      */
-    public void moveFileToSourceFolder(File file){
-        File newSource = new File(SOURCE_FOLDER_PATH+file.getName());
+    public boolean saveFileToSourceFolder(Source source){
+        File newSource = new File(SOURCE_FOLDER_PATH+source.getName());
         try {
-            newSource.createNewFile();
-            try (FileReader fileReader = new FileReader(file); 
-                    BufferedReader reader = new BufferedReader(fileReader); 
-                    FileWriter fileWriter = new FileWriter(newSource); 
+            if(newSource.exists()){
+                int replace = JOptionPane.showConfirmDialog(null, "Replace "+source.getName()+" ?", "Replace source", JOptionPane.YES_NO_OPTION);
+                if(replace == JOptionPane.NO_OPTION){
+                    return false;
+                }
+            }else{
+                newSource.createNewFile();
+            }
+            try (FileWriter fileWriter = new FileWriter(newSource); 
                     BufferedWriter writer = new BufferedWriter(fileWriter)) {
                 
-                String stringAux;
-                stringAux = reader.readLine();
-                while(stringAux != null){
-                    writer.write(stringAux);
-                }
+                writer.write(source.getContent());
             }
+            return true;
         } catch (IOException ex) {
-            ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed to create file "+file.getName());
-            ConsoleFrame.showError("Failed to create file "+file.getName());
+            ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed to create file "+source.getName());
+            ConsoleFrame.showError("Failed to create file "+source.getName());
+            return false;
         }
     }
     
     /**
-     * Creates a source file in the Compiler package and returns the file
+     * Creates a source file in the Compiler package
      * @param source
-     * @return 
+     * @return The created file from the given source
      */
     public File createSourceFile(Source source){
         File sourceFile = new File(SOURCE_FOLDER_PATH+source.getName()+".java");
@@ -177,7 +206,12 @@ public final class SourceManager {
         return null;
     }
     
-    public boolean deleteSourceFile(File source){
+    /**
+     * Deletes a given file
+     * @param source
+     * @return true if deletion was succesfull and false otherwise
+     */
+    public boolean deleteFile(File source){
         boolean success = true;
         ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Deleting file at "+source.getAbsolutePath());
         if(source.exists()){
@@ -185,6 +219,7 @@ public final class SourceManager {
         }
         return success;
     }
+    
     /**
      * This method returns the content of the predefined AI template
      * @return inteligenceTemplate
@@ -208,6 +243,10 @@ public final class SourceManager {
         return AI_TEMPLATE_CONTENT;
     }
     
+    /**
+     * Gets the intelligence template that will appear in the editor
+     * @return The intelligence template in a String
+     */
     public String getIntelligenceTemplate(){
         if(AI_TEMPLATE_CONTENT.isEmpty()){
             readIntelligenceTemplate();

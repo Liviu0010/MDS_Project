@@ -83,8 +83,9 @@ public class ClientServerDispatcher extends ServerDispatcher {
      * @param match The match object associated with this server.
      * @return true if successful, false otherwise.
      */
-    public boolean start(int port, Match match) {
+    public boolean start(Match match) {
         this.activeMatch = match;
+        this.port = match.getPort();
         boolean result = this.start(port);
         startMasterServerNotifier();
         return result;
