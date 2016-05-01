@@ -1,6 +1,7 @@
 package Main;
 
 import Console.ConsoleFrame;
+import Constants.DatabaseConstants;
 import Constants.MasterServerConstants;
 import Interface.MainFrame;
 import Networking.Server.ServerDispatcher;
