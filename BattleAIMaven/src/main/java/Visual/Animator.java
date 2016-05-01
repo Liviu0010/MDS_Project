@@ -61,6 +61,19 @@ public class Animator extends Thread{
 
             } 
             synchronized (bullets) {
+                //tankAux.moveFront();
+                tankAux.rotateCannon(1);
+                
+
+            } 
+            for(int i = 0 ; i < tanks.size() ; i++){
+                for(int j = i+1 ; j < tanks.size() ; j++)
+                    if(tanks.get(i).collision(tanks.get(j)))
+                        System.out.print("intersectie intre "+tanks.get(i).toString()+" "+tanks.get(j).toString()+"\n");
+            }
+                
+                
+                synchronized (bullets) {
                 // List<Bullet> bulletsToBeRemoved = Collections.synchronizedList(new LinkedList<Bullet>());
                 for (Bullet bulletAux : bullets) {
                     if (!(bulletAux.getX() > Constants.VisualConstants.ENGINE_WIDTH || bulletAux.getX() < 0

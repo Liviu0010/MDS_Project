@@ -49,6 +49,10 @@ public class VisualPanel extends javax.swing.JPanel {
                 Math.random()*1000%Constants.VisualConstants.ENGINE_HEIGHT, 2, 100, 0, 100,"Tank1", tankSprite, cannonSprite));
 
         
+            tanks.add(new Tank(10, 30, "tanc1"));
+            tanks.add(new Tank(800, 30, "tanc1"));
+            tanks.get(1).setAngle(180);
+        
         for(Tank aux:tanks){
             System.out.println(aux);
         }
