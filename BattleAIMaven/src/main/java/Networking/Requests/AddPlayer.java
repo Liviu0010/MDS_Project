@@ -5,20 +5,26 @@
  */
 package Networking.Requests;
 
+import Networking.Server.ClientServerDispatcher;
 import java.io.ObjectOutputStream;
 
 /**
- *
  */
-public class RegisterActivity extends Request {
+public class AddPlayer extends Request {
 
-    public RegisterActivity() {
-        super(RequestType.REGISTER_ACTIVITY);
+    private final String username;
+    
+    public AddPlayer(String username) {
+        super(RequestType.ADD_PLAYER);
+        this.username = username;
     }
     
     @Override
     public void execute(ObjectOutputStream outputStream) {
-        
+    }
+    
+    public String getUsername() {
+        return username;
     }
     
 }

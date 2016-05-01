@@ -9,16 +9,22 @@ import java.io.ObjectOutputStream;
 
 /**
  *
+ * @author root
  */
-public class RegisterActivity extends Request {
+public class RemovePlayer extends Request {
 
-    public RegisterActivity() {
-        super(RequestType.REGISTER_ACTIVITY);
+    private String username;
+    
+    public RemovePlayer(String username) {
+        super(RequestType.REMOVE_PLAYER);
+        this.username = username;
     }
     
     @Override
     public void execute(ObjectOutputStream outputStream) {
-        
     }
     
+    public String getUsername() {
+        return username;
+    }
 }
