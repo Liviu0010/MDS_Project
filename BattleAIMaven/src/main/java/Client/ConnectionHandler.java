@@ -2,8 +2,6 @@ package Client;
 
 import Console.ConsoleFrame;
 import Constants.MasterServerConstants;
-import Interface.MainFrame;
-import Interface.MultiplayerServerPanel;
 import Networking.Requests.PlayerConnect;
 import Networking.Requests.RegisterActivity;
 import Networking.Server.Match;
@@ -18,7 +16,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.SwingUtilities;
 
 /**
  * This class handles two type of connections, the connection to the master 

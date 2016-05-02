@@ -2,9 +2,7 @@ package Visual;
 
 import Console.ConsoleFrame;
 import Engine.Bullet;
-import Engine.Drawable;
 import Engine.Tank;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
