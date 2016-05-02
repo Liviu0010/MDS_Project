@@ -39,7 +39,7 @@ public class DummyDatabaseClass {
         }
         
         System.out.println("Toate meciurile");
-        X.afisM();
+        //X.afisM();
     
     }
 }

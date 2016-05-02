@@ -8,6 +8,7 @@ import Intelligence.IntelligenceTemplate;
 import Intelligence.Semaphore;
 import Intelligence.TankThread;
 import Networking.Requests.RequestType;
+import Visual.VisualEngine;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -27,7 +28,7 @@ public class IntelligenceControlThread extends Thread{
         for(int i = 0; i<surse.size(); i++){
             
             synchronized(GameEntity.entityList){
-                new Tank();
+                new Tank(); //adds it to entityList
             }
             
             playerCode = (IntelligenceTemplate)SourceCompiler.getInstanceOfSource(surse.get(i));
@@ -37,6 +38,41 @@ public class IntelligenceControlThread extends Thread{
         
     }
     
+    //testing
+    public IntelligenceControlThread(int numberOfTanks){
+        GameEntity.entityList.clear();
+        GameEntity.currentIndex = 0;
+        
+        VisualEngine.getInstance().setEntityList(GameEntity.entityList);
+        IntelligenceTemplate playerCode;// = new IntelligenceTemplate();
+        tankThreads = new ArrayList<>();
+        semaphores = new ArrayList<>();
+        
+        running = true;
+        
+        for(int i = 0; i<numberOfTanks; i++){
+            
+            synchronized(GameEntity.entityList){
+                new Tank(); //adds it to entityList
+            }
+            if(i == 0)
+                playerCode = new Intelligence.TestTank1();
+            else if(i==1)
+                playerCode = new Intelligence.TestTank2();
+            else if(i == 2)
+                playerCode = new Intelligence.TestTank3();
+            else
+                playerCode = new IntelligenceTemplate();
+            
+            semaphores.add(new Semaphore());
+            tankThreads.add(new TankThread(playerCode, semaphores.get(i)));
+        }
+        
+        System.out.println("size = "+GameEntity.entityList.size());
+        
+    }
+    //END testing
+    
     @Override
     public void run(){
         
@@ -45,7 +81,8 @@ public class IntelligenceControlThread extends Thread{
         }
         
         while(running) {  
-            synchronized (GameEntity.entityList) {
+            //OFF FOR NOW
+            /*synchronized (GameEntity.entityList) {
                 for (int i = 0; i < tankThreads.size(); i++) {
                     if (semaphores.get(i).isGreen()) {
                         EntityUpdateRequest eur = new EntityUpdateRequest(RequestType.ENTITIY_UPDATE, GameEntity.entityList);
@@ -56,17 +93,19 @@ public class IntelligenceControlThread extends Thread{
                         }
                     }
                 }
-            }
+            }*/
             
             for(int i = 0; i < tankThreads.size(); i++){
-                if(semaphores.get(i).isGreen()){
-                    semaphores.get(i).goRed();
-                    semaphores.get(i).notify();
+                synchronized (semaphores.get(i)) {
+                    if (semaphores.get(i).isGreen()) {
+                        semaphores.get(i).goRed();
+                        semaphores.get(i).notify();
+                    }
                 }
             }
             
             try {
-                this.wait(1000/60);
+                this.sleep(1000/60);
             } catch (InterruptedException ex) {
                 Console.ConsoleFrame.sendMessage("IntelligenceControlThread", ex.getMessage());
             }

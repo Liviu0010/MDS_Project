@@ -12,7 +12,8 @@ import java.util.Random;
  */
 public abstract class GameEntity implements TransformInterface {
     
-    static protected ArrayList<GameEntity> entityList;
+    static protected ArrayList<GameEntity> entityList = new ArrayList<>();
+    static protected int currentIndex = 0;
     
     protected int id;
     //use Area so we can transform using affinetransformer

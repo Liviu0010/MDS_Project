@@ -2,7 +2,6 @@ package Intelligence;
 
 import Engine.TankCapsule;
 import Engine.Inteligence;
-import Engine.Tank; 
 
 public class IntelligenceTemplate extends TankCapsule implements Inteligence{ 
     
@@ -13,8 +12,6 @@ public class IntelligenceTemplate extends TankCapsule implements Inteligence{
     }
     
     public void run(){
-        
-        
     }
 
     @Override 
@@ -27,6 +24,6 @@ public class IntelligenceTemplate extends TankCapsule implements Inteligence{
     public void hitEnemyTank() {} 
 
     @Override 
-    public void detectedEnemyTank(Tank enemy) {} 
+    public void detectedEnemyTank(TankCapsule enemy) {} 
 
 }

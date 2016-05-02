@@ -1,7 +1,12 @@
 package Visual;
 
 import Console.ConsoleFrame;
+import Editor.Source;
+import Engine.GameEntity;
+import Engine.IntelligenceControlThread;
+import Engine.Tank;
 import java.awt.Dimension;
+import java.util.ArrayList;
 
 /**
  *
@@ -12,6 +17,8 @@ public class VisualEngine extends javax.swing.JFrame {
     /**
      * Creates new form VisualEngine
      */
+    
+    IntelligenceControlThread ict;
     
     private static VisualEngine instance;
     
@@ -29,6 +36,10 @@ public class VisualEngine extends javax.swing.JFrame {
     
     public static boolean initialized(){
         return instance != null;
+    }
+    
+    public void setEntityList(ArrayList<GameEntity> entityList){
+        visualPanel1.entityList = entityList;
     }
     
     /**
@@ -86,13 +97,22 @@ public class VisualEngine extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        
+        ict = new IntelligenceControlThread(3);
+        ict.start();
+        
+        
         visualPanel1.animator.start();   //starting the animator when the window is visible
+        
+        
     }//GEN-LAST:event_formWindowOpened
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         visualPanel1.animator.stopAnimation();   //stopping the animator when the window is closing
         visualPanel1.bullets.clear();
         instance = null;    //the form's close operation is DISPOSE, so there's no point in keeping the old instance around
+        
+        ict.stopNicely();
     }//GEN-LAST:event_formWindowClosing
 
     /**

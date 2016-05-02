@@ -58,6 +58,8 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
                     i = 0;
                 }
             }
+            
+            cannon = new Cannon(staticId, xPos, yPos);
         }
         
         
