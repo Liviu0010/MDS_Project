@@ -3,7 +3,6 @@ package Engine;
 import Client.ConnectionHandler;
 import Compiler.SourceCompiler;
 import Editor.Source;
-import Engine.GameEntity;
 import Intelligence.IntelligenceTemplate;
 import Intelligence.Semaphore;
 import Intelligence.TankThread;

@@ -11,7 +11,6 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,7 +26,7 @@ import java.util.logging.Logger;
  */
 public class MatchConnection extends Connection {
     
-    private Match activeMatch;
+    private final Match activeMatch;
     
     public MatchConnection(Socket clientSocket, 
             ObjectInputStream inputStream,
