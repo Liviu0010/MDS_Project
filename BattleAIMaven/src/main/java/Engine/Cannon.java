@@ -18,14 +18,14 @@ import java.awt.geom.AffineTransform;
 final public class Cannon extends GameEntity implements Serializable,TransformInterface, Drawable{
 
     private Image cannonSprite;
-    
+    Tank parent;
     /**
      *
      * @param id
      * @param xPos
      * @param yPos
      */
-    public Cannon(int id, double xPos, double yPos){
+    public Cannon(int id, double xPos, double yPos, Tank parent){
         //in the case of the cannon spd will represend the speed of moving on the board and dmg the damage that it
         super(id,xPos,yPos);
         //gives to the tank that it hit's and ang will represent the 
@@ -36,6 +36,7 @@ final public class Cannon extends GameEntity implements Serializable,TransformIn
         speed = EngineConstants.CANNON_SPEED;
         damage = EngineConstants.DAMAGE;
         angle = EngineConstants.ANGLE;
+        this.parent = parent;
     }
     public void moveFront(){
         double s = Math.sin(angle * Math.PI/180.0);
@@ -44,7 +45,52 @@ final public class Cannon extends GameEntity implements Serializable,TransformIn
         setY(getY()+s*speed);
     }
     
-    public Point getForwardPoint(Point origin, double angle, double forwardDistance){
+    
+    public int det(Point v1, Point v2){
+        return v1.x * v2.y - v1.y*v2.x;
+    }
+    
+    //http://mathworld.wolfram.com/TriangleInterior.html
+    public boolean isInTriangle(Point a, Point b, Point c, Point toVerify) {
+        double a1, b1;
+        
+        b.x -= a.x;
+        b.y -= a.y;
+        
+        c.x -= a.x;
+        c.y -= a.y;
+        
+        a1 = (double)(det(toVerify, c) - det(a,c))/det(b,c);
+        b1 = -(double)(det(toVerify, b) - det(a,b))/det(b,c);
+        
+        return a1 > 0 && b1 > 0 && a1+b1 < 1;
+    }
+    
+    @Override
+    public void rotate(double degrees) {
+        angle = (angle+degrees)%360;
+        Tank t;
+        GameEntity entity;
+        
+        //searching for enemies
+        for(int i = 0; i<GameEntity.entityList.size(); i++){
+            entity = GameEntity.entityList.get(i);
+            
+            if(entity instanceof Tank){
+                t = (Tank)entity;
+                Point left, right;
+                
+                left = getForwardPoint(new Point((int)x,(int)y), angle-VisualConstants.RADAR_SIZE/2, 1000);
+                right = getForwardPoint(new Point((int)x,(int)y), angle+VisualConstants.RADAR_SIZE/2, 1000);
+                
+                if(isInTriangle(new Point((int)x,(int)y), left, right, new Point((int)t.getX(), (int)t.getY())))
+                    parent.tankCapsule.detectedEnemyTank(new Point((int)t.getX(), (int)t.getY()) );
+            }
+        }
+        //end
+    }
+    
+    public static Point getForwardPoint(Point origin, double angle, double forwardDistance){
         double s = Math.sin(Math.toRadians(angle))*forwardDistance;
         double c = Math.cos(Math.toRadians(angle))*forwardDistance;
         return new Point((int)(origin.x+c), (int)(origin.y+s));
