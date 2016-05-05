@@ -1,19 +1,20 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Intelligence;
 
-/**
- *
- * @author Liviu
- */
+import Console.ConsoleFrame;
+
+/*
+    Test class
+*/
 public class TestTank1 extends IntelligenceTemplate {
     @Override
     public void run(){
         for(int i = 0; i<5; i++)
             moveFront();
         rotateRight();
+    }
+    
+    @Override
+    public void hitArenaWall(){
+        ConsoleFrame.sendMessage("TestTank1", "Oy vey, hit arena wall!!"+System.currentTimeMillis());
     }
 }

@@ -1,6 +1,7 @@
 package Visual;
 
 import Console.ConsoleFrame;
+import Constants.VisualConstants;
 import Editor.Source;
 import Engine.GameEntity;
 import Engine.IntelligenceControlThread;
@@ -18,6 +19,7 @@ public class VisualEngine extends javax.swing.JFrame {
      * Creates new form VisualEngine
      */
     
+    private int matchMode = VisualConstants.SINGLEPLAYER;
     IntelligenceControlThread ict;
     
     private static VisualEngine instance;
@@ -38,8 +40,16 @@ public class VisualEngine extends javax.swing.JFrame {
         return instance != null;
     }
     
-    public void setEntityList(ArrayList<GameEntity> entityList){
-        visualPanel1.entityList = entityList;
+    public void updateEntityList(ArrayList<GameEntity> newList){
+        visualPanel1.entityList = newList;
+    }
+    
+    public void setMatchMode(int matchMode){
+        this.matchMode = matchMode;
+    }
+    
+    public int getMatchMode(){
+        return matchMode;
     }
     
     /**
@@ -98,9 +108,10 @@ public class VisualEngine extends javax.swing.JFrame {
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         
-        ict = new IntelligenceControlThread(3);
-        ict.start();
-        
+        if(matchMode == VisualConstants.SINGLEPLAYER){
+            ict = new IntelligenceControlThread(3);
+            ict.start();
+        }
         
         visualPanel1.animator.start();   //starting the animator when the window is visible
         

@@ -1,9 +1,9 @@
 package Intelligence;
 
 import Engine.TankCapsule;
-import Engine.Inteligence;
+import java.awt.Point;
 
-public class IntelligenceTemplate extends TankCapsule implements Inteligence{ 
+public class IntelligenceTemplate extends TankCapsule{ 
     
     public boolean anaAreMere;
     
@@ -24,6 +24,6 @@ public class IntelligenceTemplate extends TankCapsule implements Inteligence{
     public void hitEnemyTank() {} 
 
     @Override 
-    public void detectedEnemyTank(TankCapsule enemy) {} 
+    public void detectedEnemyTank(Point enemy) {} 
 
 }
