@@ -17,6 +17,8 @@ public interface VisualConstants {
     public final double BULLET_HEIGHT = 5;
     public final double HEALTH_BAR_HEIGHT = 3;
     public final double HEALTH_BAR_WIDTH = 25;
-    public final double RADAR_SIZE = 35;    //in degrees
+    public final double RADAR_SIZE = 26;    //in degrees
     public final int MAX_TANK_NUMBER = 8;
+    public final int SINGLEPLAYER = 1;
+    public final int MULTIPLAYER = 2;
 }

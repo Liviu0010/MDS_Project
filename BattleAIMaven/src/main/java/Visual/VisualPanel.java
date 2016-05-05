@@ -77,9 +77,23 @@ public class VisualPanel extends javax.swing.JPanel {
             tankAux.draw(g);
         }
         
-        for(GameEntity tankAux : entityList){
-            ((Tank)tankAux).draw(g);
+        //Testing 
+        if (entityList != null) {
+            synchronized (entityList) {
+                for (GameEntity tankAux : entityList) {
+                    if (tankAux instanceof Tank) {
+                        ((Tank) tankAux).draw(g);
+                    }
+                }
+
+                for (GameEntity bullet : entityList) {
+                    if (bullet instanceof Bullet) {
+                        ((Bullet) bullet).draw(g);
+                    }
+                }
+            }
         }
+        //END Testing
         
         //bullets drawn on top of the tanks
         synchronized(bullets){

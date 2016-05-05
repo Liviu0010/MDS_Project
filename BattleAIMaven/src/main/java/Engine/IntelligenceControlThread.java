@@ -2,6 +2,8 @@ package Engine;
 
 import Client.ConnectionHandler;
 import Compiler.SourceCompiler;
+import Console.ConsoleFrame;
+import Constants.VisualConstants;
 import Editor.Source;
 import Intelligence.IntelligenceTemplate;
 import Intelligence.Semaphore;
@@ -13,6 +15,7 @@ import java.util.ArrayList;
 
 public class IntelligenceControlThread extends Thread{
     private static IntelligenceControlThread instance;
+    private BulletUpdater bulletUpdater;
     private ArrayList<TankThread> tankThreads;
     private ArrayList<Semaphore> semaphores;
     private boolean running;
@@ -35,14 +38,16 @@ public class IntelligenceControlThread extends Thread{
             tankThreads.add(new TankThread(playerCode, semaphores.get(i)));
         }
         
+        bulletUpdater = new BulletUpdater();
     }
     
-    //testing
+    //Testing
+    //Couldn't figure out the compiler so I'm using this just for testing purposes
+    //This constructor will be removed at a later date
     public IntelligenceControlThread(int numberOfTanks){
         GameEntity.entityList.clear();
         GameEntity.currentIndex = 0;
         
-        VisualEngine.getInstance().setEntityList(GameEntity.entityList);
         IntelligenceTemplate playerCode;// = new IntelligenceTemplate();
         tankThreads = new ArrayList<>();
         semaphores = new ArrayList<>();
@@ -67,7 +72,12 @@ public class IntelligenceControlThread extends Thread{
             tankThreads.add(new TankThread(playerCode, semaphores.get(i)));
         }
         
-        System.out.println("size = "+GameEntity.entityList.size());
+        if(VisualEngine.getInstance().getMatchMode() == VisualConstants.SINGLEPLAYER)
+            VisualEngine.getInstance().updateEntityList(GameEntity.entityList);
+        
+        bulletUpdater = new BulletUpdater();
+        
+        ConsoleFrame.sendMessage("IntelligenceControlThread","size = "+GameEntity.entityList.size());
         
     }
     //END testing
@@ -79,9 +89,12 @@ public class IntelligenceControlThread extends Thread{
             tankThreads.get(i).start();
         }
         
-        while(running) {  
+        bulletUpdater.start();
+        
+        while(running) {
             //OFF FOR NOW
-            /*synchronized (GameEntity.entityList) {
+            /*
+            synchronized (GameEntity.entityList) {
                 for (int i = 0; i < tankThreads.size(); i++) {
                     if (semaphores.get(i).isGreen()) {
                         EntityUpdateRequest eur = new EntityUpdateRequest(RequestType.ENTITIY_UPDATE, GameEntity.entityList);
@@ -92,8 +105,8 @@ public class IntelligenceControlThread extends Thread{
                         }
                     }
                 }
-            }*/
-            
+            }
+            */
             for(int i = 0; i < tankThreads.size(); i++){
                 synchronized (semaphores.get(i)) {
                     if (semaphores.get(i).isGreen()) {
@@ -114,6 +127,7 @@ public class IntelligenceControlThread extends Thread{
     public void stopNicely(){
         running = false;
         
+        bulletUpdater.stopNicely();
         for(int i = 0; i < tankThreads.size(); i++)
             tankThreads.get(i).stopNicely();
     }
