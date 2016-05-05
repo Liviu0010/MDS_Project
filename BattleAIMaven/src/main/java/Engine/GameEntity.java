@@ -1,10 +1,7 @@
 package Engine;
 
-import Constants.VisualConstants;
-import java.awt.Shape;
 import java.awt.geom.*;
 import java.util.ArrayList;
-import java.util.Random;
 /**
  * Game Entity class provides a framework for Bullet,Cannon and Tank classes
  * the methods implemented in this class should work for normal 'X'-'Y' Cartesian  coordinate system so they would probably need to be altered to work with

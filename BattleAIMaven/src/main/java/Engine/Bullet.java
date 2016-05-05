@@ -8,8 +8,6 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Rectangle;
-import java.awt.Shape;
 import java.awt.geom.*;
 
 /**

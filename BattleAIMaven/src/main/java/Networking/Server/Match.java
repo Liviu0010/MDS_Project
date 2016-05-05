@@ -15,7 +15,7 @@ public class Match implements Serializable {
     private final String OWNER;
     
     // The list of players in the match
-    private Set<String> players;
+    private final Set<String> players;
     
     private int maxNumberOfPlayers;
     
