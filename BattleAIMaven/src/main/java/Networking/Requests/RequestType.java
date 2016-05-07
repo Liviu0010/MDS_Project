@@ -12,4 +12,7 @@ public final class RequestType {
     public final static int ADD_PLAYER = 5;
     public final static int REMOVE_PLAYER = 6;
     public final static int ENTITIY_UPDATE = 7;
+    public final static int LOGIN_ACCOUNT = 8;
+    public final static int BOOLEAN_RESPONSE = 9;
+    public final static int REGISTER_ACCOUNT = 10;
 }
