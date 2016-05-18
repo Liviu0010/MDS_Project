@@ -63,9 +63,9 @@ public final class Editor extends JFrame {
         this.frame = mainFrame;
         inteligenceTemplate = SourceManager.getInstance().getIntelligenceTemplate();
         sourceName = JOptionPane.showInputDialog("Source name: ", "LocalSource");
-        
-        inteligenceTemplate = inteligenceTemplate.replaceFirst("<name>", sourceName);
-        
+        if(sourceName != null){
+            inteligenceTemplate = inteligenceTemplate.replaceAll("<name>", sourceName);
+        }
         sourceArea = new RSyntaxTextArea();
         sourceArea.setDocument(new RSyntaxDocument (RSyntaxTextArea.SYNTAX_STYLE_JAVA));
         sourceArea.setDocument(new RSyntaxDocument(RSyntaxTextArea.SYNTAX_STYLE_JAVA));
@@ -155,6 +155,10 @@ public final class Editor extends JFrame {
         this.add(sourcePanel, BorderLayout.CENTER);
         
         this.setVisible(true);
+        if(sourceName == null){
+            frame.setVisible(true);
+            this.dispose();
+        }
     }
     
     private final class EditorNewListener extends EditorMenuListener{
@@ -230,11 +234,11 @@ public final class Editor extends JFrame {
         public void mouseClicked(MouseEvent e) {
 
             Source source = new Source(sourceArea.getText(), sourceName, Player.getInstance().getUsername());
-
             boolean success = SourceManager.getInstance().saveFileToSourceFolder(source);
 
             if(success){
                 JOptionPane.showMessageDialog(null, "Save succesfull");
+                
             }else{
                 JOptionPane.showMessageDialog(null, "Save failed");
             }

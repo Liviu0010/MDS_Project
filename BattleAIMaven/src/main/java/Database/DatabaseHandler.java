@@ -39,8 +39,8 @@ public class DatabaseHandler {
     }
 
     private DatabaseHandler(String USER, String PASS) {
-        this.USER = USER;
-        this.PASS = PASS;
+        DatabaseHandler.USER = USER;
+        DatabaseHandler.PASS = PASS;
         
         if (createDatabase() == true){
             createTables();

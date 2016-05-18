@@ -121,12 +121,14 @@ public final class SourceManager {
             try (FileOutputStream fOutput = new FileOutputStream(sourceIndex); 
                     ObjectOutputStream oOutput = new ObjectOutputStream(fOutput)) {
                 ConsoleFrame.sendMessage(this.getClass().getSimpleName(), 
-                        "Writing empty source list to source index file");
-                sources.add(new Source("Test1", "GOOD"));
-                sources.add(new Source("package User_Sources;","Test2", "BAD"));
-                sources.add(new Source("Test3", "GOOD"));
-                sources.add(new Source("Test4", "GOOD"));
-                sources.add(new Source("Test test test", "Test5", "BAD"));
+                        "Writing source list to source index file");
+                oOutput.writeObject(sources);
+            }
+        }else{
+            try (FileOutputStream fOutput = new FileOutputStream(sourceIndex); 
+                    ObjectOutputStream oOutput = new ObjectOutputStream(fOutput)) {
+                ConsoleFrame.sendMessage(this.getClass().getSimpleName(), 
+                        "Writing source list to source index file");
                 oOutput.writeObject(sources);
             }
         }
@@ -167,6 +169,12 @@ public final class SourceManager {
                     BufferedWriter writer = new BufferedWriter(fileWriter)) {
                 
                 writer.write(source.getContent());
+                if(sources.contains(source)){
+                    sources.remove(source);
+                }
+                sources.add(source);
+                File sourceIndex = new File(PathConstants.USER_SOURCES_INDEX_PATH);
+                writeSourceFileIndex(sourceIndex);
             }
             return true;
         } catch (IOException ex) {

@@ -333,17 +333,23 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
                 try {
                     Request request = (Request)ConnectionHandler.getInstance().readFromMatch();
                     
-                    
                         SwingUtilities.invokeLater(new Runnable() {
 
                             @Override
                             public void run() {
-                                if (request.getType() == RequestType.CHAT_MESSAGE)
-                                    chatOutputArea.append(((ChatMessage)request).getMessage());
-                                else if (request.getType() == RequestType.ADD_PLAYER) 
-                                    playerSelectionModel.addElement(((AddPlayer)request).getUsername());
-                                else if (request.getType() == RequestType.REMOVE_PLAYER)
-                                    playerSelectionModel.removeElement(((RemovePlayer)request).getUsername());
+                                switch (request.getType()) {
+                                    case RequestType.CHAT_MESSAGE:
+                                        chatOutputArea.append(((ChatMessage)request).getMessage());
+                                        break;
+                                    case RequestType.ADD_PLAYER:
+                                        playerSelectionModel.addElement(((AddPlayer)request).getUsername());
+                                        break;
+                                    case RequestType.REMOVE_PLAYER:
+                                        playerSelectionModel.removeElement(((RemovePlayer)request).getUsername());
+                                        break;
+                                    default:
+                                        break;
+                                }
                             }
                         });
                     
