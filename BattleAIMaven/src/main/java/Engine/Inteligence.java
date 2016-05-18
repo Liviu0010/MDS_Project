@@ -12,6 +12,6 @@ public interface Inteligence {
 
     public void hitEnemyTank();
 
-    public void detectedEnemyTank(Tank enemy);
+    public void detectedEnemyTank(TankCapsule enemy);
 
 }

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Networking.Requests;
 
 /**
@@ -17,4 +12,7 @@ public final class RequestType {
     public final static int ADD_PLAYER = 5;
     public final static int REMOVE_PLAYER = 6;
     public final static int ENTITIY_UPDATE = 7;
+    public final static int LOGIN_ACCOUNT = 8;
+    public final static int BOOLEAN_RESPONSE = 9;
+    public final static int REGISTER_ACCOUNT = 10;
 }

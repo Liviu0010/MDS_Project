@@ -1,10 +1,20 @@
 package Interface;
 
+import Client.ConnectionHandler;
 import Console.ConsoleFrame;
+import Networking.Requests.BooleanResponse;
+import Networking.Requests.LoginAccount;
+import Networking.Requests.RegisterAccount;
+import Networking.Requests.Request;
+import Networking.Requests.RequestType;
 import Networking.Server.Player;
 import Security.Guard;
+import java.io.IOException;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.SwingWorker;
+import static Networking.Requests.RequestType.BOOLEAN_RESPONSE;
 
 /**
  *
@@ -24,6 +34,7 @@ public class MultiplayerLoginRegisterPanel extends javax.swing.JPanel {
         
         initComponents();
         this.usernameField.setText(Player.getInstance().getUsername());
+        passwordField.setText("");
     }
 
     /**
@@ -128,31 +139,44 @@ public class MultiplayerLoginRegisterPanel extends javax.swing.JPanel {
         try {
             worker.execute();
             if(worker.get()){
-                if (!connectToMasterServer())
+                // Send a login request
+                ConnectionHandler.getInstance().sendToMasterServer(new LoginAccount(usernameField.getText(), 
+                        new String(passwordField.getPassword())));
+                Object ob = ConnectionHandler.getInstance().readFromMasterServer();
+                BooleanResponse response = (BooleanResponse)ob;
+                // Check if the authentification was successful
+                if (response.getValue() == false) {
+                    ConsoleFrame.showError("No account matches the provided username and password");
                     return;
+                }
                 rootFrame.changePanel(new MultiplayerServerPanel(rootFrame));
             }
-        } catch (InterruptedException | ExecutionException ex) {
+        } catch (InterruptedException | ExecutionException | IOException | ClassNotFoundException ex) {
             ConsoleFrame.showError(ex.getMessage());
-        }
+        } 
     }//GEN-LAST:event_loginButtonActionPerformed
 
     private void registerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerButtonActionPerformed
-        if (!connectToMasterServer())
-            return;
+        LoginWorker worker = new LoginWorker();
+        try {
+            worker.execute();
+            if(worker.get()){
+                // Send a register request
+                ConnectionHandler.getInstance().sendToMasterServer(new RegisterAccount(usernameField.getText(), 
+                        new String(passwordField.getPassword())));
+                Object ob = ConnectionHandler.getInstance().readFromMasterServer();
+                BooleanResponse response = (BooleanResponse)ob;
+                // Check if the authentification was successful
+                if (response.getValue() == false) {
+                    ConsoleFrame.showError("An account with that name already exists.");
+                    return;
+                }
+                rootFrame.changePanel(new MultiplayerServerPanel(rootFrame));
+            }
+        } catch (InterruptedException | ExecutionException | IOException | ClassNotFoundException ex) {
+            ConsoleFrame.showError(ex.getMessage());
+        }
     }//GEN-LAST:event_registerButtonActionPerformed
-    
-    private boolean connectToMasterServer() {
-        /*try {
-            ConnectionHandler.getInstance().connectToMasterServer();
-        } catch (IOException ex) {
-             JOptionPane.showMessageDialog(null, ex.getMessage(), 
-                    "Failed to connect to master server", 
-                    JOptionPane.ERROR_MESSAGE);
-             return false;
-        } */
-        return true;
-    }
     
     private class LoginWorker extends SwingWorker<Boolean, Object>{
 
@@ -162,7 +186,6 @@ public class MultiplayerLoginRegisterPanel extends javax.swing.JPanel {
             boolean success = true;
             String username = usernameField.getText();
             String password = Guard.scramblePassword(String.valueOf(passwordField.getPassword()));
-            passwordField.setText("");
             
             if(checkUsername(username)){
                 Player.getInstance().setUsername(username);

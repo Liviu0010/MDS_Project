@@ -2,8 +2,6 @@ package Client;
 
 import Console.ConsoleFrame;
 import Constants.MasterServerConstants;
-import Interface.MainFrame;
-import Interface.MultiplayerServerPanel;
 import Networking.Requests.PlayerConnect;
 import Networking.Requests.RegisterActivity;
 import Networking.Server.Match;
@@ -14,11 +12,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.SwingUtilities;
 
 /**
  * This class handles two type of connections, the connection to the master 
@@ -57,6 +55,7 @@ public class ConnectionHandler {
     private void connectToMasterServer() throws IOException {
         masterServerSocket = new Socket(MasterServerConstants.IP, 
                 MasterServerConstants.PORT);
+        masterServerSocket.setSoTimeout(3000);
         masterServerOutputStream = new ObjectOutputStream(masterServerSocket.getOutputStream());
         masterServerOutputStream.flush();
         masterServerInputStream = new ObjectInputStream(masterServerSocket.getInputStream());
@@ -112,7 +111,12 @@ public class ConnectionHandler {
         } catch (IOException ex) {
             Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
             connectToMasterServer();
-            result = masterServerInputStream.readObject();
+            try {
+                result = masterServerInputStream.readObject();
+            } catch (SocketTimeoutException ex2) {
+                masterServerSocket = null;
+                ConsoleFrame.showError("Connection timed out.");
+            }
         }
         return result;
     }

@@ -16,4 +16,8 @@ public class EntityUpdateRequest extends Request {
     public void execute(ObjectOutputStream outputStream) {
         
     }
+    
+    public ArrayList<GameEntity> getEntityList(){
+        return gameEntities;
+    }
 }

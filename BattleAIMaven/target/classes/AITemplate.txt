@@ -1,15 +1,12 @@
 package User_Sources;
 
-import Engine.Inteligence;
-import Engine.Tank; 
+import Intelligence.IntelligenceTemplate;
+import Engine.TankCapsule;
 
-public class <name> implements Inteligence{ 
+public class <name> extends IntelligenceTemplate{ 
 
     public void run(){
         
-        while(true){
-            
-        }
         
     }
 
@@ -23,6 +20,6 @@ public class <name> implements Inteligence{
     public void hitEnemyTank() {} 
 
     @Override 
-    public void detectedEnemyTank(Tank enemy) {} 
+    public void detectedEnemyTank(TankCapsule enemy) {} 
 
 }

@@ -2,7 +2,10 @@ package Visual;
 
 import Console.ConsoleFrame;
 import Constants.PathConstants;
+import Editor.Source;
 import Engine.Bullet;
+import Engine.GameEntity;
+import Engine.IntelligenceControlThread;
 import Engine.Tank;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -12,6 +15,7 @@ import java.awt.Image;
 import java.awt.RenderingHints;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,6 +32,7 @@ public class VisualPanel extends javax.swing.JPanel {
     List<Tank> tanks = Collections.synchronizedList(new LinkedList<Tank>());
     final List<Bullet> bullets = Collections.synchronizedList(new LinkedList<Bullet>());
     
+    ArrayList<GameEntity> entityList;
     /**
      * Creates new form VisualPanel
      */ 
@@ -43,15 +48,18 @@ public class VisualPanel extends javax.swing.JPanel {
         } catch (IOException ex) {
             ConsoleFrame.sendMessage("VisualPanel", "Failed to get sprites");
         }
+
+      /*  for(int i = 0; i<20; i++)
+        tanks.add(new Tank(Math.random()*1000%Constants.VisualConstants.ENGINE_WIDTH, 
+                Math.random()*1000%Constants.VisualConstants.ENGINE_HEIGHT, 2, 100, 0, 100,"Tank1", tankSprite, cannonSprite));
+*/
         
-            tanks.add(new Tank(10, 30, "tanc1"));
-            tanks.add(new Tank(800, 30, "tanc1"));
-            tanks.get(1).setAngle(180);
-        
+            //tanks.add(new Tank(10, 30, "tanc1"));
+            //tanks.add(new Tank(800, 30, "tanc1"));
+            //tanks.get(1).setAngle(180);
         for(Tank aux:tanks){
             System.out.println(aux);
         }
-        
         animator = new Animator(this, tanks, bullets);
     }
     
@@ -68,6 +76,24 @@ public class VisualPanel extends javax.swing.JPanel {
         for (Tank tankAux : tanks) {
             tankAux.draw(g);
         }
+        
+        //Testing 
+        if (entityList != null) {
+            synchronized (entityList) {
+                for (GameEntity tankAux : entityList) {
+                    if (tankAux instanceof Tank) {
+                        ((Tank) tankAux).draw(g);
+                    }
+                }
+
+                for (GameEntity bullet : entityList) {
+                    if (bullet instanceof Bullet) {
+                        ((Bullet) bullet).draw(g);
+                    }
+                }
+            }
+        }
+        //END Testing
         
         //bullets drawn on top of the tanks
         synchronized(bullets){
