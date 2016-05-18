@@ -16,13 +16,10 @@ public class TankCapsule {
     
     public TankCapsule(){
         synchronized(GameEntity.entityList) {
-            try{
-            tank = (Tank)GameEntity.entityList.get(GameEntity.currentIndex++);
+            if(GameEntity.entityList.size()>0){
+                tank = (Tank)GameEntity.entityList.get(GameEntity.currentIndex++);
+                tank.setTankCapsule(this);
             }
-            catch(ArrayIndexOutOfBoundsException ex){
-                ConsoleFrame.sendMessage("TankCapsule", "Array out of bounds! No tank found in the gameEntity list!");
-            }
-            tank.setTankCapsule(this);
         }
     }
     
