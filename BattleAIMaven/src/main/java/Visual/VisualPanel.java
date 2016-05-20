@@ -2,10 +2,8 @@ package Visual;
 
 import Console.ConsoleFrame;
 import Constants.PathConstants;
-import Editor.Source;
 import Engine.Bullet;
 import Engine.GameEntity;
-import Engine.IntelligenceControlThread;
 import Engine.Tank;
 import java.awt.Color;
 import java.awt.Dimension;

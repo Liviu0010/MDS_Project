@@ -103,19 +103,15 @@ public class Animator extends Thread{
  
             
             if (paintThread == null || !paintThread.isAlive()) {
-                paintThread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        while (running) {
-                            panel.repaint();
-
-                            try {
-                                Thread.sleep(1000 / framerate);
-                            } catch (InterruptedException ex) {
-                                ConsoleFrame.sendMessage("paintThread", "paintThread interrupted");
-                            }
+                paintThread = new Thread(() -> {
+                    while (running) {
+                        panel.repaint();
+                        
+                        try {
+                            Thread.sleep(1000 / framerate);
+                        } catch (InterruptedException ex) {
+                            ConsoleFrame.sendMessage("paintThread", "paintThread interrupted");
                         }
-
                     }
                 });
 

@@ -24,7 +24,7 @@ import java.util.logging.Logger;
  */
 public class ConnectionHandler {
     
-    private final static ConnectionHandler instance = new ConnectionHandler();
+    private final static ConnectionHandler INSTANCE = new ConnectionHandler();
     
     private Socket masterServerSocket;
     private ObjectInputStream masterServerInputStream;
@@ -49,7 +49,7 @@ public class ConnectionHandler {
     };
     
     public static ConnectionHandler getInstance() {
-        return instance;
+        return INSTANCE;
     }
     
     private void connectToMasterServer() throws IOException {

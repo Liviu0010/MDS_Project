@@ -1,5 +1,6 @@
 package Networking.Server;
 
+import Console.ConsoleFrame;
 import Constants.MasterServerConstants;
 import Networking.Requests.AddPlayer;
 import Networking.Requests.RemovePlayer;
@@ -86,7 +87,7 @@ public class MatchConnection extends Connection {
                         clientSocket.close();
                         System.out.println("Closed input");
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed "+e.getMessage());
                     }
                 }
             }
@@ -101,7 +102,7 @@ public class MatchConnection extends Connection {
         threadRunning = true;
         startConnectionHandler();
         
-        Object object = null;
+        Object object;
 
         while (threadRunning) {
             try {

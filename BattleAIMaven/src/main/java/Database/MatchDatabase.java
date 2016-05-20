@@ -8,9 +8,9 @@ import java.util.List;
  */
 public class MatchDatabase {
 
-    private String winner;
-    private int noPlayers;
-    private Double duration;
+    private final String winner;
+    private final int noPlayers;
+    private final Double duration;
 
     public MatchDatabase(String winner, int noPlayers, Double duration) {
         this.winner = winner;

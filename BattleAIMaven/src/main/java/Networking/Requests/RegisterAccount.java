@@ -16,8 +16,8 @@ import java.util.logging.Logger;
  * @author root
  */
 public class RegisterAccount extends Request {
-    private String username;
-    private String password;
+    private final String username;
+    private final String password;
     
     public RegisterAccount(String username, String password) {
         super(RequestType.REGISTER_ACCOUNT);

@@ -1,6 +1,5 @@
 package Engine;
 
-import Console.ConsoleFrame;
 import java.awt.Point;
 
 /**
@@ -17,8 +16,10 @@ public class TankCapsule {
     public TankCapsule(){
         synchronized(GameEntity.entityList) {
             if(GameEntity.entityList.size()>0){
-                tank = (Tank)GameEntity.entityList.get(GameEntity.currentIndex++);
-                tank.setTankCapsule(this);
+                if(GameEntity.currentIndex < GameEntity.entityList.size()){
+                    tank = (Tank)GameEntity.entityList.get(GameEntity.currentIndex++);
+                    tank.setTankCapsule(this);
+                }
             }
         }
     }

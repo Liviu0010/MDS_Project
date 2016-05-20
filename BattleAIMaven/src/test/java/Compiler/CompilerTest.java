@@ -5,11 +5,7 @@
  */
 package Compiler;
 
-import Editor.Source;
-import Editor.SourceManager;
-import java.util.List;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *

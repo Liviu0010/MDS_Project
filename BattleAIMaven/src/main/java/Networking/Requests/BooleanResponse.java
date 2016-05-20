@@ -3,7 +3,7 @@ package Networking.Requests;
 import java.io.ObjectOutputStream;
 
 public class BooleanResponse extends Request {
-    private boolean success;
+    private final boolean success;
     
     public BooleanResponse(boolean success) {
         super(RequestType.BOOLEAN_RESPONSE);

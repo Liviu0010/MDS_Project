@@ -5,16 +5,11 @@ import Console.ConsoleFrame;
 import Networking.Requests.BooleanResponse;
 import Networking.Requests.LoginAccount;
 import Networking.Requests.RegisterAccount;
-import Networking.Requests.Request;
-import Networking.Requests.RequestType;
 import Networking.Server.Player;
 import Security.Guard;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.SwingWorker;
-import static Networking.Requests.RequestType.BOOLEAN_RESPONSE;
 
 /**
  *

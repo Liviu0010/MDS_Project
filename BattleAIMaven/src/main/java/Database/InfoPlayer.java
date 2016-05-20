@@ -8,7 +8,7 @@ import java.util.List;
  * of a player
  */
 public class InfoPlayer {
-    private String userName;
+    private final String userName;
     private Integer numberOfPoints;
     private final DatabaseHandler DB = DatabaseHandler.getInstance();
     
@@ -25,6 +25,7 @@ public class InfoPlayer {
     /**
      * Returns an object Player with userName - name and his number of points    
      * @param name - the user name
+     * @return 
      */
     public InfoPlayer getObjectPlayer(String name){
         return new InfoPlayer(name, DB.getNoOfPoints(name));
@@ -34,6 +35,7 @@ public class InfoPlayer {
      * returns true if this name is valid for LogIn, i.e this name doesn't exist 
      *  in Database
      * @param name - the user name
+     * @return 
      */
     public Boolean isValidName (String name){
         return (DB.findName(name) != true);
@@ -42,6 +44,7 @@ public class InfoPlayer {
     /**
      * Returns true if user with username-name and password - pass exist, 
      * otherwise returns false.
+     * @return 
      */
     public Boolean isValidAccount (String name, String pass){
         return DB.findAccount(name, pass);

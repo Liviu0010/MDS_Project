@@ -1,6 +1,7 @@
 package Networking.Server;
 
 import Client.ConnectionHandler;
+import Console.ConsoleFrame;
 import Constants.MasterServerConstants;
 import Networking.Requests.PlayerConnect;
 import Networking.Requests.Request;
@@ -64,7 +65,7 @@ public class PlayerConnection extends Connection {
                         clientSocket.shutdownInput();
                         System.out.println("Closed input");
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed "+e.getMessage());
                     }
                 }
             }
@@ -78,7 +79,7 @@ public class PlayerConnection extends Connection {
         threadRunning = true;
         startConnectionHandler();
         
-        Object object = null;
+        Object object;
 
         while (threadRunning) {
             try {
