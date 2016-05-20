@@ -55,12 +55,12 @@ public class DatabaseHandler {
             Class.forName(JDBC_DRIVER);
             conn = DriverManager.getConnection(DB_URL, USER, PASS);
         } catch (SQLException se) {
-            // Handle errors for JDBC   
-            se.printStackTrace();
-            ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed to find driver or some other sql error, please open sql(mysqld)");
-        } catch (Exception e) {
+            // Handle errors for JDBC
+            ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed to find driver or some"
+                    + " other sql error, please open sql(mysqld) " + se.getMessage());
+        } catch (ClassNotFoundException e) {
             // Handle errors for Class.forName
-            e.printStackTrace();
+            ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed "+e.getMessage());
             ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed to initializa local JDBC");
         }
     }
@@ -71,7 +71,7 @@ public class DatabaseHandler {
                 conn.close();
             }
         } catch (SQLException se) {
-            se.printStackTrace();
+            ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed "+se.getMessage());
         }
     }
 
@@ -97,7 +97,7 @@ public class DatabaseHandler {
                 return false;
             } else {
                 closeConnection();
-                sqlException.printStackTrace();
+                ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed "+sqlException.getMessage());
                 return false;
             }
         } finally {
@@ -152,7 +152,7 @@ public class DatabaseHandler {
 
         } catch (SQLException ex) {
             closeConnection();
-            ex.printStackTrace();
+            ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed "+ex.getMessage());
         } finally {
             //finally block used to close resources
             closeConnection();
@@ -162,6 +162,7 @@ public class DatabaseHandler {
                 }
             } catch (SQLException se) {
                 closeConnection();
+                ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed "+se.getMessage());
             }
         }
     }
@@ -169,6 +170,8 @@ public class DatabaseHandler {
     /**
      * Returns true if name exist in Database on column name, otherwise returns
      * false
+     * @param name
+     * @return 
      */
     public Boolean findName(String name) {
         preliminaries();
@@ -189,17 +192,20 @@ public class DatabaseHandler {
 
         } catch (SQLException ex) {
             closeConnection();
-            ex.printStackTrace();
+            ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed "+ex.getMessage());
         } finally {
             //finally block used to close resources
             closeConnection();
             try {
                 if (stmt != null) {
+                    if(result != null)
+                        result.close();
+                    stmt.close();
                     conn.close();
                 }
-                result.close();
             } catch (SQLException se) {
                 closeConnection();
+                ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed "+se.getMessage());
             }
         }
         return false;
@@ -208,6 +214,9 @@ public class DatabaseHandler {
     /**
      * Returns true if name exist in Database on column name, and on the same
      * row, on column password is pass, otherwise returns false
+     * @param name
+     * @param pass
+     * @return 
      */
     public Boolean findAccount(String name, String pass) {
         preliminaries();
@@ -228,17 +237,20 @@ public class DatabaseHandler {
 
         } catch (SQLException ex) {
             closeConnection();
-            ex.printStackTrace();
+            ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed "+ex.getMessage());
         } finally {
             //finally block used to close resources
             closeConnection();
             try {
                 if (stmt != null) {
+                    if(result != null)
+                        result.close();
+                    stmt.close();
                     conn.close();
                 }
-                result.close();
             } catch (SQLException se) {
                 closeConnection();
+                ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed "+se.getMessage());
             }
         }
         return false;
@@ -263,24 +275,27 @@ public class DatabaseHandler {
 
         } catch (SQLException ex) {
             closeConnection();
-            ex.printStackTrace();
+            ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed "+ex.getMessage());
         } finally {
             //finally block used to close resources
             closeConnection();
             try {
                 if (stmt != null) {
+                    if(result != null)
+                        result.close();
+                    stmt.close();
                     conn.close();
                 }
-                result.close();
             } catch (SQLException se) {
                 closeConnection();
+                ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed "+se.getMessage());
             }
         }
         return 0;
     }
 
     public List<MatchDatabase> getMatches(String name) {
-        List<MatchDatabase> matches = new ArrayList<MatchDatabase>();
+        List<MatchDatabase> matches = new ArrayList<>();
         preliminaries();
         Statement stmt = null;
         ResultSet result = null;
@@ -309,24 +324,27 @@ public class DatabaseHandler {
 
         } catch (SQLException ex) {
             closeConnection();
-            ex.printStackTrace();
+            ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed "+ex.getMessage());
         } finally {
             //finally block used to close resources
             closeConnection();
             try {
                 if (stmt != null) {
+                    if(result != null)
+                        result.close();
+                    stmt.close();
                     conn.close();
                 }
-                result.close();
             } catch (SQLException se) {
                 closeConnection();
+                ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed "+se.getMessage());
             }
         }
         return matches;
     }
 
     public List<MatchDatabase> getWonMatches(String name) {
-        List<MatchDatabase> matches = new ArrayList<MatchDatabase>();
+        List<MatchDatabase> matches = new ArrayList<>();
         preliminaries();
         Statement stmt = null;
         ResultSet result = null;
@@ -353,24 +371,27 @@ public class DatabaseHandler {
 
         } catch (SQLException ex) {
             closeConnection();
-            ex.printStackTrace();
+            ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed "+ex.getMessage());
         } finally {
             //finally block used to close resources
             closeConnection();
             try {
                 if (stmt != null) {
+                    if(result != null)
+                        result.close();
+                    stmt.close();
                     conn.close();
                 }
-                result.close();
             } catch (SQLException se) {
                 closeConnection();
+                ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed "+se.getMessage());
             }
         }
         return matches;
     }
 
     public List<MatchDatabase> getLostMatches(String name) {
-        List<MatchDatabase> matches = new ArrayList<MatchDatabase>();
+        List<MatchDatabase> matches = new ArrayList<>();
         preliminaries();
         Statement stmt = null;
         ResultSet result = null;
@@ -400,17 +421,19 @@ public class DatabaseHandler {
 
         } catch (SQLException ex) {
             closeConnection();
-            ex.printStackTrace();
+            ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed "+ex.getMessage());
         } finally {
             //finally block used to close resources
             closeConnection();
             try {
                 if (stmt != null) {
+                    if(result != null)
+                        result.close();
                     conn.close();
                 }
-                result.close();
             } catch (SQLException se) {
                 closeConnection();
+                ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed "+se.getMessage());
             }
         }
         return matches;
@@ -432,7 +455,7 @@ public class DatabaseHandler {
 
         } catch (SQLException ex) {
             closeConnection();
-            ex.printStackTrace();
+            ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed "+ex.getMessage());
         } finally {
             //finally block used to close resources
             closeConnection();
@@ -442,6 +465,7 @@ public class DatabaseHandler {
                 }
             } catch (SQLException se) {
                 closeConnection();
+                ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed "+se.getMessage());
             }
         }
     }
@@ -463,7 +487,7 @@ public class DatabaseHandler {
 
         } catch (SQLException ex) {
             closeConnection();
-            ex.printStackTrace();
+            ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed "+ex.getMessage());
         } finally {
             //finally block used to close resources
             closeConnection();
@@ -494,7 +518,7 @@ public class DatabaseHandler {
 
         } catch (SQLException ex) {
             closeConnection();
-            ex.printStackTrace();
+            ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed "+ex.getMessage());
         } finally {
             //finally block used to close resources
             closeConnection();
@@ -504,6 +528,7 @@ public class DatabaseHandler {
                 }
             } catch (SQLException se) {
                 closeConnection();
+                ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed "+se.getMessage());
             }
         }
     }
@@ -534,17 +559,20 @@ public class DatabaseHandler {
 
         } catch (SQLException ex) {
             closeConnection();
-            ex.printStackTrace();
+            ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed "+ex.getMessage());
         } finally {
             //finally block used to close resources
             closeConnection();
             try {
                 if (stmt != null) {
+                    if(result != null)
+                        result.close();
+                    stmt.close();
                     conn.close();
                 }
-                result.close();
             } catch (SQLException se) {
                 closeConnection();
+                ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed "+se.getMessage());
             }
         }
         return -1;
@@ -568,7 +596,7 @@ public class DatabaseHandler {
 
         } catch (SQLException ex) {
             closeConnection();
-            ex.printStackTrace();
+            ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed "+ex.getMessage());
         } finally {
             //finally block used to close resources
             try {
@@ -577,6 +605,7 @@ public class DatabaseHandler {
                 }
             } catch (SQLException se) {
                 closeConnection();
+                ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed "+se.getMessage());
             }
         }
     }
