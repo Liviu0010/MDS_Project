@@ -9,6 +9,7 @@ import Networking.Requests.Request;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.AbstractMap;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentSkipListMap;
@@ -19,7 +20,7 @@ public class ClientServerDispatcher extends ServerDispatcher {
     
     private volatile Match activeMatch;
     private static ClientServerDispatcher instance;
-    private final ConcurrentSkipListMap<String, Source> sourceFiles;
+    private final AbstractMap<String, Source> sourceFiles;
     
     private ClientServerDispatcher() {
         sourceFiles = new ConcurrentSkipListMap<>();
@@ -131,7 +132,7 @@ public class ClientServerDispatcher extends ServerDispatcher {
         return activeMatch;
     }
     
-    public ConcurrentSkipListMap<String, Source> getSourceFilesMap() {
+    public AbstractMap getSourceFilesMap() {
         return sourceFiles;
     }
 }

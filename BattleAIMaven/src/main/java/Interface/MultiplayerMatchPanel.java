@@ -10,12 +10,15 @@ import Networking.Requests.RemovePlayer;
 import Networking.Requests.Request;
 import Networking.Requests.RequestType;
 import Networking.Requests.SourceFileTransfer;
+import Networking.Server.ClientServerDispatcher;
 import Networking.Server.Match;
 import Networking.Server.Player;
+import Visual.VisualEngine;
 import java.awt.Color;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.util.AbstractMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -288,7 +291,29 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_readyButtonActionPerformed
 
     private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
-        setWorkerStatus(false);
+        
+        // Check if the user has selected a source file
+        String username = Player.getInstance().getUsername();
+        AbstractMap playersSourcesMap = ClientServerDispatcher.getInstance().getSourceFilesMap();
+        if (playersSourcesMap.get(username) == null) {
+            ConsoleFrame.showError("You must select a source file for your robot.");
+            return;
+        }
+        
+        if (ConnectionHandler.getInstance().isHost()) {
+            int playersCount = ClientServerDispatcher.getInstance()
+                    .getActiveMatch().getNumberOfPlayers();
+            
+            // Check if all players have selected a source file
+            if (playersSourcesMap.size() != playersCount) {
+                ConsoleFrame.showError("There are still players with no source file selected.");
+                return;
+            }
+            
+            setWorkerStatus(false);
+            List<Source> playersSources = new LinkedList(playersSourcesMap.values());
+            VisualEngine.getInstance(playersSources).setVisible(true);
+        }
     }//GEN-LAST:event_startButtonActionPerformed
 
     private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendButtonActionPerformed
