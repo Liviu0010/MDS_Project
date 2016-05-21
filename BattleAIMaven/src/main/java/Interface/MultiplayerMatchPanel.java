@@ -9,6 +9,7 @@ import Networking.Requests.ChatMessage;
 import Networking.Requests.RemovePlayer;
 import Networking.Requests.Request;
 import Networking.Requests.RequestType;
+import Networking.Requests.SourceFileTransfer;
 import Networking.Server.Match;
 import Networking.Server.Player;
 import java.awt.Color;
@@ -268,8 +269,11 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
             selectedSource = sourceList.get(index);
             playerSelectionModel.addElement(Player.getInstance().getUsername()+" / "+selectedSource.getName());
             listPlayersAndScripts.setModel(playerSelectionModel);
+            ConnectionHandler.getInstance().sendToMatch(new SourceFileTransfer(selectedSource));
         }catch(IndexOutOfBoundsException ex){
             ConsoleFrame.showError("Select script, please");
+        } catch (IOException ex) {
+            ConsoleFrame.showError("Cannot send source file content to server.");
         }
     }//GEN-LAST:event_selectButtonActionPerformed
 

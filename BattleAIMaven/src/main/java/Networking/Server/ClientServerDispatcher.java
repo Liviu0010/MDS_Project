@@ -2,6 +2,7 @@ package Networking.Server;
 
 import Client.ConnectionHandler;
 import Constants.MasterServerConstants;
+import Editor.Source;
 import Networking.Requests.HostMatch;
 import Networking.Requests.RegisterActivity;
 import Networking.Requests.Request;
@@ -10,6 +11,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,8 +19,10 @@ public class ClientServerDispatcher extends ServerDispatcher {
     
     private volatile Match activeMatch;
     private static ClientServerDispatcher instance;
+    private final ConcurrentSkipListMap<String, Source> sourceFiles;
     
     private ClientServerDispatcher() {
+        sourceFiles = new ConcurrentSkipListMap<>();
     }
     
     public static ClientServerDispatcher getInstance() {
@@ -125,5 +129,9 @@ public class ClientServerDispatcher extends ServerDispatcher {
      */
     public Match getActiveMatch() {
         return activeMatch;
+    }
+    
+    public ConcurrentSkipListMap<String, Source> getSourceFilesMap() {
+        return sourceFiles;
     }
 }

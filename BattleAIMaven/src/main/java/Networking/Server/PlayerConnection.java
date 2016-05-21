@@ -4,6 +4,8 @@ import Client.ConnectionHandler;
 import Constants.MasterServerConstants;
 import Networking.Requests.PlayerConnect;
 import Networking.Requests.Request;
+import Networking.Requests.RequestType;
+import Networking.Requests.SourceFileTransfer;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Timer;
@@ -91,6 +93,12 @@ public class PlayerConnection extends Connection {
                     Request request = (Request)object;
                     request.execute(outputStream);
                     
+                    if (request.getType() == RequestType.SOURCE_FILE_TRANSFER) {
+                        // map this source to the player
+                        SourceFileTransfer source = (SourceFileTransfer)request;
+                        ClientServerDispatcher.getInstance().getSourceFilesMap().put(username, source.getSource());
+                    }
+                    
                     if (!identityConfirmed) {
                         identityConfirmed = true;
                         username = ((PlayerConnect)request).getUsername();
@@ -103,6 +111,9 @@ public class PlayerConnection extends Connection {
                 activeConnection = false;
             }
         }
+        
+        // remove source mapping
+        ClientServerDispatcher.getInstance().getSourceFilesMap().remove(username);
         
         try {
             ConnectionHandler.getInstance().sendToMatch(new PlayerConnect(username, true));
