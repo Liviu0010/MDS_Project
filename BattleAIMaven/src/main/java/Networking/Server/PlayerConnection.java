@@ -1,6 +1,6 @@
 package Networking.Server;
 
-import Client.ConnectionHandler;
+import Networking.Client.ConnectionHandler;
 import Constants.MasterServerConstants;
 import Networking.Requests.PlayerConnect;
 import Networking.Requests.Request;

@@ -1,6 +1,6 @@
 package Networking.Server;
 
-import Client.ConnectionHandler;
+import Networking.Client.ConnectionHandler;
 import Constants.MasterServerConstants;
 import Editor.Source;
 import Networking.Requests.HostMatch;

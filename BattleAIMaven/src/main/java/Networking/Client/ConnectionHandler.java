@@ -1,4 +1,4 @@
-package Client;
+package Networking.Client;
 
 import Console.ConsoleFrame;
 import Constants.MasterServerConstants;
