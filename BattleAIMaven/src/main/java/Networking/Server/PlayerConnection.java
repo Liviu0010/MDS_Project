@@ -46,7 +46,7 @@ public class PlayerConnection extends Connection {
         TimerTask handleConnections = new TimerTask() {
             @Override
             public void run() {
-                 if (!threadRunning) {
+                 if (!threadRunning.get()) {
                     connectionHandler.cancel();
                     return;
                 }
@@ -64,12 +64,12 @@ public class PlayerConnection extends Connection {
     
     @Override
     public void run() {
-        threadRunning = true;
+        threadRunning.set(true);
         startConnectionHandler();
         
         Object object = null;
 
-        while (threadRunning) {
+        while (threadRunning.get()) {
             try {
                 if (!clientSocket.isInputShutdown()) {
                     object = inputStream.readObject();

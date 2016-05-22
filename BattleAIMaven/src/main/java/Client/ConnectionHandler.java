@@ -2,6 +2,8 @@ package Client;
 
 import Console.ConsoleFrame;
 import Constants.MasterServerConstants;
+import Interface.MainFrame;
+import Interface.MultiplayerServerPanel;
 import Networking.Requests.PlayerConnect;
 import Networking.Requests.RegisterActivity;
 import Networking.Server.Match;
@@ -145,7 +147,8 @@ public class ConnectionHandler {
         matchInputStream = new ObjectInputStream(matchSocket.getInputStream());
         matchOutputStream.writeObject(new PlayerConnect(Player.getInstance().getUsername()));
         matchOutputStream.flush();
-  
+       
+        
         Timer t = new Timer();
         TimerTask notification = new TimerTask() {
             @Override
@@ -154,8 +157,14 @@ public class ConnectionHandler {
                     matchOutputStream.writeObject(new RegisterActivity());
                     matchOutputStream.flush();
                 } catch (IOException ex) {
-                    ConsoleFrame.sendMessage(this.getClass().getSimpleName(), ex.getMessage());
                     t.cancel();
+                    
+                    if (!host) {
+                        MainFrame.getInstance()
+                                .changePanel(new MultiplayerServerPanel(MainFrame.getInstance()));
+                        ConsoleFrame.showError("Connection lost.");
+                    } else
+                        host = false;
                 }
                 System.out.println("Send acknowledgement");
             }
@@ -166,9 +175,9 @@ public class ConnectionHandler {
     public void disconnectFromMatch() {
         try {
             matchSocket.close();
+            //masterServerSocket.close();
             if (host) {
                 ClientServerDispatcher.getInstance().stop();
-                host = false;
             }
         } catch (IOException ex) {
             Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);

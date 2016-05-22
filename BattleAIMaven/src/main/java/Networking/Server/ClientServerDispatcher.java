@@ -49,9 +49,8 @@ public class ClientServerDispatcher extends ServerDispatcher {
             
             @Override
             public void run() {
-                if (!isRunning) {
-                    this.cancel();
-                    System.out.println("Cancelling");
+                if (!isRunning.get()) {
+                    masterServerNotifier.cancel();
                     return;
                 }
                 
@@ -64,7 +63,7 @@ public class ClientServerDispatcher extends ServerDispatcher {
                     // Confirm activity
                     ConnectionHandler.getInstance().sendToMasterServer(new RegisterActivity());
                 } catch (IOException ex) {
-                    this.cancel();
+                    masterServerNotifier.cancel();
                     Logger.getLogger(ClientServerDispatcher.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 
@@ -94,7 +93,7 @@ public class ClientServerDispatcher extends ServerDispatcher {
      */
     @Override
     protected void listenForConnections(ServerSocket serverSocket) {
-        while (isRunning) {
+        while (isRunning.get()) {
             try {
                 Socket clientSocket = serverSocket.accept();
                 PlayerConnection playerConnection = new PlayerConnection(clientSocket);

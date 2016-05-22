@@ -69,12 +69,12 @@ public class RegularConnection extends Connection {
     
     @Override
     public void run() {
-        threadRunning = true;
+        threadRunning.set(true);
         startConnectionHandler();
         
         Object object = null;
         
-        while (threadRunning) {
+        while (threadRunning.get()) {
             try {
 
                 if (!clientSocket.isInputShutdown()) {
@@ -91,8 +91,8 @@ public class RegularConnection extends Connection {
                         Match match = ((HostMatch)request).getMatch();
                         switchedConnection = true;
                         ServerDispatcher.getInstance().addConnection(new MatchConnection(clientSocket, inputStream, outputStream, match));
-                        threadRunning = false;
-                        activeConnection = false;
+                        threadRunning.set(false);
+                        activeConnection.set(false);
                     }
                 }
             } catch (ClassNotFoundException | IOException ex) {
