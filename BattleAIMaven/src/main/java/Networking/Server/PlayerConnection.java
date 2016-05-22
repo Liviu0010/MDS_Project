@@ -121,4 +121,8 @@ public class PlayerConnection extends Connection {
             Logger.getLogger(PlayerConnection.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    public String getUsername() {
+        return username;
+    }
 }

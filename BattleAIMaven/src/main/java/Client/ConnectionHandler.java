@@ -125,20 +125,20 @@ public class ConnectionHandler {
         
         int attempt = 1;
         while (attempt <= 6)
-        try {
-            matchSocket = new Socket(match.getIP(), match.getPort());
-            attempt = 7;
-        } catch (IOException ex) {
             try {
-                Thread.sleep(500);
-                attempt++;
-            } catch (InterruptedException ex1) {
-                Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex1);
+                matchSocket = new Socket(match.getIP(), match.getPort());
+                attempt = 7;
+            } catch (IOException ex) {
+                try {
+                    Thread.sleep(500);
+                    attempt++;
+                } catch (InterruptedException ex1) {
+                    Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex1);
+                }
+
+                if (attempt == 7)
+                    throw ex;
             }
-            
-            if (attempt == 7)
-                throw ex;
-        }
         
         matchOutputStream = new ObjectOutputStream(matchSocket.getOutputStream());
         matchOutputStream.flush();
