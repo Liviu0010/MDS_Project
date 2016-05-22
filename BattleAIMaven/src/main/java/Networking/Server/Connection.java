@@ -6,6 +6,8 @@ import java.net.Socket;
 
 import java.io.ObjectOutputStream;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public abstract class Connection implements Runnable {
     
@@ -81,5 +83,15 @@ public abstract class Connection implements Runnable {
     public void run() {
     }
     
-    
+    public void closeConnection() {
+        try {
+            threadRunning = false;
+            activeConnection = false;
+            outputStream.close();
+            inputStream.close();
+            clientSocket.close();
+        } catch (IOException ex) {
+            Logger.getLogger(Connection.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

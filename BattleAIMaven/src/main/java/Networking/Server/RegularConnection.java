@@ -55,15 +55,8 @@ public class RegularConnection extends Connection {
                 
                 // close connection if inactivity level has reached maximum
                 if (inactivityLevel.get() == MAX_INACTIVITY_LEVEL) {
-                    threadRunning = false;
-                    activeConnection = false;
+                    closeConnection();
                     connectionHandler.cancel();
-                    
-                    try {
-                        clientSocket.close();
-                    } catch (IOException ex) {
-                        Logger.getLogger(RegularConnection.class.getName()).log(Level.SEVERE, null, ex);
-                    }
                 }
                 else
                     inactivityLevel.incrementAndGet();
@@ -104,8 +97,7 @@ public class RegularConnection extends Connection {
                 }
             } catch (ClassNotFoundException | IOException ex) {
                 Logger.getLogger(MatchConnection.class.getName()).log(Level.SEVERE, null, ex);
-                threadRunning = false;
-                activeConnection = false;
+                closeConnection();
             }
         }
     }

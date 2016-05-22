@@ -53,22 +53,9 @@ public class PlayerConnection extends Connection {
                 
                 int level = inactivityLevel.incrementAndGet();
                 
-                if (level == MAX_INACTIVITY_LEVEL) {
-                    // Shut down the thread
-                    System.out.println("closing");
-                    activeConnection = false;
-                    threadRunning = false;
-                    try {
-                        /* Close the input stream of the socket. This also 
-                        forces readObject() to exit if it's still waiting for 
-                        an object to be read from the stream.
-                        */
-                        clientSocket.shutdownInput();
-                        System.out.println("Closed input");
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+                if (level == MAX_INACTIVITY_LEVEL) 
+                    closeConnection();
+             
             }
         };
         connectionHandler.scheduleAtFixedRate(handleConnections, MasterServerConstants.PACKET_DELAY * 2, 
@@ -107,8 +94,7 @@ public class PlayerConnection extends Connection {
 
             } catch (IOException | ClassNotFoundException ex) {
                 Logger.getLogger(MatchConnection.class.getName()).log(Level.SEVERE, null, ex);
-                threadRunning = false;
-                activeConnection = false;
+                closeConnection();
             }
         }
         

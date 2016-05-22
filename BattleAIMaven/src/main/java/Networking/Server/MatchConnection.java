@@ -63,32 +63,13 @@ public class MatchConnection extends Connection {
             public void run() {
                 if (!threadRunning) {
                     connectionHandler.cancel();
-                    try {
-                        clientSocket.close();
-                    } catch (IOException ex) {
-                        Logger.getLogger(MatchConnection.class.getName()).log(Level.SEVERE, null, ex);
-                    }
                     return;
                 }
-                
+       
                 int level = inactivityLevel.incrementAndGet();
                 
-                if (level == MAX_INACTIVITY_LEVEL) {
-                    // Shut down the thread
-                    System.out.println("closing");
-                    activeConnection = false;
-                    threadRunning = false;
-                    try {
-                        /* Close the input stream of the socket. This also 
-                        forces readObject() to exit if it's still waiting for 
-                        an object to be read from the stream.
-                        */
-                        clientSocket.close();
-                        System.out.println("Closed input");
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+                if (level == MAX_INACTIVITY_LEVEL) 
+                   closeConnection();
             }
         };
         
@@ -125,8 +106,7 @@ public class MatchConnection extends Connection {
 
             } catch (IOException | ClassNotFoundException ex) {
                 Logger.getLogger(MatchConnection.class.getName()).log(Level.SEVERE, null, ex);
-                threadRunning = false;
-                activeConnection = false;
+                closeConnection();
             }
         }
     }
