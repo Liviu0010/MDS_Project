@@ -1,13 +1,12 @@
 package Visual;
 
-import Console.ConsoleFrame;
 import Constants.VisualConstants;
 import Editor.Source;
 import Engine.GameEntity;
 import Engine.IntelligenceControlThread;
-import Engine.Tank;
 import java.awt.Dimension;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -21,18 +20,34 @@ public class VisualEngine extends javax.swing.JFrame {
     
     private int matchMode = VisualConstants.SINGLEPLAYER;
     IntelligenceControlThread ict;
+    private List<Source> sursePrimite;
     
     private static VisualEngine instance;
     
     private VisualEngine() {
         initComponents();
-        setLocationRelativeTo(null);
         setAlwaysOnTop(true);
     }
     
+    private VisualEngine(List<Source> surse) {
+        initComponents();
+        setAlwaysOnTop(true);
+        this.sursePrimite = surse;
+    }
+    
     public static VisualEngine getInstance(){
-        if(instance == null)
+        if(instance == null){
             instance = new VisualEngine();
+            instance.setLocationRelativeTo(null);
+        }
+        return instance;
+    }
+    
+    public static VisualEngine getInstance(List<Source> surse){
+        if(instance == null){
+            instance = new VisualEngine(surse);
+            instance.setLocationRelativeTo(null);
+        }
         return instance;
     }
     
@@ -109,7 +124,11 @@ public class VisualEngine extends javax.swing.JFrame {
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         
         if(matchMode == VisualConstants.SINGLEPLAYER){
-            ict = new IntelligenceControlThread(3);
+            if(sursePrimite != null){
+                ict = new IntelligenceControlThread(sursePrimite);
+            }else{
+                ict = new IntelligenceControlThread(3);
+            }
             ict.start();
         }
         

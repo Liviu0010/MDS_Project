@@ -9,12 +9,17 @@ import Networking.Requests.ChatMessage;
 import Networking.Requests.RemovePlayer;
 import Networking.Requests.Request;
 import Networking.Requests.RequestType;
+import Networking.Requests.SourceFileTransfer;
+import Networking.Requests.StartBattle;
+import Networking.Server.ClientServerDispatcher;
 import Networking.Server.Match;
 import Networking.Server.Player;
+import Visual.VisualEngine;
 import java.awt.Color;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.util.AbstractMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -268,8 +273,11 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
             selectedSource = sourceList.get(index);
             playerSelectionModel.addElement(Player.getInstance().getUsername()+" / "+selectedSource.getName());
             listPlayersAndScripts.setModel(playerSelectionModel);
+            ConnectionHandler.getInstance().sendToMatch(new SourceFileTransfer(selectedSource));
         }catch(IndexOutOfBoundsException ex){
             ConsoleFrame.showError("Select script, please");
+        } catch (IOException ex) {
+            ConsoleFrame.showError("Cannot send source file content to server.");
         }
     }//GEN-LAST:event_selectButtonActionPerformed
 
@@ -284,7 +292,33 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_readyButtonActionPerformed
 
     private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
-        setWorkerStatus(false);
+
+        // Check if the user has selected a source file
+        if (ConnectionHandler.getInstance().isHost()) 
+        {
+            String username = Player.getInstance().getUsername();
+            AbstractMap playersSourcesMap = ClientServerDispatcher.getInstance().getSourceFilesMap();
+            if (playersSourcesMap.get(username) == null) {
+                ConsoleFrame.showError("You must select a source file for your robot.");
+                return;
+            }
+
+   
+            int playersCount = ClientServerDispatcher.getInstance()
+                    .getActiveMatch().getNumberOfPlayers();
+
+            // Check if all players have selected a source file
+            if (playersSourcesMap.size() != playersCount) {
+                ConsoleFrame.showError("There are still players with no source file selected.");
+                return;
+            }
+
+            ClientServerDispatcher.getInstance().broadcastToAllExceptHost(new StartBattle());
+
+            setWorkerStatus(false);
+            List<Source> playersSources = new LinkedList(playersSourcesMap.values());
+            VisualEngine.getInstance(playersSources).setVisible(true);
+        }
     }//GEN-LAST:event_startButtonActionPerformed
 
     private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendButtonActionPerformed
@@ -333,17 +367,27 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
                 try {
                     Request request = (Request)ConnectionHandler.getInstance().readFromMatch();
                     
-                    
                         SwingUtilities.invokeLater(new Runnable() {
 
                             @Override
                             public void run() {
-                                if (request.getType() == RequestType.CHAT_MESSAGE)
-                                    chatOutputArea.append(((ChatMessage)request).getMessage());
-                                else if (request.getType() == RequestType.ADD_PLAYER) 
-                                    playerSelectionModel.addElement(((AddPlayer)request).getUsername());
-                                else if (request.getType() == RequestType.REMOVE_PLAYER)
-                                    playerSelectionModel.removeElement(((RemovePlayer)request).getUsername());
+                                switch (request.getType()) {
+                                    case RequestType.CHAT_MESSAGE:
+                                        chatOutputArea.append(((ChatMessage)request).getMessage());
+                                        break;
+                                    case RequestType.ADD_PLAYER:
+                                        playerSelectionModel.addElement(((AddPlayer)request).getUsername());
+                                        break;
+                                    case RequestType.REMOVE_PLAYER:
+                                        playerSelectionModel.removeElement(((RemovePlayer)request).getUsername());
+                                        break;
+                                    case RequestType.START_BATTLE:
+                                        VisualEngine.getInstance().setVisible(true);
+                                        setWorkerStatus(false);
+                                        break;
+                                    default:
+                                        break;
+                                }
                             }
                         });
                     

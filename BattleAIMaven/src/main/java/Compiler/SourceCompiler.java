@@ -3,6 +3,7 @@ package Compiler;
 import Console.ConsoleFrame;
 import Editor.Source;
 import Editor.SourceManager;
+import Intelligence.IntelligenceTemplate;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -64,14 +65,14 @@ public abstract class SourceCompiler {
      * @return A instance of the given source object
      */
     public static Object getInstanceOfSource(Source source){
-        Object sourceInstance = null;
+        IntelligenceTemplate sourceInstance = null;
         File sourceFile = compileSource(source,true,false);
         if(sourceFile != null){
             try {
                 
                 CLASS_LOADER = URLClassLoader.newInstance(new URL[] { sourceFile.toURI().toURL() });
                 Class<?> sourceClass = Class.forName("User_Sources."+source.getName(),true,CLASS_LOADER);
-                sourceInstance = sourceClass.newInstance();
+                sourceInstance = (IntelligenceTemplate) sourceClass.newInstance();
                 ConsoleFrame.sendMessage(SourceCompiler.class.getSimpleName(), "Created instance of "+sourceInstance.getClass().getSimpleName());
                 
             } catch (MalformedURLException ex) {
