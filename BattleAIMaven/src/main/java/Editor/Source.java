@@ -1,6 +1,7 @@
 package Editor;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  *
@@ -21,14 +22,7 @@ public class Source implements Serializable{
     }
     
     public Source(String name, String author) {
-        String generatedContent = "package User_Sources;\n\n";
-        generatedContent += "   public class "+name+"{\n";
-        generatedContent += "       static { System.out.println(\"Hello "+author+"\"); }\n";
-        generatedContent += "       public "+name+"(){\n";
-        generatedContent += "           System.out.println(\"I have been instantieted\");\n";
-        generatedContent += "       }\n";
-        generatedContent += "   }\n";
-        this.content = generatedContent;
+        this.content = "";
         this.name = name;
         this.author = author;
     }
@@ -52,4 +46,23 @@ public class Source implements Serializable{
     public String toString() {
         return "Source{" + "name=" + name + ", author=" + author + ", content=" + content + '}';
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof Source){
+            Source sObj = (Source) obj;
+            return this.name.equals(sObj.name) && this.author.equals(sObj.author);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 53 * hash + Objects.hashCode(this.name);
+        hash = 53 * hash + Objects.hashCode(this.author);
+        return hash;
+    }
+    
+    
 }

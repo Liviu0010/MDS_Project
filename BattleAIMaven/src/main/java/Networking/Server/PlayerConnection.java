@@ -1,9 +1,11 @@
 package Networking.Server;
 
-import Client.ConnectionHandler;
+import Networking.Client.ConnectionHandler;
 import Constants.MasterServerConstants;
 import Networking.Requests.PlayerConnect;
 import Networking.Requests.Request;
+import Networking.Requests.RequestType;
+import Networking.Requests.SourceFileTransfer;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Timer;
@@ -44,29 +46,16 @@ public class PlayerConnection extends Connection {
         TimerTask handleConnections = new TimerTask() {
             @Override
             public void run() {
-                 if (!threadRunning) {
+                 if (!threadRunning.get()) {
                     connectionHandler.cancel();
                     return;
                 }
                 
                 int level = inactivityLevel.incrementAndGet();
                 
-                if (level == MAX_INACTIVITY_LEVEL) {
-                    // Shut down the thread
-                    System.out.println("closing");
-                    activeConnection = false;
-                    threadRunning = false;
-                    try {
-                        /* Close the input stream of the socket. This also 
-                        forces readObject() to exit if it's still waiting for 
-                        an object to be read from the stream.
-                        */
-                        clientSocket.shutdownInput();
-                        System.out.println("Closed input");
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+                if (level == MAX_INACTIVITY_LEVEL) 
+                    closeConnection();
+             
             }
         };
         connectionHandler.scheduleAtFixedRate(handleConnections, MasterServerConstants.PACKET_DELAY * 2, 
@@ -75,12 +64,12 @@ public class PlayerConnection extends Connection {
     
     @Override
     public void run() {
-        threadRunning = true;
+        threadRunning.set(true);
         startConnectionHandler();
         
         Object object = null;
 
-        while (threadRunning) {
+        while (threadRunning.get()) {
             try {
                 if (!clientSocket.isInputShutdown()) {
                     object = inputStream.readObject();
@@ -91,6 +80,12 @@ public class PlayerConnection extends Connection {
                     Request request = (Request)object;
                     request.execute(outputStream);
                     
+                    if (request.getType() == RequestType.SOURCE_FILE_TRANSFER) {
+                        // map this source to the player
+                        SourceFileTransfer source = (SourceFileTransfer)request;
+                        ClientServerDispatcher.getInstance().getSourceFilesMap().put(username, source.getSource());
+                    }
+                    
                     if (!identityConfirmed) {
                         identityConfirmed = true;
                         username = ((PlayerConnect)request).getUsername();
@@ -99,15 +94,21 @@ public class PlayerConnection extends Connection {
 
             } catch (IOException | ClassNotFoundException ex) {
                 Logger.getLogger(MatchConnection.class.getName()).log(Level.SEVERE, null, ex);
-                threadRunning = false;
-                activeConnection = false;
+                closeConnection();
             }
         }
+        
+        // remove source mapping
+        ClientServerDispatcher.getInstance().getSourceFilesMap().remove(username);
         
         try {
             ConnectionHandler.getInstance().sendToMatch(new PlayerConnect(username, true));
         } catch (IOException ex) {
             Logger.getLogger(PlayerConnection.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public String getUsername() {
+        return username;
     }
 }

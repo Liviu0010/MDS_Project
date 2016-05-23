@@ -1,7 +1,8 @@
 package Networking.Requests;
 
-import Client.ConnectionHandler;
+import Networking.Client.ConnectionHandler;
 import Networking.Server.ClientServerDispatcher;
+import Networking.Server.Match;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.logging.Level;
@@ -31,10 +32,15 @@ public class PlayerConnect extends Request {
         try {
             Request request = isDisconnecting ? new RemovePlayer(username) : new AddPlayer(username);
             String message = username;
-            if (isDisconnecting) 
+            Match activeMatch = ClientServerDispatcher.getInstance().getActiveMatch();
+            if (isDisconnecting) {
                 message += " has left.\n";
-            else
+                activeMatch.removePlayer(username);
+            }
+            else {
                 message += " has joined.\n";
+                activeMatch.addPlayer(username);
+            }
             // Ask master server to update match
             ConnectionHandler.getInstance().sendToMasterServer(request);
             // Broadcast request to all connected clients

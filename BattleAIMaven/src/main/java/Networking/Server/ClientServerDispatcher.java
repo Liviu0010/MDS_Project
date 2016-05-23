@@ -1,15 +1,19 @@
 package Networking.Server;
 
-import Client.ConnectionHandler;
+import Networking.Client.ConnectionHandler;
 import Constants.MasterServerConstants;
+import Editor.Source;
 import Networking.Requests.HostMatch;
+import Networking.Requests.PlayerConnect;
 import Networking.Requests.RegisterActivity;
 import Networking.Requests.Request;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.AbstractMap;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,8 +21,10 @@ public class ClientServerDispatcher extends ServerDispatcher {
     
     private volatile Match activeMatch;
     private static ClientServerDispatcher instance;
+    private final AbstractMap<String, Source> sourceFiles;
     
     private ClientServerDispatcher() {
+        sourceFiles = new ConcurrentSkipListMap<>();
     }
     
     public static ClientServerDispatcher getInstance() {
@@ -43,9 +49,8 @@ public class ClientServerDispatcher extends ServerDispatcher {
             
             @Override
             public void run() {
-                if (!isRunning) {
-                    this.cancel();
-                    System.out.println("Cancelling");
+                if (!isRunning.get()) {
+                    masterServerNotifier.cancel();
                     return;
                 }
                 
@@ -58,7 +63,7 @@ public class ClientServerDispatcher extends ServerDispatcher {
                     // Confirm activity
                     ConnectionHandler.getInstance().sendToMasterServer(new RegisterActivity());
                 } catch (IOException ex) {
-                    this.cancel();
+                    masterServerNotifier.cancel();
                     Logger.getLogger(ClientServerDispatcher.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 
@@ -88,7 +93,7 @@ public class ClientServerDispatcher extends ServerDispatcher {
      */
     @Override
     protected void listenForConnections(ServerSocket serverSocket) {
-        while (isRunning) {
+        while (isRunning.get()) {
             try {
                 Socket clientSocket = serverSocket.accept();
                 PlayerConnection playerConnection = new PlayerConnection(clientSocket);
@@ -120,10 +125,29 @@ public class ClientServerDispatcher extends ServerDispatcher {
             }
     }
     
+    /** Send a request to all clients connected to this match except the host.
+     * @param request The request which will be broadcasted to all connected players.
+     */
+    public synchronized void broadcastToAllExceptHost(Request request) {
+        for (Connection i: activeConnections)
+            if (!((PlayerConnection)i).getUsername().equals(Player.getInstance().getUsername()))
+                try {
+                    i.getOutputStream().reset();
+                    i.getOutputStream().writeObject(request);
+                    i.getOutputStream().flush();
+                } catch (IOException ex) {
+                    Logger.getLogger(ClientServerDispatcher.class.getName()).log(Level.SEVERE, null, ex);
+                }
+    }
+    
     /**
      * @return The active match associated with this server.
      */
     public Match getActiveMatch() {
         return activeMatch;
+    }
+    
+    public AbstractMap getSourceFilesMap() {
+        return sourceFiles;
     }
 }

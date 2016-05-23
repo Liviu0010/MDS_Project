@@ -193,7 +193,7 @@ public class SingleplayerPanel extends JPanel {
     }//GEN-LAST:event_removeButtonActionPerformed
 
     private void battleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_battleButtonActionPerformed
-        VisualEngine.getInstance().setVisible(true);
+        VisualEngine.getInstance(addedSourceList).setVisible(true);
         rootFrame.setVisible(true);
     }//GEN-LAST:event_battleButtonActionPerformed
 
