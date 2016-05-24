@@ -10,7 +10,7 @@ import java.util.List;
 public class InfoPlayer {
     private final String userName;
     private Integer numberOfPoints;
-    private final DatabaseHandler DB = DatabaseHandler.getInstance();
+    private static DatabaseHandler DB = DatabaseHandler.getInstance();
     
     public InfoPlayer(String name){
         this.userName = name;
@@ -23,11 +23,11 @@ public class InfoPlayer {
     }
     
     /**
-     * Returns an object Player with userName - name and his number of points    
+     * Returns an object InfoPlayer with userName - name and his number of points    
      * @param name - the user name
      * @return 
      */
-    public InfoPlayer getObjectPlayer(String name){
+    public InfoPlayer singIn(String name){
         return new InfoPlayer(name, DB.getNoOfPoints(name));
     }
     
@@ -37,7 +37,7 @@ public class InfoPlayer {
      * @param name - the user name
      * @return 
      */
-    public Boolean isValidName (String name){
+    public static Boolean isValidName (String name){
         return (DB.findName(name) != true);
     }
     
@@ -46,7 +46,7 @@ public class InfoPlayer {
      * otherwise returns false.
      * @return 
      */
-    public Boolean isValidAccount (String name, String pass){
+    public static Boolean isValidAccount (String name, String pass){
         return DB.findAccount(name, pass);
     }
     
@@ -54,9 +54,11 @@ public class InfoPlayer {
      * Push the player with User Name - name and Password - pass in database
      * @param name
      * @param pass 
+     * @return an object InfoPlayer with userName - name and his number of points
      */
-    public void LogIn(String name, String pass){
+    public static InfoPlayer logIn(String name, String pass){
         DB.pushPlayer(name, pass);
+        return new InfoPlayer(name);
     }
 
     public void setNumberOfPoints(Integer numberOfPoints) {
@@ -76,16 +78,16 @@ public class InfoPlayer {
      * @param Player
      * @return List of matches in which Player participate
      */
-    public List getMatches(InfoPlayer Player){
-        return DB.getMatches(Player.userName);
+    public List getMatches(){
+        return DB.getMatches(userName);
     }
     
-    public List getWonMatches(InfoPlayer Player){
-        return DB.getWonMatches(Player.userName);
+    public List getWonMatches(){
+        return DB.getWonMatches(userName);
     }
     
-    public List getLostMatches(InfoPlayer Player){
-        return DB.getLostMatches(Player.userName);
+    public List getLostMatches(){
+        return DB.getLostMatches(userName);
     }
     
     /**
@@ -93,7 +95,7 @@ public class InfoPlayer {
      * @param Player who want to change the password
      * @param pass new password
      */
-    public void changePassword(InfoPlayer Player, String pass){
-        DB.changePassword(Player.userName, pass);
+    public void changePassword(String pass){
+        DB.changePassword(userName, pass);
     }
 }

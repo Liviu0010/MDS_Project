@@ -15,4 +15,6 @@ public final class RequestType {
     public final static int LOGIN_ACCOUNT = 8;
     public final static int BOOLEAN_RESPONSE = 9;
     public final static int REGISTER_ACCOUNT = 10;
+    public final static int SOURCE_FILE_TRANSFER = 11;
+    public final static int START_BATTLE = 12;
 }
