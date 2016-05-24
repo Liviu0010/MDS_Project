@@ -13,9 +13,9 @@ import java.util.List;
 
 public class IntelligenceControlThread extends Thread{
     private static IntelligenceControlThread instance;
-    private BulletUpdater bulletUpdater;
-    private ArrayList<TankThread> tankThreads;
-    private ArrayList<Semaphore> semaphores;
+    private final BulletUpdater bulletUpdater;
+    private final ArrayList<TankThread> tankThreads;
+    private final ArrayList<Semaphore> semaphores;
     private boolean running;
     
 //    public IntelligenceControlThread(ArrayList<Source> surse){
@@ -57,14 +57,20 @@ public class IntelligenceControlThread extends Thread{
             synchronized(GameEntity.entityList){
                 new Tank(); //adds it to entityList
             }
-            if(i == 0)
-                playerCode = new Intelligence.TestTank1();
-            else if(i==1)
-                playerCode = new Intelligence.TestTank2();
-            else if(i == 2)
-                playerCode = new Intelligence.TestTank3();
-            else
-                playerCode = new IntelligenceTemplate();
+            switch (i) {
+                case 0:
+                    playerCode = new Intelligence.TestTank1();
+                    break;
+                case 1:
+                    playerCode = new Intelligence.TestTank2();
+                    break;
+                case 2:
+                    playerCode = new Intelligence.TestTank3();
+                    break;
+                default:
+                    playerCode = new IntelligenceTemplate();
+                    break;
+            }
             
             semaphores.add(new Semaphore());
             tankThreads.add(new TankThread(playerCode, semaphores.get(i)));

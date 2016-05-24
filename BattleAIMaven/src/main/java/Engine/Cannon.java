@@ -17,13 +17,14 @@ import java.awt.geom.AffineTransform;
 
 final public class Cannon extends GameEntity implements Serializable,TransformInterface, Drawable{
 
-    private Image cannonSprite;
+    private final Image cannonSprite;
     Tank parent;
     /**
      *
      * @param id
      * @param xPos
      * @param yPos
+     * @param parent
      */
     public Cannon(int id, double xPos, double yPos, Tank parent){
         //in the case of the cannon spd will represend the speed of moving on the board and dmg the damage that it

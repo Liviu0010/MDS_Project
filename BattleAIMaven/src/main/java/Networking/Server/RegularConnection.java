@@ -30,6 +30,7 @@ public class RegularConnection extends Connection {
     
     /**
      * @param clientSocket The client socket associated with the connection.
+     * @throws java.io.IOException
      */
     public RegularConnection(Socket clientSocket) throws IOException {
         super(clientSocket);
@@ -72,7 +73,7 @@ public class RegularConnection extends Connection {
         threadRunning.set(true);
         startConnectionHandler();
         
-        Object object = null;
+        Object object;
         
         while (threadRunning.get()) {
             try {

@@ -8,8 +8,8 @@ import java.util.logging.Logger;
 
 public class LoginAccount extends Request {
     
-    private String username;
-    private String password;
+    private final String username;
+    private final String password;
     
     public LoginAccount(String username, String password) {
         super(RequestType.LOGIN_ACCOUNT);

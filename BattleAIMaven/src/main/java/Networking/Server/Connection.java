@@ -26,6 +26,7 @@ public abstract class Connection implements Runnable {
      * provided socket.
      * @param clientSocket The client socket associated with the connection.
      * @param match The active match object to be used for the connection.
+     * @throws java.io.IOException
      */
     public Connection(Socket clientSocket) throws IOException {
         this.clientSocket = clientSocket;
