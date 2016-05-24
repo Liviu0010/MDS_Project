@@ -167,6 +167,8 @@ public class MultiplayerLoginRegisterPanel extends javax.swing.JPanel {
                     return;
                 }
                 rootFrame.changePanel(new MultiplayerServerPanel(rootFrame));
+            }else{
+                ConsoleFrame.showError("Username can't contain these characters: ' = + ; \" ");
             }
         } catch (InterruptedException | ExecutionException | IOException | ClassNotFoundException ex) {
             ConsoleFrame.showError(ex.getMessage());
@@ -178,13 +180,16 @@ public class MultiplayerLoginRegisterPanel extends javax.swing.JPanel {
         @Override
         protected Boolean doInBackground() throws Exception {
             //This should start false
-            boolean success = true;
+            boolean success;
             String username = usernameField.getText();
             String password = Guard.scramblePassword(String.valueOf(passwordField.getPassword()));
             
             if(checkUsername(username)){
                 Player.getInstance().setUsername(username);
                 success = true;
+            }else{
+                success = false;
+                
             }
             
             return success;
@@ -194,7 +199,6 @@ public class MultiplayerLoginRegisterPanel extends javax.swing.JPanel {
             char[] unacceptebleChars = {'\'','=','+',';','\"'};
             for(char c:unacceptebleChars){
                 if(username.indexOf(c) >= 0){
-                    ConsoleFrame.showError("Username can't contain these characters: ' = + ; \" ");
                     return false;
                 }
             }
