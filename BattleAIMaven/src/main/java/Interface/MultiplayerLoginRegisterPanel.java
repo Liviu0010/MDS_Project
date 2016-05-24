@@ -145,6 +145,8 @@ public class MultiplayerLoginRegisterPanel extends javax.swing.JPanel {
                     return;
                 }
                 rootFrame.changePanel(new MultiplayerServerPanel(rootFrame));
+            } else {
+                ConsoleFrame.showError("Username can't contain these characters: ' = + ; \" ");
             }
         } catch (InterruptedException | ExecutionException | IOException | ClassNotFoundException ex) {
             ConsoleFrame.showError(ex.getMessage());
