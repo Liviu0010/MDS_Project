@@ -77,31 +77,23 @@ public class Main implements ApplicationState{
         
         //Starting main interface if is not server
         if(!isServer){
-            EventQueue.invokeLater(new Runnable() {
-
-                @Override
-                public void run() {
-                    ConsoleFrame.sendMessage(Main.class.getSimpleName(),"Initializing MainFrame");
-                    mainFrame = MainFrame.getInstance();
-                    mainFrame.setLocationRelativeTo(null);
-                    mainFrame.setVisible(true);
-                }
+            EventQueue.invokeLater(() -> {
+                ConsoleFrame.sendMessage(Main.class.getSimpleName(),"Initializing MainFrame");
+                mainFrame = MainFrame.getInstance();
+                mainFrame.setLocationRelativeTo(null);
+                mainFrame.setVisible(true);
             });
         }
         
         //Starting console if wanted
         if(showConsole){
-            EventQueue.invokeLater(new Runnable() {
-
-                @Override
-                public void run() {
-                    ConsoleFrame.sendMessage(Main.class.getSimpleName(),"Initializing ConsoleFrame");
-                    synchronized(consoleReady){
-                        console = ConsoleFrame.getInstance();
-                        console.setLocation(100, 100);
-                        console.setVisible(true);
-                        consoleReady = true;
-                    }
+            EventQueue.invokeLater(() -> {
+                ConsoleFrame.sendMessage(Main.class.getSimpleName(),"Initializing ConsoleFrame");
+                synchronized(consoleReady){
+                    console = ConsoleFrame.getInstance();
+                    console.setLocation(100, 100);
+                    console.setVisible(true);
+                    consoleReady = true;
                 }
             });
             synchronized(consoleReady){

@@ -5,16 +5,11 @@ import Console.ConsoleFrame;
 import Networking.Requests.BooleanResponse;
 import Networking.Requests.LoginAccount;
 import Networking.Requests.RegisterAccount;
-import Networking.Requests.Request;
-import Networking.Requests.RequestType;
 import Networking.Server.Player;
 import Security.Guard;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.SwingWorker;
-import static Networking.Requests.RequestType.BOOLEAN_RESPONSE;
 
 /**
  *
@@ -172,6 +167,8 @@ public class MultiplayerLoginRegisterPanel extends javax.swing.JPanel {
                     return;
                 }
                 rootFrame.changePanel(new MultiplayerServerPanel(rootFrame));
+            }else{
+                ConsoleFrame.showError("Username can't contain these characters: ' = + ; \" ");
             }
         } catch (InterruptedException | ExecutionException | IOException | ClassNotFoundException ex) {
             ConsoleFrame.showError(ex.getMessage());
@@ -183,13 +180,16 @@ public class MultiplayerLoginRegisterPanel extends javax.swing.JPanel {
         @Override
         protected Boolean doInBackground() throws Exception {
             //This should start false
-            boolean success = true;
+            boolean success;
             String username = usernameField.getText();
             String password = Guard.scramblePassword(String.valueOf(passwordField.getPassword()));
             
             if(checkUsername(username)){
                 Player.getInstance().setUsername(username);
                 success = true;
+            }else{
+                success = false;
+                
             }
             
             return success;
@@ -199,7 +199,6 @@ public class MultiplayerLoginRegisterPanel extends javax.swing.JPanel {
             char[] unacceptebleChars = {'\'','=','+',';','\"'};
             for(char c:unacceptebleChars){
                 if(username.indexOf(c) >= 0){
-                    ConsoleFrame.showError("Username can't contain these characters: ' = + ; \" ");
                     return false;
                 }
             }
