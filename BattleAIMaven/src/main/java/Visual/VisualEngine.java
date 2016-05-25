@@ -4,6 +4,10 @@ import Constants.VisualConstants;
 import Editor.Source;
 import Engine.GameEntity;
 import Engine.IntelligenceControlThread;
+import Main.GameModes;
+import Networking.Client.ConnectionHandler;
+import Networking.Requests.EntityUpdateRequest;
+import Networking.Server.ClientServerDispatcher;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +22,7 @@ public class VisualEngine extends javax.swing.JFrame {
      * Creates new form VisualEngine
      */
     
-    private int matchMode = VisualConstants.SINGLEPLAYER;
+    private GameModes matchMode = GameModes.SINGLEPLAYER;
     IntelligenceControlThread ict;
     private List<Source> sursePrimite;
     
@@ -57,13 +61,17 @@ public class VisualEngine extends javax.swing.JFrame {
     
     public void updateEntityList(ArrayList<GameEntity> newList){
         visualPanel1.entityList = newList;
+        if(matchMode == GameModes.MULTIPLAYER_HOST){
+            ClientServerDispatcher.getInstance().broadcastToAllExceptHost(new EntityUpdateRequest(newList));
+        }
     }
     
-    public void setMatchMode(int matchMode){
+    public void setMatchMode(GameModes matchMode){
         this.matchMode = matchMode;
+        visualPanel1.setGameMode(matchMode);
     }
     
-    public int getMatchMode(){
+    public GameModes getMatchMode(){
         return matchMode;
     }
     
@@ -123,7 +131,7 @@ public class VisualEngine extends javax.swing.JFrame {
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         
-        if(matchMode == VisualConstants.SINGLEPLAYER){
+        if(matchMode == GameModes.SINGLEPLAYER){
             if(sursePrimite != null){
                 ict = new IntelligenceControlThread(sursePrimite);
             }else{
@@ -139,7 +147,6 @@ public class VisualEngine extends javax.swing.JFrame {
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         visualPanel1.animator.stopAnimation();   //stopping the animator when the window is closing
-        visualPanel1.bullets.clear();
         instance = null;    //the form's close operation is DISPOSE, so there's no point in keeping the old instance around
         
         ict.stopNicely();
