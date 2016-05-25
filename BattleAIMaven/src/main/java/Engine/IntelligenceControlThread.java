@@ -148,6 +148,10 @@ public class IntelligenceControlThread extends Thread{
             for(int i = 0; i < tankThreads.size(); i++){
                 synchronized (semaphores.get(i)) {
                     if (semaphores.get(i).isGreen()) {
+                        //to ensure that the enemy is always detected
+                        ((Tank)GameEntity.entityList.get(i)).rotate(0.1);
+                        ((Tank)GameEntity.entityList.get(i)).rotate(-0.1);
+                        //end
                         semaphores.get(i).goRed();
                         semaphores.get(i).notify();
                     }

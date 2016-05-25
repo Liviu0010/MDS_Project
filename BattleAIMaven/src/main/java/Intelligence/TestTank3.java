@@ -6,8 +6,8 @@ package Intelligence;
 public class TestTank3 extends Intelligence.IntelligenceTemplate{
     @Override
     public void run(){
-        rotateCannonLeft();
-        rotateCannonLeft();
+        rotateCannon(10);
+        rotateCannon(3);
         //rotateRight();
     }
 }

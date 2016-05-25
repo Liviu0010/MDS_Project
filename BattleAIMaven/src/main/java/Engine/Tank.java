@@ -95,6 +95,16 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
         }
     }
     
+    public Point getCenter(){
+        Point center;
+        
+        
+        center = Cannon.getForwardPoint(new Point((int)this.x, (int)this.y), angle, Constants.VisualConstants.TANK_WIDTH/2);
+        center = Cannon.getForwardPoint(center, angle-90, Constants.VisualConstants.TANK_HEIGHT/2);
+        
+        return center;
+    }
+    
     /**
      *  Gets the id of the tan
      * @return a integer value representing the id of the tank.
@@ -125,7 +135,7 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
     @Override
     public void rotate(double degrees){
         angle = (angle + degrees)%360;
-        cannon.rotate(degrees);
+        rotateCannon(degrees);
     }
     /**
      *  Rotates the cannon of the tank by 'degrees' reported to the cannon's rotation angle
