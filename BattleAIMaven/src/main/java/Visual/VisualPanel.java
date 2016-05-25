@@ -5,6 +5,7 @@ import Constants.PathConstants;
 import Engine.Bullet;
 import Engine.GameEntity;
 import Engine.Tank;
+import Main.GameModes;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -14,9 +15,6 @@ import java.awt.RenderingHints;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 import javax.imageio.ImageIO;
 
 /**
@@ -27,10 +25,10 @@ public class VisualPanel extends javax.swing.JPanel {
 
     private long lastTime, totalTime, frames, totalFrames;
     Animator animator;
-    List<Tank> tanks = Collections.synchronizedList(new LinkedList<Tank>());
-    final List<Bullet> bullets = Collections.synchronizedList(new LinkedList<Bullet>());
     
-    ArrayList<GameEntity> entityList;
+    private GameModes gameMode;
+    
+    public ArrayList<GameEntity> entityList;
     /**
      * Creates new form VisualPanel
      */ 
@@ -38,7 +36,6 @@ public class VisualPanel extends javax.swing.JPanel {
     
     public VisualPanel() {
         initComponents();
-        
         try {
             tankSprite = ImageIO.read(new File(PathConstants.TANK_BODY_SPRITE_PATH));
             cannonSprite = ImageIO.read(new File(PathConstants.TANK_CANNON_SPRITE_PATH));
@@ -46,19 +43,13 @@ public class VisualPanel extends javax.swing.JPanel {
         } catch (IOException ex) {
             ConsoleFrame.sendMessage("VisualPanel", "Failed to get sprites");
         }
-
-      /*  for(int i = 0; i<20; i++)
-        tanks.add(new Tank(Math.random()*1000%Constants.VisualConstants.ENGINE_WIDTH, 
-                Math.random()*1000%Constants.VisualConstants.ENGINE_HEIGHT, 2, 100, 0, 100,"Tank1", tankSprite, cannonSprite));
-*/
         
-            //tanks.add(new Tank(10, 30, "tanc1"));
-            //tanks.add(new Tank(800, 30, "tanc1"));
-            //tanks.get(1).setAngle(180);
-        for(Tank aux:tanks){
-            System.out.println(aux);
-        }
-        animator = new Animator(this, tanks, bullets);
+        animator = new Animator(this);
+    }
+    
+    public void setGameMode(GameModes gameMode){
+        this.gameMode = gameMode;
+        animator.setGameMode(gameMode);
     }
     
     @Override
@@ -70,11 +61,6 @@ public class VisualPanel extends javax.swing.JPanel {
         ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
         
         //drawing all the stuff
-        //drawing the tanks first
-        for (Tank tankAux : tanks) {
-            tankAux.draw(g);
-        }
-        
         //Testing 
         if (entityList != null) {
             synchronized (entityList) {
@@ -91,15 +77,6 @@ public class VisualPanel extends javax.swing.JPanel {
                 }
             }
         }
-        //END Testing
-        
-        //bullets drawn on top of the tanks
-        synchronized(bullets){
-            for (Bullet bulletAux : bullets) {
-                bulletAux.draw(g);
-            }
-        }
-        
         
         long currentTime = System.currentTimeMillis();
         totalTime += lastTime == 0 ? 0 : currentTime - lastTime;
@@ -113,7 +90,7 @@ public class VisualPanel extends javax.swing.JPanel {
         }
         
         g.setColor(Color.BLACK);
-        g.drawString("FPS: "+totalFrames + " number of bullets: "+bullets.size(), 2, 11);
+        g.drawString("FPS: "+totalFrames, 2, 11);
     }
     
     /**

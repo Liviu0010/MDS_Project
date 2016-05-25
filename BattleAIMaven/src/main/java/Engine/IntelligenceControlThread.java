@@ -7,6 +7,7 @@ import Editor.Source;
 import Intelligence.IntelligenceTemplate;
 import Intelligence.Semaphore;
 import Intelligence.TankThread;
+import Main.GameModes;
 import Visual.VisualEngine;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +77,7 @@ public class IntelligenceControlThread extends Thread{
             tankThreads.add(new TankThread(playerCode, semaphores.get(i)));
         }
         
-        if(VisualEngine.getInstance().getMatchMode() == VisualConstants.SINGLEPLAYER)
+        if(VisualEngine.getInstance().getMatchMode() == GameModes.SINGLEPLAYER)
             VisualEngine.getInstance().updateEntityList(GameEntity.entityList);
         
         bulletUpdater = new BulletUpdater();
@@ -110,7 +111,7 @@ public class IntelligenceControlThread extends Thread{
             tankThreads.add(new TankThread(playerCode, semaphores.get(i)));
         }
         
-        if(VisualEngine.getInstance().getMatchMode() == VisualConstants.SINGLEPLAYER)
+        if(VisualEngine.getInstance().getMatchMode() == GameModes.SINGLEPLAYER)
             VisualEngine.getInstance().updateEntityList(GameEntity.entityList);
         
         bulletUpdater = new BulletUpdater();
