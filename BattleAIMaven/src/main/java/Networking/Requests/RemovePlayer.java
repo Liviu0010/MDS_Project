@@ -4,7 +4,7 @@ import java.io.ObjectOutputStream;
 
 public class RemovePlayer extends Request {
 
-    private String username;
+    private final String username;
     
     public RemovePlayer(String username) {
         super(RequestType.REMOVE_PLAYER);

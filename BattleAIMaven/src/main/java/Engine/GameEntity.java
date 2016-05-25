@@ -15,7 +15,7 @@ public abstract class GameEntity implements TransformInterface {
     protected int id;
     //use Area so we can transform using affinetransformer
     //transformation applied to area
-    private AffineTransform transformation;
+    private final AffineTransform transformation;
     protected double x,y;//this is top left corner of the rectangle
     protected double  angle, speed , damage , width, height;
 

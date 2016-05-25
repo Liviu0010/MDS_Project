@@ -13,15 +13,16 @@ import java.util.TimerTask;
 import Constants.MasterServerConstants;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ServerDispatcher implements Runnable {
 	
-    private static ServerDispatcher serverDispatcher = new ServerDispatcher();
+    private static final ServerDispatcher SERVER_DISPATCHER = new ServerDispatcher();
     protected List<Connection> activeConnections =
         Collections.synchronizedList(new LinkedList<Connection>());
-    protected boolean isRunning = false;
+    protected AtomicBoolean isRunning;
     protected Thread mainThread;
     protected int port;
     protected final ExecutorService THREAD_POOL;
@@ -29,14 +30,15 @@ public class ServerDispatcher implements Runnable {
     
     protected ServerDispatcher() {
         THREAD_POOL = Executors.newCachedThreadPool();
+        isRunning = new AtomicBoolean(false);
     }
     
     public static ServerDispatcher getInstance() {
-        return serverDispatcher;
+        return SERVER_DISPATCHER;
     }
 
     public boolean start(int port) {
-        if (!isRunning) {
+        if (!isRunning.get()) {
             this.port = port;
             try {
                 serverSocket = new ServerSocket(port);
@@ -45,7 +47,7 @@ public class ServerDispatcher implements Runnable {
                 return false;
             }
             mainThread = new Thread(this);
-            isRunning = true;
+            isRunning.set(true);
             mainThread.start();
             return true;
         }
@@ -54,11 +56,14 @@ public class ServerDispatcher implements Runnable {
     }
 
     public boolean stop() {
-        if (isRunning) {
-            isRunning = false;
+        if (isRunning.get()) {
+            isRunning.set(false);
+            for (Connection i: activeConnections)
+                i.closeConnection();
             activeConnections.clear();
             try {
                 serverSocket.close();
+                THREAD_POOL.shutdownNow();
                 mainThread.join();
             } catch (IOException | InterruptedException ex) {
                 Logger.getLogger(ServerDispatcher.class.getName()).log(Level.SEVERE, null, ex);
@@ -71,7 +76,7 @@ public class ServerDispatcher implements Runnable {
     }
     
     protected void listenForConnections(ServerSocket serverSocket) {
-        while (isRunning) {
+        while (isRunning.get()) {
             try {
                 Socket clientSocket = serverSocket.accept();
                 addConnection(new RegularConnection(clientSocket));
@@ -89,6 +94,11 @@ public class ServerDispatcher implements Runnable {
         TimerTask removeInactiveConnections = new TimerTask() {
             @Override
             public void run() {
+                if (!isRunning.get()) {
+                    connectionCleaner.cancel();
+                    return;
+                }
+                    
                 for (int i = 0; i < activeConnections.size(); i++)
                     if (!activeConnections.get(i).isActive()) {
                             System.out.println("removing");
@@ -112,7 +122,7 @@ public class ServerDispatcher implements Runnable {
     public List<Match> getActiveMatches() throws IOException {
         List<Match> activeMatches = new LinkedList<>();
         
-        MatchConnection matchConnection = null;
+        MatchConnection matchConnection;
         for (Connection connection: activeConnections) {
             if (connection.isActive() && connection instanceof MatchConnection) {
                 matchConnection = (MatchConnection)connection;

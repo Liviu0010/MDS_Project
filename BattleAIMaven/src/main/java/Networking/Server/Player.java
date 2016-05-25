@@ -32,6 +32,8 @@ public class Player implements Serializable {
      * @return 
      */
     public String getUsername() {
+        if(username == null)
+            return "Local";
         return username;
     }
     

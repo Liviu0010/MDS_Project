@@ -1,6 +1,5 @@
 package Engine;
 
-import Client.ConnectionHandler;
 import Compiler.SourceCompiler;
 import Console.ConsoleFrame;
 import Constants.VisualConstants;
@@ -8,38 +7,37 @@ import Editor.Source;
 import Intelligence.IntelligenceTemplate;
 import Intelligence.Semaphore;
 import Intelligence.TankThread;
-import Networking.Requests.RequestType;
 import Visual.VisualEngine;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class IntelligenceControlThread extends Thread{
     private static IntelligenceControlThread instance;
-    private BulletUpdater bulletUpdater;
-    private ArrayList<TankThread> tankThreads;
-    private ArrayList<Semaphore> semaphores;
+    private final BulletUpdater bulletUpdater;
+    private final ArrayList<TankThread> tankThreads;
+    private final ArrayList<Semaphore> semaphores;
     private boolean running;
     
-    public IntelligenceControlThread(ArrayList<Source> surse){
-        IntelligenceTemplate playerCode;
-        tankThreads = new ArrayList<>();
-        semaphores = new ArrayList<>();
-        
-        running = true;
-        
-        for(int i = 0; i<surse.size(); i++){
-            
-            synchronized(GameEntity.entityList){
-                new Tank(); //adds it to entityList
-            }
-            
-            playerCode = (IntelligenceTemplate)SourceCompiler.getInstanceOfSource(surse.get(i));
-            semaphores.add(new Semaphore());
-            tankThreads.add(new TankThread(playerCode, semaphores.get(i)));
-        }
-        
-        bulletUpdater = new BulletUpdater();
-    }
+//    public IntelligenceControlThread(ArrayList<Source> surse){
+//        IntelligenceTemplate playerCode;
+//        tankThreads = new ArrayList<>();
+//        semaphores = new ArrayList<>();
+//        
+//        running = true;
+//        
+//        for(int i = 0; i<surse.size(); i++){
+//            
+//            synchronized(GameEntity.entityList){
+//                new Tank(); //adds it to entityList
+//            }
+//            
+//            playerCode = (IntelligenceTemplate)SourceCompiler.getInstanceOfSource(surse.get(i));
+//            semaphores.add(new Semaphore());
+//            tankThreads.add(new TankThread(playerCode, semaphores.get(i)));
+//        }
+//        
+//        bulletUpdater = new BulletUpdater();
+//    }
     
     //Testing
     //Couldn't figure out the compiler so I'm using this just for testing purposes
@@ -59,14 +57,20 @@ public class IntelligenceControlThread extends Thread{
             synchronized(GameEntity.entityList){
                 new Tank(); //adds it to entityList
             }
-            if(i == 0)
-                playerCode = new Intelligence.TestTank1();
-            else if(i==1)
-                playerCode = new Intelligence.TestTank2();
-            else if(i == 2)
-                playerCode = new Intelligence.TestTank3();
-            else
-                playerCode = new IntelligenceTemplate();
+            switch (i) {
+                case 0:
+                    playerCode = new Intelligence.TestTank1();
+                    break;
+                case 1:
+                    playerCode = new Intelligence.TestTank2();
+                    break;
+                case 2:
+                    playerCode = new Intelligence.TestTank3();
+                    break;
+                default:
+                    playerCode = new IntelligenceTemplate();
+                    break;
+            }
             
             semaphores.add(new Semaphore());
             tankThreads.add(new TankThread(playerCode, semaphores.get(i)));
@@ -81,6 +85,40 @@ public class IntelligenceControlThread extends Thread{
         
     }
     //END testing
+    
+    //Testing
+    //Couldn't figure out the compiler so I'm using this just for testing purposes
+    //This constructor will be removed at a later date
+    public IntelligenceControlThread(List<Source> surse){
+        GameEntity.entityList.clear();
+        GameEntity.currentIndex = 0;
+        
+        IntelligenceTemplate playerCode;// = new IntelligenceTemplate();
+        tankThreads = new ArrayList<>();
+        semaphores = new ArrayList<>();
+        
+        running = true;
+        
+        for(int i = 0; i<surse.size(); i++){
+            
+            synchronized(GameEntity.entityList){
+                new Tank(); //adds it to entityList
+            }
+            playerCode = (IntelligenceTemplate) SourceCompiler.getInstanceOfSource(surse.get(i));
+            
+            semaphores.add(new Semaphore());
+            tankThreads.add(new TankThread(playerCode, semaphores.get(i)));
+        }
+        
+        if(VisualEngine.getInstance().getMatchMode() == VisualConstants.SINGLEPLAYER)
+            VisualEngine.getInstance().updateEntityList(GameEntity.entityList);
+        
+        bulletUpdater = new BulletUpdater();
+        
+        ConsoleFrame.sendMessage("IntelligenceControlThread","size = "+GameEntity.entityList.size());
+    }
+    //END testing
+    
     
     @Override
     public void run(){

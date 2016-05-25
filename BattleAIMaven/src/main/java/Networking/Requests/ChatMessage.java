@@ -5,7 +5,7 @@ import java.io.ObjectOutputStream;
 
 public class ChatMessage extends Request {
 
-    private String message;
+    private final String message;
 
     public ChatMessage(String message) {
         super(RequestType.CHAT_MESSAGE);

@@ -4,7 +4,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 public abstract class Request implements Serializable {
-    private int type;
+    private final int type;
     
     public Request(int type) {
         this.type = type;
