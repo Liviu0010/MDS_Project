@@ -266,8 +266,12 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
 
     private void selectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectButtonActionPerformed
         int index = listAvailableScripts.getSelectedIndex();
-        if(selectedSource != null){
-            playerSelectionModel.removeElement(Player.getInstance().getUsername()+" / "+selectedSource.getName());
+        for(int i = 0; i<playerSelectionModel.getSize();i++){
+            String aux = (String) playerSelectionModel.get(i);
+            if(aux.startsWith(Player.getInstance().getUsername())){
+                playerSelectionModel.remove(i);
+                break;
+            }
         }
         try{
             selectedSource = sourceList.get(index);
