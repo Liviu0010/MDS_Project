@@ -77,7 +77,8 @@ public class IntelligenceControlThread extends Thread{
             tankThreads.add(new TankThread(playerCode, semaphores.get(i)));
         }
         
-        if(VisualEngine.getInstance().getMatchMode() == GameModes.SINGLEPLAYER)
+        if(VisualEngine.getInstance().getMatchMode() == GameModes.SINGLEPLAYER ||
+                VisualEngine.getInstance().getMatchMode() == GameModes.MULTIPLAYER_HOST)
             VisualEngine.getInstance().updateEntityList(GameEntity.entityList);
         
         bulletUpdater = new BulletUpdater();
@@ -111,7 +112,8 @@ public class IntelligenceControlThread extends Thread{
             tankThreads.add(new TankThread(playerCode, semaphores.get(i)));
         }
         
-        if(VisualEngine.getInstance().getMatchMode() == GameModes.SINGLEPLAYER)
+        if(VisualEngine.getInstance().getMatchMode() == GameModes.SINGLEPLAYER ||
+                VisualEngine.getInstance().getMatchMode() == GameModes.MULTIPLAYER_HOST)
             VisualEngine.getInstance().updateEntityList(GameEntity.entityList);
         
         bulletUpdater = new BulletUpdater();

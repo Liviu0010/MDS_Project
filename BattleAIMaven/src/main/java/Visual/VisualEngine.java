@@ -131,7 +131,8 @@ public class VisualEngine extends javax.swing.JFrame {
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         
-        if(matchMode == GameModes.SINGLEPLAYER){
+        if(matchMode == GameModes.SINGLEPLAYER ||
+                matchMode == GameModes.MULTIPLAYER_HOST){
             if(sursePrimite != null){
                 ict = new IntelligenceControlThread(sursePrimite);
             }else{
@@ -149,7 +150,9 @@ public class VisualEngine extends javax.swing.JFrame {
         visualPanel1.animator.stopAnimation();   //stopping the animator when the window is closing
         instance = null;    //the form's close operation is DISPOSE, so there's no point in keeping the old instance around
         
-        ict.stopNicely();
+        if(matchMode != GameModes.MULTIPLAYER_CLIENT){
+            ict.stopNicely();
+        }
     }//GEN-LAST:event_formWindowClosing
 
     /**
