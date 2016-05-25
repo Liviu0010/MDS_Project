@@ -57,7 +57,7 @@ public class ConnectionHandler {
     private void connectToMasterServer() throws IOException {
         masterServerSocket = new Socket(MasterServerConstants.IP, 
                 MasterServerConstants.PORT);
-        masterServerSocket.setSoTimeout(3000);
+        masterServerSocket.setSoTimeout(5000);
         masterServerOutputStream = new ObjectOutputStream(masterServerSocket.getOutputStream());
         masterServerOutputStream.flush();
         masterServerInputStream = new ObjectInputStream(masterServerSocket.getInputStream());
@@ -115,7 +115,7 @@ public class ConnectionHandler {
             connectToMasterServer();
             try {
                 result = masterServerInputStream.readObject();
-            } catch (SocketTimeoutException ex2) {
+            } catch (IOException ex2) {
                 masterServerSocket = null;
                 ConsoleFrame.showError("Connection timed out.");
             }
