@@ -24,6 +24,6 @@ public class <name> extends IntelligenceTemplate{
     public void hitEnemyTank() {} 
 
     @Override 
-    public void detectedEnemyTank(Point enemy) {}
+    public void detectedEnemyTank(double enemyAngle) {}
 
 }

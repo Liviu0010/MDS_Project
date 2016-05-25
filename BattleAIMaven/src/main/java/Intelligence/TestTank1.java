@@ -10,7 +10,7 @@ public class TestTank1 extends IntelligenceTemplate {
     public void run(){
         for(int i = 0; i<5; i++)
             moveFront();
-        rotateRight();
+        rotate(3);
     }
     
     @Override
