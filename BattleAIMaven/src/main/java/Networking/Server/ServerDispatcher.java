@@ -79,6 +79,7 @@ public class ServerDispatcher implements Runnable {
         while (isRunning.get()) {
             try {
                 Socket clientSocket = serverSocket.accept();
+                System.out.println(clientSocket.getRemoteSocketAddress());
                 addConnection(new RegularConnection(clientSocket));
             } catch (IOException ex) {
                 Logger.getLogger(ServerDispatcher.class.getName()).log(Level.SEVERE, null, ex);
