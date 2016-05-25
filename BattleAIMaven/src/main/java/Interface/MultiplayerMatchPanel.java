@@ -4,6 +4,7 @@ import Networking.Client.ConnectionHandler;
 import Console.ConsoleFrame;
 import Editor.Source;
 import Editor.SourceManager;
+import Main.GameModes;
 import Networking.Requests.AddPlayer;
 import Networking.Requests.ChatMessage;
 import Networking.Requests.RemovePlayer;
@@ -321,7 +322,9 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
 
             setWorkerStatus(false);
             List<Source> playersSources = new LinkedList(playersSourcesMap.values());
-            VisualEngine.getInstance(playersSources).setVisible(true);
+            VisualEngine ve = VisualEngine.getInstance(playersSources);
+            ve.setMatchMode(GameModes.MULTIPLAYER_HOST);
+            ve.setVisible(true);
         }
     }//GEN-LAST:event_startButtonActionPerformed
 
@@ -386,7 +389,9 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
                                         playerSelectionModel.removeElement(((RemovePlayer)request).getUsername());
                                         break;
                                     case RequestType.START_BATTLE:
-                                        VisualEngine.getInstance().setVisible(true);
+                                        VisualEngine ve = VisualEngine.getInstance();
+                                        ve.setMatchMode(GameModes.MULTIPLAYER_CLIENT);
+                                        ve.setVisible(true);
                                         setWorkerStatus(false);
                                         break;
                                     default:
