@@ -35,6 +35,10 @@ public class MatchConnection extends Connection {
             Match activeMatch)  {
         super(clientSocket, inputStream, outputStream);
         this.activeMatch = activeMatch;
+        activeMatch.setIP(clientSocket.getRemoteSocketAddress().toString());
+        String address = clientSocket.getRemoteSocketAddress().toString().substring(1);
+        String data[] = address.split(":");
+        activeMatch.setIP(data[0]);
     }
     
      /**
