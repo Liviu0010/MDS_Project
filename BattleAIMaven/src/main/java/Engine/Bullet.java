@@ -17,7 +17,7 @@ import java.awt.geom.*;
 
 final public class Bullet extends GameEntity implements Serializable,TransformInterface, Drawable{
 
-    Image bulletSprite ;
+    transient Image bulletSprite ;
     
     public Bullet(int id, double xPos , double yPos ){
         super(id,xPos,yPos);                 

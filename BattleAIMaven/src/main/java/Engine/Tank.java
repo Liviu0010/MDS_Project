@@ -14,7 +14,7 @@ import java.awt.Rectangle;
 import java.awt.geom.*;
 
 public class Tank extends GameEntity implements Serializable,MovementInterface, TransformInterface, Drawable {    
-    protected Image tankSprite;
+    transient protected Image tankSprite;
     protected String playerName = "Local";
     protected double life;
     private double energy = 100;

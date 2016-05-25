@@ -4,6 +4,7 @@ import Console.ConsoleFrame;
 import Engine.GameEntity;
 import Main.GameModes;
 import Networking.Client.ConnectionHandler;
+import Networking.Requests.EntityUpdateRequest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -70,10 +71,10 @@ public class Animator extends Thread{
     private void runMultiplayerClient(){
         while(running){
             
-            ArrayList<GameEntity> newEntities;
+            EntityUpdateRequest newEntities;
             try {
-                newEntities = (ArrayList<GameEntity>) ConnectionHandler.getInstance().readFromMatch();
-                panel.entityList = newEntities;
+                newEntities = (EntityUpdateRequest) ConnectionHandler.getInstance().readFromMatch();
+                panel.entityList = newEntities.gameEntities;
             } catch (IOException | ClassNotFoundException ex) {
                 ConsoleFrame.showError("Failed to read from battle stream");
             }
