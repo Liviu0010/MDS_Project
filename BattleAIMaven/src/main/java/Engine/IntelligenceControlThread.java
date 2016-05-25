@@ -116,9 +116,9 @@ public class IntelligenceControlThread extends Thread{
         bulletUpdater = new BulletUpdater();
         
         ConsoleFrame.sendMessage("IntelligenceControlThread","size = "+GameEntity.entityList.size());
-        
     }
     //END testing
+    
     
     @Override
     public void run(){
