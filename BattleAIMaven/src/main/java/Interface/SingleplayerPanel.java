@@ -4,6 +4,7 @@ import Console.ConsoleFrame;
 import Constants.VisualConstants;
 import Editor.Source;
 import Editor.SourceManager;
+import Main.GameModes;
 import Visual.VisualEngine;
 import java.util.ArrayList;
 import java.util.List;
@@ -193,7 +194,9 @@ public class SingleplayerPanel extends JPanel {
     }//GEN-LAST:event_removeButtonActionPerformed
 
     private void battleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_battleButtonActionPerformed
-        VisualEngine.getInstance(addedSourceList).setVisible(true);
+        VisualEngine ve = VisualEngine.getInstance(addedSourceList);
+        ve.setMatchMode(GameModes.SINGLEPLAYER);
+        ve.setVisible(true);
         rootFrame.setVisible(true);
     }//GEN-LAST:event_battleButtonActionPerformed
 
