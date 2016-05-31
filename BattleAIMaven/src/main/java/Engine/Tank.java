@@ -249,7 +249,7 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
         
         g2.rotate(Math.toRadians(90), x+10, y+10);
         g2.rotate(Math.toRadians(angle), x+10, y+10);
-        g2.drawImage(tankSprite, (int)x, (int)y, null);
+        g2.drawImage(VisualPanel.tankSprite, (int)x, (int)y, null);
         g2.setTransform(at); 
         
         cannon.draw(g);

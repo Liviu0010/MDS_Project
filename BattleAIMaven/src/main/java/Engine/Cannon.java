@@ -207,7 +207,7 @@ final public class Cannon extends GameEntity implements Serializable,TransformIn
         //end reidahr
         
         
-        g2.drawImage(cannonSprite, (int) cannonStart.x, (int) cannonStart.y, null);     //draw cannon
+        g2.drawImage(VisualPanel.cannonSprite, (int) cannonStart.x, (int) cannonStart.y, null);     //draw cannon
          
         
         g2.setTransform(at);
