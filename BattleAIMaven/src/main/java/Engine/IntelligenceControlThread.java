@@ -8,6 +8,9 @@ import Intelligence.IntelligenceTemplate;
 import Intelligence.Semaphore;
 import Intelligence.TankThread;
 import Main.GameModes;
+import Networking.Client.ConnectionHandler;
+import Networking.Requests.EntityUpdateRequest;
+import Networking.Server.ClientServerDispatcher;
 import Visual.VisualEngine;
 import java.util.ArrayList;
 import java.util.List;
@@ -134,20 +137,15 @@ public class IntelligenceControlThread extends Thread{
         
         while(running) {
             //OFF FOR NOW
-            /*
             synchronized (GameEntity.entityList) {
                 for (int i = 0; i < tankThreads.size(); i++) {
                     if (semaphores.get(i).isGreen()) {
-                        EntityUpdateRequest eur = new EntityUpdateRequest(RequestType.ENTITIY_UPDATE, GameEntity.entityList);
-                        try {
-                            ConnectionHandler.getInstance().sendToMatch(eur);
-                        } catch (IOException ex) {
-                            Console.ConsoleFrame.sendMessage("IntelligenceControlThread", ex.getMessage());
-                        }
+                        EntityUpdateRequest eur = new EntityUpdateRequest(GameEntity.entityList);
+                        ClientServerDispatcher.getInstance().broadcastToAllExceptHost(eur);
                     }
                 }
             }
-            */
+        
             for(int i = 0; i < tankThreads.size(); i++){
                 synchronized (semaphores.get(i)) {
                     if (semaphores.get(i).isGreen()) {
