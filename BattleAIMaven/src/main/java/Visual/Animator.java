@@ -71,12 +71,19 @@ public class Animator extends Thread{
     private void runMultiplayerClient(){
         while(running){
             
+            
             EntityUpdateRequest newEntities;
             try {
-                newEntities = (EntityUpdateRequest) ConnectionHandler.getInstance().readFromMatch();
-                panel.entityList = newEntities.gameEntities;
+                Object ob = ConnectionHandler.getInstance().readFromMatch();
+                if (ob instanceof EntityUpdateRequest) {
+                    newEntities = (EntityUpdateRequest) ob;
+                    panel.entityList = newEntities.gameEntities;
+                } else 
+                    continue;
             } catch (IOException | ClassNotFoundException ex) {
+                ex.printStackTrace();
                 ConsoleFrame.showError("Failed to read from battle stream");
+                running = false;
             }
             
             

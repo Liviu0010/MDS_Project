@@ -1,6 +1,8 @@
 package Engine;
 
-public interface TransformInterface {
+import java.io.Serializable;
+
+public interface TransformInterface extends Serializable {
 
     /**
      * Rotate the entity by 'degrees' reported to it's current rotation.

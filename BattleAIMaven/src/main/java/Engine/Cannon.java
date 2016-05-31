@@ -17,7 +17,7 @@ import java.awt.geom.AffineTransform;
 
 final public class Cannon extends GameEntity implements Serializable,TransformInterface, Drawable{
 
-    private final Image cannonSprite;
+    private transient final Image cannonSprite;
     Tank parent;
     boolean detected;
     /**

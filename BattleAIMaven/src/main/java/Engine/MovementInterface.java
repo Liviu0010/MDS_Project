@@ -1,6 +1,8 @@
 package Engine;
 
-public interface MovementInterface {
+import java.io.Serializable;
+
+public interface MovementInterface extends Serializable {
 
     /**
      * Moves the entity up.

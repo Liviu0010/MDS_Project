@@ -47,7 +47,7 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
     private final DefaultListModel playerSelectionModel = new DefaultListModel();
     private boolean ready = false;
     
-    private Boolean listenForRequests = false;
+    private Boolean listenForRequests = true;
     private LinkedList<Request> requestsList = new LinkedList<>();
     
     /**
@@ -318,7 +318,7 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
                 return;
             }
 
-            ClientServerDispatcher.getInstance().broadcastToAllExceptHost(new StartBattle());
+            ClientServerDispatcher.getInstance().broadcast(new StartBattle());
 
             setWorkerStatus(false);
             List<Source> playersSources = new LinkedList(playersSourcesMap.values());
@@ -367,13 +367,13 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
         @Override
         protected Void doInBackground(){
             
-            boolean listen = true;
-            
-            while(listen){
+            while(listenForRequests){
                 
                 try {
-                    Request request = (Request)ConnectionHandler.getInstance().readFromMatch();
-                    
+                        Request request = (Request)ConnectionHandler.getInstance().readFromMatch();
+                        if (request.getType() == RequestType.START_BATTLE)
+                            listenForRequests = false;
+                        
                         SwingUtilities.invokeLater(new Runnable() {
 
                             @Override
@@ -389,10 +389,11 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
                                         playerSelectionModel.removeElement(((RemovePlayer)request).getUsername());
                                         break;
                                     case RequestType.START_BATTLE:
-                                        VisualEngine ve = VisualEngine.getInstance();
-                                        ve.setMatchMode(GameModes.MULTIPLAYER_CLIENT);
-                                        ve.setVisible(true);
-                                        setWorkerStatus(false);
+                                        if (!ConnectionHandler.getInstance().isHost()) {
+                                            VisualEngine ve = VisualEngine.getInstance();
+                                            ve.setMatchMode(GameModes.MULTIPLAYER_CLIENT);
+                                            ve.setVisible(true);
+                                        }
                                         break;
                                     default:
                                         break;
@@ -402,7 +403,7 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
                     
                 } catch (IOException | ClassNotFoundException ex) {
                     ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed to read from match");
-                    listen = false;
+                    listenForRequests = false;
                 }
             }
             return null;
