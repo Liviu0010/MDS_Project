@@ -20,7 +20,7 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
     private double energy = 100;
     protected Cannon cannon;
     private final int tank_id;
-    protected TankCapsule tankCapsule;
+    protected transient TankCapsule tankCapsule;
     //the id of the tank will be the current number of instanced tank classes
     private static int staticId;
     /**
