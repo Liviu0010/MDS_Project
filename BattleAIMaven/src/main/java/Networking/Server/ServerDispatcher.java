@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 
 public class ServerDispatcher implements Runnable {
 	
-    private static ServerDispatcher serverDispatcher = new ServerDispatcher();
+    private static final ServerDispatcher SERVER_DISPATCHER = new ServerDispatcher();
     protected List<Connection> activeConnections =
         Collections.synchronizedList(new LinkedList<Connection>());
     protected AtomicBoolean isRunning;
@@ -34,7 +34,7 @@ public class ServerDispatcher implements Runnable {
     }
     
     public static ServerDispatcher getInstance() {
-        return serverDispatcher;
+        return SERVER_DISPATCHER;
     }
 
     public boolean start(int port) {
@@ -79,6 +79,7 @@ public class ServerDispatcher implements Runnable {
         while (isRunning.get()) {
             try {
                 Socket clientSocket = serverSocket.accept();
+                System.out.println(clientSocket.getRemoteSocketAddress());
                 addConnection(new RegularConnection(clientSocket));
             } catch (IOException ex) {
                 Logger.getLogger(ServerDispatcher.class.getName()).log(Level.SEVERE, null, ex);
@@ -122,7 +123,7 @@ public class ServerDispatcher implements Runnable {
     public List<Match> getActiveMatches() throws IOException {
         List<Match> activeMatches = new LinkedList<>();
         
-        MatchConnection matchConnection = null;
+        MatchConnection matchConnection;
         for (Connection connection: activeConnections) {
             if (connection.isActive() && connection instanceof MatchConnection) {
                 matchConnection = (MatchConnection)connection;

@@ -1,6 +1,7 @@
 package Networking.Server;
 
 import Networking.Client.ConnectionHandler;
+import Console.ConsoleFrame;
 import Constants.MasterServerConstants;
 import Networking.Requests.PlayerConnect;
 import Networking.Requests.Request;
@@ -56,7 +57,7 @@ public class PlayerConnection extends Connection {
                 if (level == MAX_INACTIVITY_LEVEL) 
                     closeConnection();
              
-            }
+                    }
         };
         connectionHandler.scheduleAtFixedRate(handleConnections, MasterServerConstants.PACKET_DELAY * 2, 
                 MasterServerConstants.PACKET_DELAY * 2);
@@ -67,7 +68,7 @@ public class PlayerConnection extends Connection {
         threadRunning.set(true);
         startConnectionHandler();
         
-        Object object = null;
+        Object object;
 
         while (threadRunning.get()) {
             try {
@@ -110,5 +111,5 @@ public class PlayerConnection extends Connection {
     
     public String getUsername() {
         return username;
-    }
+}
 }

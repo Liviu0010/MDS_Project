@@ -14,12 +14,12 @@ import java.awt.Rectangle;
 import java.awt.geom.*;
 
 public class Tank extends GameEntity implements Serializable,MovementInterface, TransformInterface, Drawable {    
-    protected Image tankSprite;
-    protected String playerName;
+    transient protected Image tankSprite;
+    protected String playerName = "Local";
     protected double life;
     private double energy = 100;
     protected Cannon cannon;
-    private final int id;
+    private final int tank_id;
     protected TankCapsule tankCapsule;
     //the id of the tank will be the current number of instanced tank classes
     private static int staticId;
@@ -33,7 +33,7 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
     public Tank(double xPos, double yPos,String playerName) {
         super(staticId,xPos, yPos);
         tankSprite  = VisualPanel.tankSprite;
-        this.id = staticId++;
+        this.tank_id = staticId++;
         this.life = 100;
         this.playerName = playerName;
         width = (int)VisualConstants.TANK_WIDTH;
@@ -80,9 +80,8 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
         //this.y = yPos;
         
         tankSprite  = VisualPanel.tankSprite;
-        this.id = staticId++;
+        this.tank_id = staticId++;
         this.life = 100;
-        this.playerName = playerName;
         width = (int)VisualConstants.TANK_WIDTH;
         height = (int)VisualConstants.TANK_HEIGHT;
         cannon = new Cannon(staticId, x, y, this);
@@ -96,12 +95,22 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
         }
     }
     
+    public Point getCenter(){
+        Point center;
+        
+        
+        center = Cannon.getForwardPoint(new Point((int)this.x, (int)this.y), angle, Constants.VisualConstants.TANK_WIDTH/2);
+        center = Cannon.getForwardPoint(center, angle-90, Constants.VisualConstants.TANK_HEIGHT/2);
+        
+        return center;
+    }
+    
     /**
      *  Gets the id of the tan
      * @return a integer value representing the id of the tank.
      */
     public int getId(){
-        return id;
+        return tank_id;
     }
     /**
      * Gets the life of the Tank.
@@ -126,7 +135,7 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
     @Override
     public void rotate(double degrees){
         angle = (angle + degrees)%360;
-        cannon.rotate(degrees);
+        rotateCannon(degrees);
     }
     /**
      *  Rotates the cannon of the tank by 'degrees' reported to the cannon's rotation angle
@@ -158,6 +167,7 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
     
     /**
      * 
+     * @param p
      * @return Value which specifies whether the point is inside the arena or not.
      */
     public boolean isInsideArena(Point p){
@@ -168,7 +178,7 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
      * 
      * @return Value which specifies whether the tank is inside the arena or not.
      */
-    public boolean isInsideArena(){
+    public final boolean isInsideArena(){
         Point upperLeft,upperRight, lowerLeft, lowerRight;
         upperLeft = new Point((int)x,(int)y);
         upperRight = Cannon.getForwardPoint(upperLeft, angle+90, VisualConstants.TANK_WIDTH);

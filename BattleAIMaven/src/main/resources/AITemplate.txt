@@ -1,6 +1,7 @@
 package User_Sources;
 
 import Intelligence.IntelligenceTemplate;
+import Engine.TankCapsule;
 import java.awt.Point;
 
 public class <name> extends IntelligenceTemplate{ 
@@ -10,6 +11,7 @@ public class <name> extends IntelligenceTemplate{
     }
     
     public void run(){
+        
     }
 
     @Override 
@@ -22,6 +24,6 @@ public class <name> extends IntelligenceTemplate{
     public void hitEnemyTank() {} 
 
     @Override 
-    public void detectedEnemyTank(Point enemy) {} 
+    public void detectedEnemyTank(double enemyAngle) {}
 
 }

@@ -1,5 +1,6 @@
 package Networking.Server;
 
+import Console.ConsoleFrame;
 import Constants.MasterServerConstants;
 import Networking.Requests.AddPlayer;
 import Networking.Requests.RemovePlayer;
@@ -34,6 +35,10 @@ public class MatchConnection extends Connection {
             Match activeMatch)  {
         super(clientSocket, inputStream, outputStream);
         this.activeMatch = activeMatch;
+        activeMatch.setIP(clientSocket.getRemoteSocketAddress().toString());
+        String address = clientSocket.getRemoteSocketAddress().toString().substring(1);
+        String data[] = address.split(":");
+        activeMatch.setIP(data[0]);
     }
     
      /**
@@ -65,12 +70,12 @@ public class MatchConnection extends Connection {
                     connectionHandler.cancel();
                     return;
                 }
-       
+                
                 int level = inactivityLevel.incrementAndGet();
                 
                 if (level == MAX_INACTIVITY_LEVEL) 
                    closeConnection();
-            }
+                    }
         };
         
         connectionHandler.scheduleAtFixedRate(handleConnections, MasterServerConstants.PACKET_DELAY * 2, 
@@ -82,7 +87,7 @@ public class MatchConnection extends Connection {
         threadRunning.set(true);
         startConnectionHandler();
         
-        Object object = null;
+        Object object;
 
         while (threadRunning.get()) {
             try {

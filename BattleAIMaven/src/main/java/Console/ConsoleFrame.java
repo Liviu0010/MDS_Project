@@ -8,6 +8,7 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.text.DefaultCaret;
 
 /**
@@ -174,8 +175,10 @@ public final class ConsoleFrame extends JFrame {
         System.out.println(" "+className+": "+message+"\n");
     }
     
-    public synchronized static void showError(String message){
-        JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
+    public static void showError(String message){
+        SwingUtilities.invokeLater(() -> {
+            JOptionPane.showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
+        });
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

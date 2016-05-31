@@ -1,13 +1,14 @@
 package Engine;
 
 import java.awt.geom.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 /**
  * Game Entity class provides a framework for Bullet,Cannon and Tank classes
  * the methods implemented in this class should work for normal 'X'-'Y' Cartesian  coordinate system so they would probably need to be altered to work with
  * origin in the top left
  */
-public abstract class GameEntity implements TransformInterface {
+public abstract class GameEntity implements TransformInterface, Serializable {
     
     static protected ArrayList<GameEntity> entityList = new ArrayList<>();
     static protected int currentIndex = 0;
@@ -15,7 +16,7 @@ public abstract class GameEntity implements TransformInterface {
     protected int id;
     //use Area so we can transform using affinetransformer
     //transformation applied to area
-    private AffineTransform transformation;
+    private final AffineTransform transformation;
     protected double x,y;//this is top left corner of the rectangle
     protected double  angle, speed , damage , width, height;
 
