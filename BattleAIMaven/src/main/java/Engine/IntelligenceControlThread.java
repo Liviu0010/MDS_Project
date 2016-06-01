@@ -7,6 +7,10 @@ import Editor.Source;
 import Intelligence.IntelligenceTemplate;
 import Intelligence.Semaphore;
 import Intelligence.TankThread;
+import Main.GameModes;
+import Networking.Client.ConnectionHandler;
+import Networking.Requests.EntityUpdateRequest;
+import Networking.Server.ClientServerDispatcher;
 import Visual.VisualEngine;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +80,8 @@ public class IntelligenceControlThread extends Thread{
             tankThreads.add(new TankThread(playerCode, semaphores.get(i)));
         }
         
-        if(VisualEngine.getInstance().getMatchMode() == VisualConstants.SINGLEPLAYER)
+        if(VisualEngine.getInstance().getMatchMode() == GameModes.SINGLEPLAYER ||
+                VisualEngine.getInstance().getMatchMode() == GameModes.MULTIPLAYER_HOST)
             VisualEngine.getInstance().updateEntityList(GameEntity.entityList);
         
         bulletUpdater = new BulletUpdater();
@@ -110,7 +115,8 @@ public class IntelligenceControlThread extends Thread{
             tankThreads.add(new TankThread(playerCode, semaphores.get(i)));
         }
         
-        if(VisualEngine.getInstance().getMatchMode() == VisualConstants.SINGLEPLAYER)
+        if(VisualEngine.getInstance().getMatchMode() == GameModes.SINGLEPLAYER ||
+                VisualEngine.getInstance().getMatchMode() == GameModes.MULTIPLAYER_HOST)
             VisualEngine.getInstance().updateEntityList(GameEntity.entityList);
         
         bulletUpdater = new BulletUpdater();
@@ -131,23 +137,22 @@ public class IntelligenceControlThread extends Thread{
         
         while(running) {
             //OFF FOR NOW
-            /*
             synchronized (GameEntity.entityList) {
                 for (int i = 0; i < tankThreads.size(); i++) {
                     if (semaphores.get(i).isGreen()) {
-                        EntityUpdateRequest eur = new EntityUpdateRequest(RequestType.ENTITIY_UPDATE, GameEntity.entityList);
-                        try {
-                            ConnectionHandler.getInstance().sendToMatch(eur);
-                        } catch (IOException ex) {
-                            Console.ConsoleFrame.sendMessage("IntelligenceControlThread", ex.getMessage());
-                        }
+                        EntityUpdateRequest eur = new EntityUpdateRequest(GameEntity.entityList);
+                        ClientServerDispatcher.getInstance().broadcastToAllExceptHost(eur);
                     }
                 }
             }
-            */
+        
             for(int i = 0; i < tankThreads.size(); i++){
                 synchronized (semaphores.get(i)) {
                     if (semaphores.get(i).isGreen()) {
+                        //to ensure that the enemy is always detected
+                        ((Tank)GameEntity.entityList.get(i)).rotate(0.1);
+                        ((Tank)GameEntity.entityList.get(i)).rotate(-0.1);
+                        //end
                         semaphores.get(i).goRed();
                         semaphores.get(i).notify();
                     }

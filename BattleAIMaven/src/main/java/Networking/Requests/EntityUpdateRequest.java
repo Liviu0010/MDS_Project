@@ -5,10 +5,10 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 public class EntityUpdateRequest extends Request {
-    ArrayList<GameEntity> gameEntities;
+    public ArrayList<GameEntity> gameEntities;
     
-    public EntityUpdateRequest(int type, ArrayList<GameEntity> entities) {
-        super(type);
+    public EntityUpdateRequest(ArrayList<GameEntity> entities) {
+        super(RequestType.ENTITIY_UPDATE);
         gameEntities = entities;
     }
     

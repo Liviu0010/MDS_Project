@@ -14,13 +14,13 @@ import java.awt.Rectangle;
 import java.awt.geom.*;
 
 public class Tank extends GameEntity implements Serializable,MovementInterface, TransformInterface, Drawable {    
-    protected Image tankSprite;
+    transient protected Image tankSprite;
     protected String playerName = "Local";
     protected double life;
     private double energy = 100;
     protected Cannon cannon;
     private final int tank_id;
-    protected TankCapsule tankCapsule;
+    protected transient TankCapsule tankCapsule;
     //the id of the tank will be the current number of instanced tank classes
     private static int staticId;
     /**
@@ -95,6 +95,16 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
         }
     }
     
+    public Point getCenter(){
+        Point center;
+        
+        
+        center = Cannon.getForwardPoint(new Point((int)this.x, (int)this.y), angle, Constants.VisualConstants.TANK_WIDTH/2);
+        center = Cannon.getForwardPoint(center, angle-90, Constants.VisualConstants.TANK_HEIGHT/2);
+        
+        return center;
+    }
+    
     /**
      *  Gets the id of the tan
      * @return a integer value representing the id of the tank.
@@ -125,7 +135,7 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
     @Override
     public void rotate(double degrees){
         angle = (angle + degrees)%360;
-        cannon.rotate(degrees);
+        rotateCannon(degrees);
     }
     /**
      *  Rotates the cannon of the tank by 'degrees' reported to the cannon's rotation angle
@@ -239,7 +249,7 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
         
         g2.rotate(Math.toRadians(90), x+10, y+10);
         g2.rotate(Math.toRadians(angle), x+10, y+10);
-        g2.drawImage(tankSprite, (int)x, (int)y, null);
+        g2.drawImage(VisualPanel.tankSprite, (int)x, (int)y, null);
         g2.setTransform(at); 
         
         cannon.draw(g);

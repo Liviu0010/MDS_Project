@@ -17,7 +17,7 @@ import java.awt.geom.*;
 
 final public class Bullet extends GameEntity implements Serializable,TransformInterface, Drawable{
 
-    Image bulletSprite ;
+    transient Image bulletSprite ;
     
     public Bullet(int id, double xPos , double yPos ){
         super(id,xPos,yPos);                 
@@ -51,7 +51,7 @@ final public class Bullet extends GameEntity implements Serializable,TransformIn
         AffineTransform at = g2.getTransform();
         
         g2.rotate(Math.toRadians(angle), x, y);
-                                                       //8-9 FPS at ~1300 objects
+        
         g2.setColor(Color.red);
         g2.fillRect((int)x, (int)y, (int)VisualConstants.BULLET_WIDTH, (int)VisualConstants.BULLET_HEIGHT);  
         

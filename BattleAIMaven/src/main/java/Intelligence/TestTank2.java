@@ -9,7 +9,7 @@ import java.awt.Point;
 public class TestTank2 extends Intelligence.IntelligenceTemplate{
     @Override
     public void run(){
-        rotateCannonRight();
+        rotateCannon(8);
         try {
             Thread.sleep(60);
         } catch (InterruptedException ex) {
@@ -18,7 +18,8 @@ public class TestTank2 extends Intelligence.IntelligenceTemplate{
     }
     
     @Override
-    public void detectedEnemyTank(Point tank){
+    public void detectedEnemyTank(double enemyAngle){
         fire();
+        rotateCannon(enemyAngle);
     }
 }

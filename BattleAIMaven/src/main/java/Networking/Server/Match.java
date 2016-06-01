@@ -10,8 +10,8 @@ import java.util.TreeSet;
 public class Match implements Serializable {
 	
     private String title;
-    private final String IP;
-    private final int PORT;
+    private String IP;
+    private int PORT;
     private final String OWNER;
     
     // The list of players in the match
@@ -123,5 +123,13 @@ public class Match implements Serializable {
     
     public String toListMatch(){
         return title+" / "+OWNER;
+    }
+    
+    public void setIP(String ip) {
+        this.IP = ip;
+    }
+    
+    public void setPort(int port) {
+        this.PORT = port;
     }
 }

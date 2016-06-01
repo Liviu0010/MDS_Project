@@ -5,6 +5,7 @@ import Console.ConsoleFrame;
 import Networking.Server.Match;
 import Networking.Server.Player;
 import java.awt.Color;
+import java.net.InetAddress;
 import java.util.concurrent.ExecutionException;
 import javax.swing.SwingWorker;
 
@@ -183,9 +184,13 @@ public class MultiplayerCreateMatch extends javax.swing.JPanel {
 
             @Override
             protected Boolean doInBackground() throws Exception {
+                InetAddress localIP = InetAddress.getLocalHost();
+                String publicIP  = localIP.getHostAddress();
                 createdMatch = new Match(serverNameField.getText(),
                         "localhost", Integer.parseInt(serverPortField.getText()),
                         Player.getInstance().getUsername(), 20);
+                System.out.println(localIP);
+                System.out.println(publicIP);
                 Boolean succes = ConnectionHandler.getInstance().hostMatch(createdMatch);
                 
                 return succes;

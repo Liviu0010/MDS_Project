@@ -24,6 +24,6 @@ public class IntelligenceTemplate extends TankCapsule{
     public void hitEnemyTank() {} 
 
     @Override 
-    public void detectedEnemyTank(Point enemy) {} 
+    public void detectedEnemyTank(double enemyAngle) {} 
 
 }

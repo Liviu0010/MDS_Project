@@ -17,8 +17,9 @@ import java.awt.geom.AffineTransform;
 
 final public class Cannon extends GameEntity implements Serializable,TransformInterface, Drawable{
 
-    private final Image cannonSprite;
+    private transient final Image cannonSprite;
     Tank parent;
+    boolean detected;
     /**
      *
      * @param id
@@ -72,20 +73,31 @@ final public class Cannon extends GameEntity implements Serializable,TransformIn
         angle = (angle+degrees)%360;
         Tank t;
         GameEntity entity;
+        Point me = new Point((int)this.x, (int)this.y);
+        Point forward = getForwardPoint(me, angle, 100);
         
         //searching for enemies
+        
+        if(detected){
+            detected = false;
+            return;
+        }
+        
         for(int i = 0; i<GameEntity.entityList.size(); i++){
             entity = GameEntity.entityList.get(i);
             
             if(entity instanceof Tank){
                 t = (Tank)entity;
-                Point left, right;
+                Point left, right, detectedTank;
                 
                 left = getForwardPoint(new Point((int)x,(int)y), angle-VisualConstants.RADAR_SIZE/2, 1000);
                 right = getForwardPoint(new Point((int)x,(int)y), angle+VisualConstants.RADAR_SIZE/2, 1000);
+                detectedTank = new Point((int)t.getX(), (int)t.getY());
                 
-                if(isInTriangle(new Point((int)x,(int)y), left, right, new Point((int)t.getX(), (int)t.getY())))
-                    parent.tankCapsule.detectedEnemyTank(new Point((int)t.getX(), (int)t.getY()) );
+                if(isInTriangle(new Point((int)x,(int)y), left, right, new Point((int)t.getX(), (int)t.getY()))){
+                    detected = true;
+                    parent.tankCapsule.detectedEnemyTank(getDeltaAngle(parent.getCenter(), forward, detectedTank));
+                }
             }
         }
         //end
@@ -95,6 +107,43 @@ final public class Cannon extends GameEntity implements Serializable,TransformIn
         double s = Math.sin(Math.toRadians(angle))*forwardDistance;
         double c = Math.cos(Math.toRadians(angle))*forwardDistance;
         return new Point((int)(origin.x+c), (int)(origin.y+s));
+    }
+    
+    /**
+     * 
+     * @param a
+     * @param b
+     * @param c
+     * @return Whether point C is above or below the line made by points A and B
+     */
+    public static int orientation(Point a, Point b, Point c){
+        double or = (c.y - a.y)*(b.x-a.x)-(b.y-a.y)*(c.x-a.x);
+        
+        if(or > 0)
+            return 1;
+        if(or < 0)
+            return -1;
+        
+        return 0;
+    }
+    
+    /**
+     * 
+     * @param a
+     * @param b
+     * @param c 
+     * @return The angle in degrees between the cannon (points A and B) and Point C
+     */
+    
+    public double getDeltaAngle(Point a, Point b, Point c){
+        double numitor, numarator, angle;
+        
+        numarator = Math.abs(c.x*(a.y-b.y)+c.y*(b.x-a.x)+a.x*b.y-b.x*a.y);
+        numitor = Math.pow(c.x - a.x, 2) + Math.pow(c.y - a.y, 2);
+        
+        angle = Math.toDegrees(Math.asin(numarator/numitor));
+        
+        return orientation(a,b,c)*angle;        
     }
     
     /**
@@ -158,7 +207,7 @@ final public class Cannon extends GameEntity implements Serializable,TransformIn
         //end reidahr
         
         
-        g2.drawImage(cannonSprite, (int) cannonStart.x, (int) cannonStart.y, null);     //draw cannon
+        g2.drawImage(VisualPanel.cannonSprite, (int) cannonStart.x, (int) cannonStart.y, null);     //draw cannon
          
         
         g2.setTransform(at);

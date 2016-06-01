@@ -1,6 +1,7 @@
 package Engine;
 
 import java.awt.Point;
+import java.io.Serializable;
 
 /**
  * Encapsulation for the Tank class so that we can restrict
@@ -10,7 +11,7 @@ import java.awt.Point;
  * a Tank object from the entityList in order.
  * 
  */
-public class TankCapsule {
+public class TankCapsule implements Serializable {
     private Tank tank;
     
     public TankCapsule(){
@@ -27,26 +28,18 @@ public class TankCapsule {
     public void gotHitByBullet() {} 
     public void hitArenaWall() {} 
     public void hitEnemyTank() {} 
-    public void detectedEnemyTank(Point enemyLocation) {} 
+    public void detectedEnemyTank(double enemyAngle) {} 
     
     public final void moveFront(){
         tank.moveFront();
     }
     
-    public final void rotateRight(){
-        tank.rotate(5);
+    public final void rotate(double degrees){
+        tank.rotate(degrees);
     }
     
-    public final void rotateLeft(){
-        tank.rotate(-5);
-    }
-    
-    public final void rotateCannonLeft(){
-        tank.rotateCannon(-5);
-    }
-    
-    public final void rotateCannonRight(){
-        tank.rotateCannon(5);
+    public final void rotateCannon(double degrees){
+        tank.rotateCannon(degrees);
     }
     
     public final void fire(){
