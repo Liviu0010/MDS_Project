@@ -79,8 +79,10 @@ public class Animator extends Thread{
                 
                 if(currentPacket != null && currentPacket.framesLeft() > 0)
                     panel.entityList = currentPacket.consume();
-                else
+                else {
                     currentPacket = ((EntityUpdateRequest)ConnectionHandler.getInstance().readFromMatch()).packet;
+                    panel.entityList = currentPacket.consume();
+                }
                 
             } catch (IOException | ClassNotFoundException ex) {
                 ex.printStackTrace();
