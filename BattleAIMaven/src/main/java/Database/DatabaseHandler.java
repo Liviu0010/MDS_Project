@@ -236,7 +236,6 @@ public class DatabaseHandler {
             preparedStmt.setString(2, pass);
 
             result = preparedStmt.executeQuery();
-
             return (result.next() == true);
 
         } catch (SQLException ex) {
@@ -458,6 +457,38 @@ public class DatabaseHandler {
             }
         }
     }
+    
+    public synchronized void removePlayer(String name, String pass) {
+        preliminaries();
+        PreparedStatement preparedStmt = null;
+
+        try {
+            String sqlQuery = "USE " + DB_NAME;
+            preparedStmt = conn.prepareStatement(sqlQuery);
+            preparedStmt.executeUpdate();
+
+            sqlQuery = "DELETE FROM PLAYER_DB "
+                    + "WHERE name = ? AND password = ?";
+            preparedStmt = conn.prepareStatement(sqlQuery);
+            preparedStmt.setString(1, name);
+            preparedStmt.setString(2, pass);
+            preparedStmt.executeUpdate();
+
+        } catch (SQLException ex) {
+            closeConnection();
+            ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed "+ex.getMessage());
+        } finally {
+            //finally block used to close resources
+            closeConnection();
+            try {
+                if (preparedStmt != null)
+                    preparedStmt.close();
+            } catch (SQLException se) {
+                closeConnection();
+                ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed "+se.getMessage());
+            }
+        }
+    }
 
     public synchronized void setNoOfPoints(String userName, Integer numberOfPoints) {
         preliminaries();
@@ -627,8 +658,6 @@ public class DatabaseHandler {
          } catch (SQLException ex) {
             Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            closeConnection();
-            
             try {
                 if (result != null)
                     result.close();
@@ -637,9 +666,43 @@ public class DatabaseHandler {
             } catch (SQLException ex) {
                 Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
+            closeConnection();
         }
         
         return finalResult;
     }
-
+    
+    /*
+     * @param tableName Name of the table you're looking for
+     * @return true if table exists, false otherwise
+     */
+    public boolean tableExists(String tableName) {
+        preliminaries();
+        
+        ResultSet result = null;
+        
+        boolean exists = false;
+        
+        try {
+            Statement stmt = conn.createStatement();
+            String sqlQuery = "USE " + DB_NAME;
+            stmt.executeUpdate(sqlQuery);
+            
+            sqlQuery = "SELECT COUNT(*) FROM " + tableName;
+            result = stmt.executeQuery(sqlQuery);
+            exists = result.next();
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                if (result != null)
+                    result.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            closeConnection();
+        }
+        
+        return exists;
+    }
 }
