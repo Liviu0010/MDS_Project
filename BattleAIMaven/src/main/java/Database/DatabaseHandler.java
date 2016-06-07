@@ -22,7 +22,7 @@ public class DatabaseHandler {
     private static String PASS = "";
     private final String DB_NAME = "Test3"; 
 
-    Connection conn;
+    private Connection conn;
     
     private static DatabaseHandler instance;
     
