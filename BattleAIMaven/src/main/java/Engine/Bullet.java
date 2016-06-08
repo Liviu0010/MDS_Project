@@ -18,8 +18,9 @@ import java.awt.geom.*;
 final public class Bullet extends GameEntity implements Serializable,TransformInterface, Drawable{
 
     transient Image bulletSprite ;
+    transient Tank owner;
     
-    public Bullet(int id, double xPos , double yPos ){
+    public Bullet(int id, double xPos , double yPos, Tank owner){
         super(id,xPos,yPos);                 
         //spd represents the speed of the bullet, dmg represents the damage that the bullet gives to an
         //enemy tank and ang represents the angle in wich the bullet is rotated
@@ -30,6 +31,7 @@ final public class Bullet extends GameEntity implements Serializable,TransformIn
         speed = EngineConstants.BULLET_SPEED;
         angle = EngineConstants.ANGLE;
         damage = EngineConstants.DAMAGE;
+        this.owner = owner;
     }
     public void moveFront(){
         double s = Math.sin(angle * Math.PI/180.0);

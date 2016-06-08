@@ -137,9 +137,8 @@ public class VisualEngine extends javax.swing.JFrame {
                 matchMode == GameModes.MULTIPLAYER_HOST){
             if(sursePrimite != null){
                 ict = new IntelligenceControlThread(sursePrimite);
-            }else{
-                ict = new IntelligenceControlThread(3);
             }
+            
             ict.start();
         }
         

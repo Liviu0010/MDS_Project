@@ -69,12 +69,13 @@ final public class Cannon extends GameEntity implements Serializable,TransformIn
     }
     
     @Override
-    public void rotate(double degrees) {
+    public void rotate(double degrees) {   
         angle = (angle+degrees)%360;
+        
         Tank t;
         GameEntity entity;
         Point me = new Point((int)this.x, (int)this.y);
-        Point forward = getForwardPoint(me, angle, 100);
+        Point forward = getForwardPoint(me, angle, 1000);
         
         //searching for enemies
         
@@ -86,26 +87,28 @@ final public class Cannon extends GameEntity implements Serializable,TransformIn
         for(int i = 0; i<GameEntity.entityList.size(); i++){
             entity = GameEntity.entityList.get(i);
             
-            if(entity instanceof Tank){
+            if(entity instanceof Tank && ((Tank)entity).inTheGame() && entity != parent){
                 t = (Tank)entity;
                 Point left, right, detectedTank;
                 
                 left = getForwardPoint(new Point((int)x,(int)y), angle-VisualConstants.RADAR_SIZE/2, 1000);
                 right = getForwardPoint(new Point((int)x,(int)y), angle+VisualConstants.RADAR_SIZE/2, 1000);
-                detectedTank = new Point((int)t.getX(), (int)t.getY());
+                //detectedTank = new Point((int)t.getX(), (int)t.getY());
+                detectedTank = t.getCenter();
                 
-                if(isInTriangle(new Point((int)x,(int)y), left, right, new Point((int)t.getX(), (int)t.getY()))){
+                if(isInTriangle(new Point((int)x,(int)y), left, right, detectedTank)){
                     detected = true;
                     parent.tankCapsule.detectedEnemyTank(getDeltaAngle(parent.getCenter(), forward, detectedTank));
                 }
             }
         }
-        //end
+        //end 
     }
     
     public static Point getForwardPoint(Point origin, double angle, double forwardDistance){
         double s = Math.sin(Math.toRadians(angle))*forwardDistance;
         double c = Math.cos(Math.toRadians(angle))*forwardDistance;
+        
         return new Point((int)(origin.x+c), (int)(origin.y+s));
     }
     
@@ -137,11 +140,17 @@ final public class Cannon extends GameEntity implements Serializable,TransformIn
     
     public double getDeltaAngle(Point a, Point b, Point c){
         double numitor, numarator, angle;
+        Point v = new Point(b.x-a.x, b.y-a.y),
+              u = new Point(c.x - a.x, c.y-a.y);
         
-        numarator = Math.abs(c.x*(a.y-b.y)+c.y*(b.x-a.x)+a.x*b.y-b.x*a.y);
-        numitor = Math.pow(c.x - a.x, 2) + Math.pow(c.y - a.y, 2);
+        numarator = v.x*u.x+v.y*u.y;
+        numitor = Math.sqrt(v.x*v.x + v.y*v.y) * Math.sqrt(u.x*u.x + u.y*u.y);
         
-        angle = Math.toDegrees(Math.asin(numarator/numitor));
+        angle = Math.toDegrees(Math.acos(numarator/numitor));
+        
+        if(((Double)angle).isNaN()){
+            return 0;
+        }
         
         return orientation(a,b,c)*angle;        
     }
@@ -168,7 +177,7 @@ final public class Cannon extends GameEntity implements Serializable,TransformIn
                 );
         //firePoint = getForwardPoint(new Point((int)x, (int)y),angle,VisualConstants.CANNON_WIDTH);
         
-        Bullet b=new Bullet(id, firePoint.x,firePoint.y);
+        Bullet b=new Bullet(id, firePoint.x,firePoint.y, this.parent);
         b.setAngle(angle);
         b.setDamage(damage);
         b.setSpeed(EngineConstants.BULLET_SPEED);
@@ -191,8 +200,8 @@ final public class Cannon extends GameEntity implements Serializable,TransformIn
         
         //draw le reidahr
         //get reidahr far points
-        Point r1 = getForwardPoint(cannonStart, VisualConstants.RADAR_SIZE/2+90, VisualConstants.ENGINE_WIDTH);
-        Point r2 = getForwardPoint(cannonStart, -VisualConstants.RADAR_SIZE/2+90, VisualConstants.ENGINE_WIDTH);
+        Point r1 = getForwardPoint(cannonStart, VisualConstants.RADAR_SIZE/2+90, 1000);
+        Point r2 = getForwardPoint(cannonStart, -VisualConstants.RADAR_SIZE/2+90, 1000);
         //end points
         
         Stroke s = g2.getStroke();
@@ -206,9 +215,7 @@ final public class Cannon extends GameEntity implements Serializable,TransformIn
         g2.setStroke(s);
         //end reidahr
         
-        
         g2.drawImage(VisualPanel.cannonSprite, (int) cannonStart.x, (int) cannonStart.y, null);     //draw cannon
-         
         
         g2.setTransform(at);
     }
