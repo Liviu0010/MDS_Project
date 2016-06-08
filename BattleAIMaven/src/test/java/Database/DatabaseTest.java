@@ -31,30 +31,31 @@ public class DatabaseTest {
     @Test
     public void sqlInjectionTest1() {
         String username = "johnny';DROP TABLE PLAYER_DB;--";
-        DatabaseHandler.getInstance().findAccount(username, "abcd");
+        InfoPlayer.isValidAccount(username, "abcd");
         assertEquals(DatabaseHandler.getInstance().tableExists("PLAYER_DB"), true);
     }
     
     @Test
     public void sqlInjectionTest2() {
         String username = "johnny' OR 1=1/*";
-        assertEquals(DatabaseHandler.getInstance().findName(username), false);
+        assertEquals(InfoPlayer.isValidName(username), true);
+        
     }
     
     @Test
     public void sqlInjectionTest3() {
         String username = "'=''/*";
-        assertEquals(DatabaseHandler.getInstance().findName(username), false);
+        assertEquals(InfoPlayer.isValidName(username), true);
     }
     
     @Test
     public void sqlInjectionTest4() {
         String username = "$badboypwnsyodatabase$ >:)";
         String password = "(SELECT 1 FROM DUAL)";
-        DatabaseHandler.getInstance().pushPlayer(username, password);
-        assertEquals(DatabaseHandler.getInstance().findAccount(username, "1"), false);
-        assertEquals(DatabaseHandler.getInstance().findAccount(username, password), true);
-        DatabaseHandler.getInstance().removePlayer(username, password);
-        assertEquals(DatabaseHandler.getInstance().findAccount(username, password), false);
+        InfoPlayer.signUp(username, password);
+        assertEquals(InfoPlayer.isValidAccount(username, "1"), false);
+        assertEquals(InfoPlayer.isValidAccount(username, password), true);
+        InfoPlayer.removeAccount(username, password);
+        assertEquals(InfoPlayer.isValidAccount(username, password), false);
     }
 }
