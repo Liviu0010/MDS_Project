@@ -17,4 +17,5 @@ public final class RequestType {
     public final static int REGISTER_ACCOUNT = 10;
     public final static int SOURCE_FILE_TRANSFER = 11;
     public final static int START_BATTLE = 12;
+    public final static int SOURCE_FILE_RECEIVED = 13;
 }
