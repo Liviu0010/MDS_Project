@@ -9,14 +9,23 @@ import static org.junit.Assert.assertEquals;
  * @author root
  */
 public class DatabaseTest {
+    private final String[] tables;
+    
     public DatabaseTest() {
         DatabaseHandler.getInstance("root", "");
+        tables = new String[]{"PLAYER_DB, MATCHES_DB, ATTEND"};
     }
     
     @Test
     public void connectionTest() throws SQLException {
         boolean result = DatabaseHandler.getInstance().testConnection();
         assertEquals(result, true);
+    }
+    
+    @Test
+    public void tableCreationTest() {
+        for (String tableName: tables)
+            assertEquals(DatabaseHandler.getInstance().tableExists(tableName), true);
     }
     
     @Test
