@@ -1,8 +1,38 @@
 language: java
 jdk:
     - oraclejdk8
-services:
-    - mysql
+dist: trusty
+sudo: required
+addons:
+  apt:
+    packages:
+    - mysql-server-5.6
+    - mysql-client-core-5.6
+    - mysql-client-5.6
 before_script: 
-    - mysql -e 'CREATE DATABASE Test3;'
+    - mysql -u root -e "CREATE DATABASE Test3; 
+    
+                        USE Test3;
+                        
+                        CREATE TABLE PLAYER_DB 
+                        (name VARCHAR(255) not NULL, 
+                        password VARCHAR(255) not NULL, 
+                        no_points INTEGER,
+                        PRIMARY KEY ( name ))ENGINE=InnoDB;
+                        
+                        CREATE TABLE MATCHES_DB
+                        (id_match INTEGER not NULL AUTO_INCREMENT,
+                        winner VARCHAR(255),
+                        no_players INTEGER not NULL,
+                        duration DOUBLE(10, 5) not NULL,
+                        PRIMARY KEY ( id_match )) ENGINE=InnoDB;
+                       
+                        CREATE TABLE ATTEND
+                        (id_match INTEGER not NULL REFERENCES
+                        MATCHES_BD(id_match) ON DELETE CASCADE ON UPDATE CASCADE,
+                        player_name VARCHAR(255) not NULL REFERENCES
+                        PLAYER_BD(name) ON DELETE CASCADE ON UPDATE CASCADE,
+                        PRIMARY KEY ( id_match, player_name ))ENGINE=InnoDB;"
+    
     - cd BattleAIMaven
+
