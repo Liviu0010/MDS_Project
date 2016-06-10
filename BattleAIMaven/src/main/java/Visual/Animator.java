@@ -4,8 +4,6 @@ import Console.ConsoleFrame;
 import Main.GameModes;
 import Networking.Client.ConnectionHandler;
 import Networking.Requests.EntityUpdateRequest;
-import Networking.Requests.Request;
-import Networking.Requests.RequestType;
 import java.io.IOException;
 
 /**

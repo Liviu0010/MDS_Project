@@ -2,13 +2,11 @@ package Engine;
 
 import Compiler.SourceCompiler;
 import Console.ConsoleFrame;
-import Constants.VisualConstants;
 import Editor.Source;
 import Intelligence.IntelligenceTemplate;
 import Intelligence.Semaphore;
 import Intelligence.TankThread;
 import Main.GameModes;
-import Networking.Client.ConnectionHandler;
 import Networking.Requests.EntityUpdateRequest;
 import Networking.Server.ClientServerDispatcher;
 import Visual.VisualEngine;

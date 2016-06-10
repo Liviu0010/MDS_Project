@@ -1,7 +1,6 @@
 package Intelligence;
 
 import Console.ConsoleFrame;
-import java.awt.Point;
 
 /*
     Test class

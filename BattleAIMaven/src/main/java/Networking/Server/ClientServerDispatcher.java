@@ -4,7 +4,6 @@ import Networking.Client.ConnectionHandler;
 import Constants.MasterServerConstants;
 import Editor.Source;
 import Networking.Requests.HostMatch;
-import Networking.Requests.PlayerConnect;
 import Networking.Requests.RegisterActivity;
 import Networking.Requests.Request;
 import java.io.IOException;
