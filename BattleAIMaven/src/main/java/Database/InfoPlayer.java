@@ -4,40 +4,22 @@ package Database;
 import java.util.List;
 
 /**
- * The InfoPlayer class represents all the necessary information for an account 
- * of a player
+ * The InfoPlayer class acts as a layer that simplifies DatabaseHandler usage in
+ * dealing with player information.
  */
 public class InfoPlayer {
-    private final String userName;
-    private Integer numberOfPoints;
-    private static DatabaseHandler DB = DatabaseHandler.getInstance();
+    private final static DatabaseHandler DB;
     
-    public InfoPlayer(String name){
-        this.userName = name;
-        this.numberOfPoints = 0;
+    static {
+        DB = DatabaseHandler.getInstance();
     }
-    
-    public InfoPlayer(String name, Integer points){
-        this.userName = name;
-        this.numberOfPoints = points;
-    }
-    
-    /**
-     * Returns an object InfoPlayer with userName - name and his number of points    
-     * @param name - the user name
-     * @return 
-     */
-    public InfoPlayer singIn(String name){
-        return new InfoPlayer(name, DB.getNoOfPoints(name));
-    }
-    
     /**
      * returns true if this name is valid for LogIn, i.e this name doesn't exist 
      *  in Database
      * @param name - the user name
      * @return 
      */
-    public static Boolean isValidName (String name){
+    public static synchronized Boolean isValidName (String name){
         return (DB.findName(name) != true);
     }
     
@@ -46,7 +28,7 @@ public class InfoPlayer {
      * otherwise returns false.
      * @return 
      */
-    public static Boolean isValidAccount (String name, String pass){
+    public static synchronized Boolean isValidAccount (String name, String pass){
         return DB.findAccount(name, pass);
     }
     
@@ -56,38 +38,45 @@ public class InfoPlayer {
      * @param pass 
      * @return an object InfoPlayer with userName - name and his number of points
      */
-    public static InfoPlayer logIn(String name, String pass){
+    public static synchronized void signUp(String name, String pass){
         DB.pushPlayer(name, pass);
-        return new InfoPlayer(name);
+    }
+    
+    public static synchronized void removeAccount(String name, String pass){
+        DB.removePlayer(name, pass);
     }
 
-    public void setNumberOfPoints(Integer numberOfPoints) {
-        this.numberOfPoints = numberOfPoints;
-        DB.setNoOfPoints(this.userName, numberOfPoints);
+    public static synchronized void setNumberOfPoints(String username, Integer numberOfPoints) {
+        DB.setNoOfPoints(username, numberOfPoints);
+    }
+    
+    public static synchronized void increasePoints(String username, int points) {
+        DB.setNoOfPoints(username, getNumberOfPoints(username) + points);
+    }
+    
+    public static synchronized void decreasePoints(String username, int points) {
+        increasePoints(username, -points);
+        
     }
 
-    public String getUserName() {
-        return userName;
-    }
-
-    public Integer getNumberOfPoints() {
-        return numberOfPoints;
+    public static synchronized Integer getNumberOfPoints(String username) {
+        return DB.getNoOfPoints(username);
     }
     
     /**
      * @param Player
      * @return List of matches in which Player participate
      */
-    public List getMatches(){
-        return DB.getMatches(userName);
+    public static synchronized List getMatches(String username){
+        return DB.getMatches(username);
     }
     
-    public List getWonMatches(){
-        return DB.getWonMatches(userName);
+    public static synchronized List getWonMatches(String username){
+        return DB.getWonMatches(username);
     }
     
-    public List getLostMatches(){
-        return DB.getLostMatches(userName);
+    public static synchronized List getLostMatches(String username){
+        return DB.getLostMatches(username);
     }
     
     /**
@@ -95,7 +84,7 @@ public class InfoPlayer {
      * @param Player who want to change the password
      * @param pass new password
      */
-    public void changePassword(String pass){
-        DB.changePassword(userName, pass);
+    public static synchronized void changePassword(String username, String pass){
+        DB.changePassword(username, pass);
     }
 }

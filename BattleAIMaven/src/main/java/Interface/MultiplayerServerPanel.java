@@ -271,6 +271,8 @@ public class MultiplayerServerPanel extends javax.swing.JPanel {
                 matches = (List<Match>)ConnectionHandler.getInstance().readFromMasterServer();
             } catch (IOException | ClassNotFoundException ex) {
                 Logger.getLogger(MultiplayerServerPanel.class.getName()).log(Level.SEVERE, null, ex);
+                ConsoleFrame.showError("Lost connection to the master-server.");
+                MainFrame.getInstance().changePanel(new MultiplayerChooserPanel(MainFrame.getInstance()));
             }
             return matches;
         }

@@ -1,6 +1,7 @@
-# BattleAI
-
-<p> BattleAi is a game where players can write Java programs to control a single robot and then use it to battle other
+# BattleAI 
+master [![Build Status](https://travis-ci.org/AlexandruGhergut/BattleAI.svg?branch=master)](https://travis-ci.org/AlexandruGhergut/BattleAI) <br>
+trunk [![Build Status](https://travis-ci.org/AlexandruGhergut/BattleAI.svg?branch=trunk)](https://travis-ci.org/AlexandruGhergut/BattleAI) 
+<p> BattleAI is a game where players can write Java programs to control a single robot and then use it to battle other
 players (computer or human). <p>
 
 <h2> Instructions </h2>

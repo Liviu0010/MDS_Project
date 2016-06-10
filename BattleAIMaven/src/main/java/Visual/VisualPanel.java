@@ -65,7 +65,7 @@ public class VisualPanel extends javax.swing.JPanel {
         if (entityList != null) {
             synchronized (entityList) {
                 for (GameEntity tankAux : entityList) {
-                    if (tankAux instanceof Tank) {
+                    if (tankAux instanceof Tank && ((Tank)tankAux).inTheGame()) {
                         ((Tank) tankAux).draw(g);
                     }
                 }
