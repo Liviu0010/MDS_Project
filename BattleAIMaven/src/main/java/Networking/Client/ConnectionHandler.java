@@ -91,7 +91,8 @@ public class ConnectionHandler {
         try {
             masterServerOutputStream.writeObject(request);
         } catch (IOException ex) {
-            Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
+            ConsoleFrame.sendMessage(this.getClass().getSimpleName(), ex.getMessage());
             connectToMasterServer();
             masterServerOutputStream.writeObject(request);
         }

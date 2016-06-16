@@ -1,5 +1,6 @@
 package Networking.Server;
 
+import Console.ConsoleFrame;
 import Networking.Client.ConnectionHandler;
 import Constants.MasterServerConstants;
 import Networking.Requests.PlayerConnect;
@@ -93,7 +94,8 @@ public class PlayerConnection extends Connection {
                 }
 
             } catch (IOException | ClassNotFoundException ex) {
-                Logger.getLogger(MatchConnection.class.getName()).log(Level.SEVERE, null, ex);
+                //Logger.getLogger(MatchConnection.class.getName()).log(Level.SEVERE, null, ex);
+                ConsoleFrame.sendMessage(this.getClass().getSimpleName(), ex.getMessage());
                 closeConnection();
             }
         }
@@ -104,7 +106,8 @@ public class PlayerConnection extends Connection {
         try {
             ConnectionHandler.getInstance().sendToMatch(new PlayerConnect(username, true));
         } catch (IOException ex) {
-            Logger.getLogger(PlayerConnection.class.getName()).log(Level.SEVERE, null, ex);
+            //Logger.getLogger(PlayerConnection.class.getName()).log(Level.SEVERE, null, ex);
+            ConsoleFrame.sendMessage(this.getClass().getSimpleName(), ex.getMessage());
         }
     }
     
