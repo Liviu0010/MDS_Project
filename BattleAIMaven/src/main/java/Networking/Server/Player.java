@@ -9,6 +9,7 @@ public class Player implements Serializable {
     
     private static Player instance;
     private String username;
+    private boolean loggedIn = false;
     
     private Player() {
     }
@@ -37,5 +38,12 @@ public class Player implements Serializable {
         return username;
     }
     
+    public boolean isLoggedIn(){
+        return loggedIn;
+    }
+    
+    public void login(){
+        loggedIn = true;
+    }
     
 }

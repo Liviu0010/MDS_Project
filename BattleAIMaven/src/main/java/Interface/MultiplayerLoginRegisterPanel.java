@@ -30,6 +30,7 @@ public class MultiplayerLoginRegisterPanel extends javax.swing.JPanel {
         initComponents();
         this.usernameField.setText(Player.getInstance().getUsername());
         passwordField.setText("");
+        
     }
 
     /**
@@ -144,6 +145,8 @@ public class MultiplayerLoginRegisterPanel extends javax.swing.JPanel {
                     ConsoleFrame.showError("No account matches the provided username and password");
                     return;
                 }
+                Player.getInstance().setUsername(usernameField.getText());
+                Player.getInstance().login();
                 rootFrame.changePanel(new MultiplayerServerPanel(rootFrame));
             } else {
                 ConsoleFrame.showError("Username can't contain these characters: ' = + ; \" ");
