@@ -214,7 +214,7 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
      * Move the tank forward reported to it's current orientation angle.
      */
     public void moveFront(){
-        if(move_state >= Constants.EngineConstants.ROTATE_LIMIT)
+        if(move_state >= Constants.EngineConstants.MOVE_LIMIT)
             return;
         
         move_state++;
