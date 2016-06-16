@@ -7,7 +7,7 @@ package Constants;
 public interface MasterServerConstants {
     String MASTER_USERNAME = "BattleAIMS";
     String IP = "localhost";
-    //String IP = "192.168.43.181";
+    //String IP = "79.115.166.26";
     int PORT = 60010;
     long PACKET_DELAY = 3000; // expressed in milliseconds
 }
