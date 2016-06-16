@@ -3,8 +3,8 @@ package Networking.Server;
 import Networking.Client.ConnectionHandler;
 import Constants.MasterServerConstants;
 import Editor.Source;
+import Interface.MainFrame;
 import Networking.Requests.HostMatch;
-import Networking.Requests.PlayerConnect;
 import Networking.Requests.RegisterActivity;
 import Networking.Requests.Request;
 import java.io.IOException;
@@ -83,6 +83,13 @@ public class ClientServerDispatcher extends ServerDispatcher {
         this.port = match.getPort();
         boolean result = this.start(port);
         startMasterServerNotifier();
+        return result;
+    }
+    
+    @Override
+    public boolean stop() {
+        boolean result = super.stop();
+        MainFrame.getInstance().localServerName = null;
         return result;
     }
     

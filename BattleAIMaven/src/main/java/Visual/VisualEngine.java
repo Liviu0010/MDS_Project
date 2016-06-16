@@ -1,11 +1,9 @@
 package Visual;
 
-import Constants.VisualConstants;
 import Editor.Source;
 import Engine.GameEntity;
 import Engine.IntelligenceControlThread;
 import Main.GameModes;
-import Networking.Client.ConnectionHandler;
 import Networking.Requests.EntityUpdateRequest;
 import Networking.Server.ClientServerDispatcher;
 import java.awt.Dimension;
@@ -61,9 +59,11 @@ public class VisualEngine extends javax.swing.JFrame {
     
     public void updateEntityList(ArrayList<GameEntity> newList){
         visualPanel1.entityList = newList;
+        /*
         if(matchMode == GameModes.MULTIPLAYER_HOST){
             ClientServerDispatcher.getInstance().broadcastToAllExceptHost(new EntityUpdateRequest(newList));
         }
+        */
     }
     
     public void setMatchMode(GameModes matchMode){
@@ -135,9 +135,8 @@ public class VisualEngine extends javax.swing.JFrame {
                 matchMode == GameModes.MULTIPLAYER_HOST){
             if(sursePrimite != null){
                 ict = new IntelligenceControlThread(sursePrimite);
-            }else{
-                ict = new IntelligenceControlThread(3);
             }
+            
             ict.start();
         }
         

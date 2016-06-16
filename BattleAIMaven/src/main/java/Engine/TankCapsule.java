@@ -1,6 +1,6 @@
 package Engine;
 
-import java.awt.Point;
+import java.io.Serializable;
 
 /**
  * Encapsulation for the Tank class so that we can restrict
@@ -10,7 +10,7 @@ import java.awt.Point;
  * a Tank object from the entityList in order.
  * 
  */
-public class TankCapsule {
+public class TankCapsule implements Serializable {
     private Tank tank;
     
     public TankCapsule(){

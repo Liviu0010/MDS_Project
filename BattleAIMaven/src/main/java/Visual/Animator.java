@@ -1,14 +1,14 @@
 package Visual;
 
 import Console.ConsoleFrame;
-import Engine.GameEntity;
 import Main.GameModes;
 import Networking.Client.ConnectionHandler;
 import Networking.Requests.EntityUpdateRequest;
+import Networking.Requests.Request;
+import Networking.Requests.RequestType;
+import Networking.Server.Packet;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * The separate thread which is responsible
@@ -25,6 +25,7 @@ public class Animator extends Thread{
     private Thread paintThread;
     volatile boolean updateDone;
     long c = 0;
+    private Packet currentPacket;
     
     private GameModes gameMode;
     
@@ -71,12 +72,22 @@ public class Animator extends Thread{
     private void runMultiplayerClient(){
         while(running){
             
-            EntityUpdateRequest newEntities;
+            //EntityUpdateRequest newEntities;
             try {
-                newEntities = (EntityUpdateRequest) ConnectionHandler.getInstance().readFromMatch();
-                panel.entityList = newEntities.gameEntities;
+                //newEntities = (EntityUpdateRequest)ConnectionHandler.getInstance().readFromMatch();
+                //panel.entityList = newEntities.gameEntities;  
+                
+                if(currentPacket != null && currentPacket.framesLeft() > 0)
+                    panel.entityList = currentPacket.consume();
+                else {
+                    currentPacket = ((EntityUpdateRequest)ConnectionHandler.getInstance().readFromMatch()).packet;
+                    panel.entityList = currentPacket.consume();
+                }
+                
             } catch (IOException | ClassNotFoundException ex) {
+                ex.printStackTrace();
                 ConsoleFrame.showError("Failed to read from battle stream");
+                running = false;
             }
             
             

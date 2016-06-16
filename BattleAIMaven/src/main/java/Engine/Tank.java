@@ -6,6 +6,7 @@ import Constants.EngineConstants;
 import Constants.VisualConstants;
 import Visual.VisualPanel;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -15,12 +16,13 @@ import java.awt.geom.*;
 
 public class Tank extends GameEntity implements Serializable,MovementInterface, TransformInterface, Drawable {    
     transient protected Image tankSprite;
-    protected String playerName = "Local";
     protected double life;
     private double energy = 100;
     protected Cannon cannon;
     private final int tank_id;
-    protected TankCapsule tankCapsule;
+    protected transient TankCapsule tankCapsule;
+    private String name, author;
+    
     //the id of the tank will be the current number of instanced tank classes
     private static int staticId;
     /**
@@ -35,7 +37,7 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
         tankSprite  = VisualPanel.tankSprite;
         this.tank_id = staticId++;
         this.life = 100;
-        this.playerName = playerName;
+        this.author = playerName;
         width = (int)VisualConstants.TANK_WIDTH;
         height = (int)VisualConstants.TANK_HEIGHT;
         cannon = new Cannon(staticId, xPos, yPos, this);
@@ -45,10 +47,13 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
         life = EngineConstants.LIFE;
     }
     
-    public Tank() {
+    public Tank(String name, String author) {
         super(0,0,0);
         Rectangle tankRect =  new Rectangle();
         Rectangle otherTank = new Rectangle();
+        
+        this.name = name;
+        this.author = author;
         
         x = (int)(Math.random()*1000%VisualConstants.ENGINE_WIDTH);
         y = (int)(Math.random()*1000%VisualConstants.ENGINE_HEIGHT);
@@ -89,20 +94,22 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
         angle = EngineConstants.ANGLE;
         speed = EngineConstants.TANK_SPEED;
         life = EngineConstants.LIFE;
-        
+            
         synchronized(this){
             GameEntity.entityList.add(this);
         }
     }
     
     public Point getCenter(){
-        Point center;
+        Point midway = Cannon.getForwardPoint(new Point((int)this.x, (int)this.y), angle, Constants.VisualConstants.TANK_WIDTH/2);
+        Point center1 = Cannon.getForwardPoint(midway, angle-90, Constants.VisualConstants.TANK_HEIGHT/2);
+        Point center2 = Cannon.getForwardPoint(midway, angle-270, Constants.VisualConstants.TANK_HEIGHT/2);
         
-        
-        center = Cannon.getForwardPoint(new Point((int)this.x, (int)this.y), angle, Constants.VisualConstants.TANK_WIDTH/2);
-        center = Cannon.getForwardPoint(center, angle-90, Constants.VisualConstants.TANK_HEIGHT/2);
-        
-        return center;
+        if(center1.x > this.x && center1.x < this.x+Constants.VisualConstants.TANK_WIDTH &&
+                center1.y > this.y && center1.y < this.x+Constants.VisualConstants.TANK_HEIGHT)
+            return center1;
+        else
+            return center2;
     }
     
     /**
@@ -198,12 +205,12 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
         double c = Math.cos(angle * Math.PI / 180.0);
         x += c * speed;
         y += s * speed;
-
+        
         if (!isInsideArena()) {
             x = origX;
             y = origY;
             tankCapsule.hitArenaWall();
-        } else {
+        } else {   
             //we store the angle of the cannon in cangle
             double cangle = cannon.getAngle();
             //set the cannon rotaton to the tank rotation  
@@ -242,6 +249,15 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
         this.tankCapsule = tankCapsule;
     }
     
+    public void hitByBullet(){
+        this.life -= 10;
+        this.tankCapsule.gotHitByBullet();
+    }
+    
+    public boolean inTheGame(){
+        return life > 0;
+    }
+    
     @Override
     public void draw(Graphics g) {
         Graphics2D g2 = (Graphics2D)g;
@@ -249,7 +265,7 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
         
         g2.rotate(Math.toRadians(90), x+10, y+10);
         g2.rotate(Math.toRadians(angle), x+10, y+10);
-        g2.drawImage(tankSprite, (int)x, (int)y, null);
+        g2.drawImage(VisualPanel.tankSprite, (int)x, (int)y, null);
         g2.setTransform(at); 
         
         cannon.draw(g);
@@ -268,14 +284,19 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
         g2.fillRect((int)x-2, (int)(y-10-VisualConstants.HEALTH_BAR_HEIGHT), (int)(energy/100*VisualConstants.HEALTH_BAR_WIDTH), (int)VisualConstants.HEALTH_BAR_HEIGHT);
         //end
         
-        /*g2.rotate(Math.toRadians(90), cannon.getX()+10, cannon.getY()+10);
-        g2.rotate(Math.toRadians(cannon.getAngle()), cannon.getX()+10, cannon.getY()+10);
-        g2.drawImage(cannonSprite, (int)cannon.getX()+8, (int)cannon.getY(), null);*/
+        //draw name and author
+        g2.setColor(Color.BLACK);
+        Font f = g2.getFont();
+        g2.setFont(g2.getFont().deriveFont(10f));
+        g2.drawString(this.name, (int)(this.x+Constants.VisualConstants.TANK_WIDTH + 3), (int)(this.y+Constants.VisualConstants.TANK_HEIGHT/2-4));
+        g2.drawString(this.author, (int)(this.x+Constants.VisualConstants.TANK_WIDTH + 3), (int)(this.y+Constants.VisualConstants.TANK_HEIGHT/2+4));
+        g2.setFont(f);
+        //end
     }
 
     @Override
     public String toString() {
-        return "Tank{" + " playerName=" + playerName + ", life=" + life + ", cannon=" +
+        return "Tank{" + " playerName=" + author + ", life=" + life + ", cannon=" +
                 cannon + ", width=" + width + ", height=" + height + '}' + " " + super.toString();
     }
 

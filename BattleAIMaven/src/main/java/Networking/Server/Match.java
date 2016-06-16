@@ -132,4 +132,19 @@ public class Match implements Serializable {
     public void setPort(int port) {
         this.PORT = port;
     }
+    
+    @Override 
+    public boolean equals(Object ob) {
+        if (ob == null || !(ob instanceof Match))
+            return false;
+        
+        Match match = (Match)ob;
+        
+        return title.equals(match.title) &&
+                IP.equals(match.IP) &&
+                PORT == match.PORT && 
+                OWNER.equals(match.OWNER) && 
+                players.containsAll(match.players) &&
+                maxNumberOfPlayers == match.maxNumberOfPlayers;
+    }
 }

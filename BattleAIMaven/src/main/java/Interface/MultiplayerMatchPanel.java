@@ -10,6 +10,7 @@ import Networking.Requests.ChatMessage;
 import Networking.Requests.RemovePlayer;
 import Networking.Requests.Request;
 import Networking.Requests.RequestType;
+import Networking.Requests.SourceFileReceived;
 import Networking.Requests.SourceFileTransfer;
 import Networking.Requests.StartBattle;
 import Networking.Server.ClientServerDispatcher;
@@ -46,8 +47,8 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
     private final DefaultListModel listModel = new DefaultListModel();
     private final DefaultListModel playerSelectionModel = new DefaultListModel();
     private boolean ready = false;
-    
-    private Boolean listenForRequests = false;
+    private int lastSelectedIndex = -1;
+    private Boolean listenForRequests = true;
     private LinkedList<Request> requestsList = new LinkedList<>();
     
     /**
@@ -57,6 +58,8 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
      */
     public MultiplayerMatchPanel(MainFrame rootFrame, Match currentMatch) {
         initComponents();
+        if (!ConnectionHandler.getInstance().isHost())
+            startButton.setVisible(false);
         this.selectButton.setFocusable(false);
         this.readyButton.setFocusable(false);
         this.chatOutputArea.setEditable(false);
@@ -267,18 +270,13 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
 
     private void selectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectButtonActionPerformed
         int index = listAvailableScripts.getSelectedIndex();
-        for(int i = 0; i<playerSelectionModel.getSize();i++){
-            String aux = (String) playerSelectionModel.get(i);
-            if(aux.startsWith(Player.getInstance().getUsername())){
-                playerSelectionModel.remove(i);
-                break;
-            }
-        }
         try{
-            selectedSource = sourceList.get(index);
-            playerSelectionModel.addElement(Player.getInstance().getUsername()+" / "+selectedSource.getName());
-            listPlayersAndScripts.setModel(playerSelectionModel);
-            ConnectionHandler.getInstance().sendToMatch(new SourceFileTransfer(selectedSource));
+            if (index != lastSelectedIndex) {
+                selectedSource = sourceList.get(index);
+                ConnectionHandler.getInstance().
+                        sendToMatch(new SourceFileTransfer(Player.getInstance().getUsername(), selectedSource));
+                lastSelectedIndex = index;
+            }
         }catch(IndexOutOfBoundsException ex){
             ConsoleFrame.showError("Select script, please");
         } catch (IOException ex) {
@@ -318,7 +316,7 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
                 return;
             }
 
-            ClientServerDispatcher.getInstance().broadcastToAllExceptHost(new StartBattle());
+            ClientServerDispatcher.getInstance().broadcast(new StartBattle());
 
             setWorkerStatus(false);
             List<Source> playersSources = new LinkedList(playersSourcesMap.values());
@@ -367,13 +365,13 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
         @Override
         protected Void doInBackground(){
             
-            boolean listen = true;
-            
-            while(listen){
+            while(listenForRequests){
                 
                 try {
-                    Request request = (Request)ConnectionHandler.getInstance().readFromMatch();
-                    
+                        Request request = (Request)ConnectionHandler.getInstance().readFromMatch();
+                        if (request.getType() == RequestType.START_BATTLE)
+                            listenForRequests = false;
+                        
                         SwingUtilities.invokeLater(new Runnable() {
 
                             @Override
@@ -389,10 +387,24 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
                                         playerSelectionModel.removeElement(((RemovePlayer)request).getUsername());
                                         break;
                                     case RequestType.START_BATTLE:
-                                        VisualEngine ve = VisualEngine.getInstance();
-                                        ve.setMatchMode(GameModes.MULTIPLAYER_CLIENT);
-                                        ve.setVisible(true);
-                                        setWorkerStatus(false);
+                                        if (!ConnectionHandler.getInstance().isHost()) {
+                                            VisualEngine ve = VisualEngine.getInstance();
+                                            ve.setMatchMode(GameModes.MULTIPLAYER_CLIENT);
+                                            ve.setVisible(true);
+                                        }
+                                        break;
+                                    case RequestType.SOURCE_FILE_RECEIVED:
+                                        String username = ((SourceFileReceived)request).getUsername();
+                                        String sourcename = ((SourceFileReceived)request).getSourcename();
+                                        for(int i = 0; i<playerSelectionModel.getSize();i++){
+                                            String aux = (String) playerSelectionModel.get(i);
+                                            if(aux.startsWith(username)){
+                                                playerSelectionModel.remove(i);
+                                                break;
+                                            }
+                                        }
+                                        playerSelectionModel.addElement(username + "/" + sourcename);
+                                        
                                         break;
                                     default:
                                         break;
@@ -402,7 +414,7 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
                     
                 } catch (IOException | ClassNotFoundException ex) {
                     ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed to read from match");
-                    listen = false;
+                    listenForRequests = false;
                 }
             }
             return null;
