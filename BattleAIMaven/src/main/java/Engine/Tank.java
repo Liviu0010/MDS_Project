@@ -22,6 +22,7 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
     private final int tank_id;
     protected transient TankCapsule tankCapsule;
     private String name, author;
+    private int rotate_state, move_state;
     
     //the id of the tank will be the current number of instanced tank classes
     private static int staticId;
@@ -149,7 +150,10 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
      * @param degrees a double value representing the rotation value
      */
     public void rotateCannon(double degrees){
-        cannon.rotate(degrees);
+        if(rotate_state < Constants.EngineConstants.ROTATE_LIMIT){
+            rotate_state++;
+            cannon.rotate(degrees);
+        }
     }
     
     @Override
@@ -170,6 +174,17 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
     @Override
     public void moveRight() {
         setX(getX()+1);
+    }
+    
+    public void janitor(){
+        resetStates();
+        rotateCannon(0.1);
+        rotateCannon(-0.1);
+        rotate_state -=2;
+    }
+    
+    private void resetStates(){
+        rotate_state = move_state = 0;
     }
     
     /**
@@ -199,6 +214,10 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
      * Move the tank forward reported to it's current orientation angle.
      */
     public void moveFront(){
+        if(move_state >= Constants.EngineConstants.ROTATE_LIMIT)
+            return;
+        
+        move_state++;
         double origX = x, origY = y;
         
         double s = Math.sin(angle * Math.PI / 180.0);
