@@ -3,7 +3,7 @@ package Networking.Server;
 import Console.ConsoleFrame;
 import Networking.Client.ConnectionHandler;
 import Constants.MasterServerConstants;
-import Editor.Source;
+import Source.Source;
 import Interface.MainFrame;
 import Networking.Requests.HostMatch;
 import Networking.Requests.RegisterActivity;

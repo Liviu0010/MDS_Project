@@ -1,14 +1,11 @@
 package Visual;
 
 import Console.ConsoleFrame;
-import Main.GameModes;
+import Enums.GameModes;
 import Networking.Client.ConnectionHandler;
 import Networking.Requests.EntityUpdateRequest;
-import Networking.Requests.Request;
-import Networking.Requests.RequestType;
 import Networking.Server.Packet;
 import java.io.IOException;
-import java.util.ArrayList;
 
 /**
  * The separate thread which is responsible

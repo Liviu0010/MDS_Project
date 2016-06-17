@@ -1,4 +1,4 @@
-package Editor;
+package Source;
 
 import Console.ConsoleFrame;
 import Constants.PathConstants;

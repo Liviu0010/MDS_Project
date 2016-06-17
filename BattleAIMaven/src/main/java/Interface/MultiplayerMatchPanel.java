@@ -2,9 +2,9 @@ package Interface;
 
 import Networking.Client.ConnectionHandler;
 import Console.ConsoleFrame;
-import Editor.Source;
-import Editor.SourceManager;
-import Main.GameModes;
+import Source.Source;
+import Source.SourceManager;
+import Enums.GameModes;
 import Networking.Requests.AddPlayer;
 import Networking.Requests.ChatMessage;
 import Networking.Requests.RemovePlayer;

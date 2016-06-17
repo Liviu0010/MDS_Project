@@ -11,8 +11,6 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * PlayerConnection handles the continuous connection between a player and a match.
