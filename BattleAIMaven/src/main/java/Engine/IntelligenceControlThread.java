@@ -2,11 +2,11 @@ package Engine;
 
 import Compiler.SourceCompiler;
 import Console.ConsoleFrame;
-import Editor.Source;
+import Source.Source;
 import Intelligence.IntelligenceTemplate;
 import Intelligence.Semaphore;
 import Intelligence.TankThread;
-import Main.GameModes;
+import Enums.GameModes;
 import Networking.Server.PacketManager;
 import Visual.VisualEngine;
 import java.util.ArrayList;
@@ -35,7 +35,8 @@ public class IntelligenceControlThread extends Thread{
         for(int i = 0; i<surse.size(); i++){
             
             synchronized(GameEntity.entityList){
-                new Tank(surse.get(i).getName(), surse.get(i).getAuthor()); //adds it to entityList
+                Tank tanc = new Tank(surse.get(i).getName(), surse.get(i).getAuthor()); //adds it to entityList
+                GameEntity.entityList.add(tanc);
             }
             playerCode = (IntelligenceTemplate) SourceCompiler.getInstanceOfSource(surse.get(i));
             
