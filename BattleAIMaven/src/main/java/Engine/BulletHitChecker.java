@@ -5,7 +5,7 @@ import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
-public class BulletHitChecker extends Thread{
+public class BulletHitChecker extends Thread {
     private boolean running;
     private static BulletHitChecker instance;
     private static boolean good2go;
