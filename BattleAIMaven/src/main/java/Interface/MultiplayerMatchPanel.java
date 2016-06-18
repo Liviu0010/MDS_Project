@@ -297,6 +297,10 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
 
     private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
 
+        if(this.listPlayersAndScripts.getModel().getSize() <= 1){
+            return;
+        }
+        
         // Check if the user has selected a source file
         if (ConnectionHandler.getInstance().isHost()) 
         {

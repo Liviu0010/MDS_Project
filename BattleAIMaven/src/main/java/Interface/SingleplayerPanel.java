@@ -194,10 +194,13 @@ public class SingleplayerPanel extends JPanel {
     }//GEN-LAST:event_removeButtonActionPerformed
 
     private void battleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_battleButtonActionPerformed
-        VisualEngine ve = VisualEngine.getInstance(addedSourceList);
-        ve.setMatchMode(GameModes.SINGLEPLAYER);
-        ve.setVisible(true);
-        rootFrame.setVisible(true);
+        if (this.listChosenScripts.getModel().getSize() >= 2) {
+
+            VisualEngine ve = VisualEngine.getInstance(addedSourceList);
+            ve.setMatchMode(GameModes.SINGLEPLAYER);
+            ve.setVisible(true);
+            rootFrame.setVisible(true);
+        }
     }//GEN-LAST:event_battleButtonActionPerformed
 
     private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
