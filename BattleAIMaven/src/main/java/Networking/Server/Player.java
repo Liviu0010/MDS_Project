@@ -38,25 +38,25 @@ public class Player implements Serializable {
         return username;
     }
     
-    public boolean isLoggedIn(){
+    public boolean isLoggedIn() {
         return loggedIn;
     }
     
     /**
-     * Set's the Player as logged into a Master-Server with the given username
+     * Sets the Player as logged into a Master-Server with the given username
      * @param username 
      */
-    public void login(String username){
+    public void logIn(String username) {
         loggedIn = true;
         setUsername(username);
     }
-    
+
     /**
-     * Set's the Player as Local
+     * Sets the Player as Local
      */
-    public void logout(){
+    public void logOut() {
         loggedIn = false;
         setUsername("Local");
     }
-    
+
 }

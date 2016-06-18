@@ -273,6 +273,7 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
         try{
             if (index != lastSelectedIndex) {
                 selectedSource = sourceList.get(index);
+                selectedSource.setAuthor(Player.getInstance().getUsername());
                 ConnectionHandler.getInstance().
                         sendToMatch(new SourceFileTransfer(Player.getInstance().getUsername(), selectedSource));
                 lastSelectedIndex = index;
