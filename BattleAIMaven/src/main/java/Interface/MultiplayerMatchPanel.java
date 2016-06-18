@@ -318,7 +318,6 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
 
             ClientServerDispatcher.getInstance().broadcast(new StartBattle());
 
-            setWorkerStatus(false);
             List<Source> playersSources = new LinkedList(playersSourcesMap.values());
             VisualEngine ve = VisualEngine.getInstance(playersSources);
             ve.setMatchMode(GameModes.MULTIPLAYER_HOST);
@@ -369,8 +368,6 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
                 
                 try {
                         Request request = (Request)ConnectionHandler.getInstance().readFromMatch();
-                        if (request.getType() == RequestType.START_BATTLE)
-                            listenForRequests = false;
                         
                         SwingUtilities.invokeLater(new Runnable() {
 
@@ -387,6 +384,7 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
                                         playerSelectionModel.removeElement(((RemovePlayer)request).getUsername());
                                         break;
                                     case RequestType.START_BATTLE:
+                                        ConnectionHandler.getInstance().clearGameData();
                                         if (!ConnectionHandler.getInstance().isHost()) {
                                             VisualEngine ve = VisualEngine.getInstance();
                                             ve.setMatchMode(GameModes.MULTIPLAYER_CLIENT);
@@ -405,6 +403,9 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
                                         }
                                         playerSelectionModel.addElement(username + "/" + sourcename);
                                         
+                                        break;
+                                    case RequestType.ENTITIY_UPDATE:
+                                        ConnectionHandler.getInstance().addGameData(request);
                                         break;
                                     default:
                                         break;

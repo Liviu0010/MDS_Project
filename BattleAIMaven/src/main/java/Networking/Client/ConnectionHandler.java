@@ -16,6 +16,8 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -39,11 +41,14 @@ public class ConnectionHandler {
     // this variable indicated where the disconnect was voluntary
     private boolean disconnectedFromMatch;
     
+    private final BlockingQueue<Request> gameDataQueue;
+           
     public boolean isHost() {
         return host;
     }
     
     private ConnectionHandler() {
+        gameDataQueue = new LinkedBlockingQueue<>();
         masterServerSocket = null;
         matchSocket = null;
         host = false;
@@ -204,4 +209,15 @@ public class ConnectionHandler {
         matchOutputStream.flush();
     }
     
+    public void addGameData(Request request) {
+        gameDataQueue.add(request);
+    }
+    
+    public Request getGameData() throws InterruptedException {
+        return gameDataQueue.take();
+    }
+    
+    public void clearGameData() {
+        gameDataQueue.clear();
+    }
 }
