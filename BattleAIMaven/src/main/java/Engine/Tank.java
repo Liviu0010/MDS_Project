@@ -4,18 +4,15 @@ import java.io.Serializable;
 
 import Constants.EngineConstants;
 import Constants.VisualConstants;
-import Visual.VisualPanel;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.*;
 
-public class Tank extends GameEntity implements Serializable,MovementInterface, TransformInterface, Drawable {    
-    transient protected Image tankSprite;
+public class Tank extends GameEntity implements Serializable,MovementInterface, TransformInterface, Drawable {
     protected double life;
     private double energy = 100;
     protected Cannon cannon;
@@ -35,7 +32,6 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
     
     public Tank(double xPos, double yPos,String playerName) {
         super(staticId,xPos, yPos);
-        tankSprite  = VisualPanel.tankSprite;
         this.tank_id = staticId++;
         this.life = 100;
         this.author = playerName;
@@ -85,7 +81,6 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
         //this.x = xPos;
         //this.y = yPos;
         
-        tankSprite  = VisualPanel.tankSprite;
         this.tank_id = staticId++;
         this.life = 100;
         width = (int)VisualConstants.TANK_WIDTH;
@@ -95,10 +90,7 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
         angle = EngineConstants.ANGLE;
         speed = EngineConstants.TANK_SPEED;
         life = EngineConstants.LIFE;
-            
-        synchronized(this){
-            GameEntity.entityList.add(this);
-        }
+        
     }
     
     public Point getCenter(){
@@ -284,7 +276,7 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
         
         g2.rotate(Math.toRadians(90), x+10, y+10);
         g2.rotate(Math.toRadians(angle), x+10, y+10);
-        g2.drawImage(VisualPanel.tankSprite, (int)x, (int)y, null);
+        g2.drawImage(EngineConstants.TANK_SPRITE, (int)x, (int)y, null);
         g2.setTransform(at); 
         
         cannon.draw(g);

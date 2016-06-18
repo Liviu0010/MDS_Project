@@ -1,11 +1,9 @@
 package Visual;
 
-import Editor.Source;
+import Source.Source;
 import Engine.GameEntity;
 import Engine.IntelligenceControlThread;
-import Main.GameModes;
-import Networking.Requests.EntityUpdateRequest;
-import Networking.Server.ClientServerDispatcher;
+import Enums.GameModes;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,11 +57,6 @@ public class VisualEngine extends javax.swing.JFrame {
     
     public void updateEntityList(ArrayList<GameEntity> newList){
         visualPanel1.entityList = newList;
-        /*
-        if(matchMode == GameModes.MULTIPLAYER_HOST){
-            ClientServerDispatcher.getInstance().broadcastToAllExceptHost(new EntityUpdateRequest(newList));
-        }
-        */
     }
     
     public void setMatchMode(GameModes matchMode){

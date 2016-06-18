@@ -30,6 +30,7 @@ public class MultiplayerLoginRegisterPanel extends javax.swing.JPanel {
         initComponents();
         this.usernameField.setText(Player.getInstance().getUsername());
         passwordField.setText("");
+        
     }
 
     /**
@@ -187,7 +188,7 @@ public class MultiplayerLoginRegisterPanel extends javax.swing.JPanel {
             String password = Guard.scramblePassword(String.valueOf(passwordField.getPassword()));
             
             if(checkUsername(username)){
-                Player.getInstance().setUsername(username);
+                Player.getInstance().login(username);
                 success = true;
             }else{
                 success = false;

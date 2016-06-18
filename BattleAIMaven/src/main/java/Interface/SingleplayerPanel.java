@@ -2,9 +2,9 @@ package Interface;
 
 import Console.ConsoleFrame;
 import Constants.VisualConstants;
-import Editor.Source;
-import Editor.SourceManager;
-import Main.GameModes;
+import Source.Source;
+import Source.SourceManager;
+import Enums.GameModes;
 import Visual.VisualEngine;
 import java.util.ArrayList;
 import java.util.List;

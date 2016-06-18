@@ -1,5 +1,7 @@
 package Editor;
 
+import Source.SourceManager;
+import Source.Source;
 import Compiler.SourceCompiler;
 import Console.ConsoleFrame;
 import Constants.PathConstants;
@@ -7,10 +9,7 @@ import Interface.MainFrame;
 import Networking.Server.Player;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.GridLayout;
-import java.awt.event.InputMethodEvent;
-import java.awt.event.InputMethodListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
