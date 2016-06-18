@@ -12,11 +12,13 @@ import java.io.Serializable;
  */
 public class TankCapsule implements Serializable {
     private Tank tank;
+    private transient int index;
     
     public TankCapsule(){
         synchronized(GameEntity.entityList) {
             if(GameEntity.entityList.size()>0){
                 if(GameEntity.currentIndex < GameEntity.entityList.size()){
+                    index = GameEntity.currentIndex;
                     tank = (Tank)GameEntity.entityList.get(GameEntity.currentIndex++);
                     tank.setTankCapsule(this);
                 }
