@@ -48,6 +48,9 @@ public class TankCapsule implements Serializable {
     public final double getEnergy(){
         return tank.getEnergy();
     }
+    public final double getAngle(){
+      return tank.getAngle();
+    };
     public final void fire(){
             Bullet b = tank.fire();
             
