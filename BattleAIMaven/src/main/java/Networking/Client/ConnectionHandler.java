@@ -138,6 +138,7 @@ public class ConnectionHandler {
     
     public void connectToMatch(Match match) throws IOException {
         InetSocketAddress address = new InetSocketAddress(match.getIP(), match.getPort());
+        System.out.println("Connecting to " + match.getIP());
         matchSocket = new Socket();
 
         matchSocket.connect(address, 3500);
