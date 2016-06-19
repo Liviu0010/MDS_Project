@@ -105,6 +105,10 @@ public class IntelligenceControlThread extends Thread{
     }
     
     public void gameOver(){
+        for(int i = 0; i<IntelligenceControlThread.numberOfTanks; i++){
+            System.out.println(((Tank)GameEntity.entityList.get(i)).getScore());
+        }
+            
         this.stopNicely();
         VisualEngine.getInstance().closeWindow(); 
     }
