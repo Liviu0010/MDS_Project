@@ -129,7 +129,6 @@ public class ConnectionHandler {
                 result = masterServerInputStream.readObject();
             } catch (IOException ex2) {
                 masterServerSocket = null;
-                ConsoleFrame.showError("Connection timed out.");
                 throw ex2;
             }
         }
