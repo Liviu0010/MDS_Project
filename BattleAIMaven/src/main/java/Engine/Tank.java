@@ -20,6 +20,7 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
     protected transient TankCapsule tankCapsule;
     private String name, author;
     private int rotate_state, move_state;
+    private int score;
     
     //the id of the tank will be the current number of instanced tank classes
     private static int staticId;
@@ -294,6 +295,22 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
         g2.drawString(this.author, (int)(this.x+Constants.VisualConstants.TANK_WIDTH + 3), (int)(this.y+Constants.VisualConstants.TANK_HEIGHT/2+4));
         g2.setFont(f);
         //end
+    }
+    
+    public String getAuthor(){
+        return this.author;
+    }
+    
+    public String getName(){
+        return this.name;
+    }
+    
+    public void addScore(int toAdd){
+        this.score += toAdd;
+    }
+    
+    public int getScore(){
+        return score;
     }
 
     @Override

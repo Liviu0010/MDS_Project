@@ -43,6 +43,10 @@ final public class Bullet extends GameEntity implements Serializable,TransformIn
         return id;
     }
     
+    public Tank getOwner(){
+        return owner;
+    }
+    
     @Override
     public void draw(Graphics g) {
         Graphics2D g2 = (Graphics2D)g;
