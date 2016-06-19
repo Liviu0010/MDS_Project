@@ -180,7 +180,7 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
      * @return Value which specifies whether the tank is inside the arena or not.
      */
     public boolean isInsideArena(Point p){
-        return p.x-10 > 0 && p.y-10 > 0 && p.x+VisualConstants.TANK_WIDTH+10 < VisualConstants.ENGINE_WIDTH && p.y+VisualConstants.TANK_HEIGHT+30 < VisualConstants.ENGINE_HEIGHT;
+        return p.x-10 > 0 && p.y-10 > 0 && p.x+VisualConstants.TANK_WIDTH+10 < VisualConstants.ENGINE_WIDTH && p.y+VisualConstants.TANK_HEIGHT+40 < VisualConstants.ENGINE_HEIGHT;
     }
     
     /**
@@ -188,7 +188,7 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
      * @return Value which specifies whether the tank is inside the arena or not.
      */
     public final boolean isInsideArena(){
-        return this.x-10 > 0 && this.y-10 > 0 && this.x+VisualConstants.TANK_WIDTH+10 < VisualConstants.ENGINE_WIDTH && this.y + VisualConstants.TANK_HEIGHT+30 < VisualConstants.ENGINE_HEIGHT;
+        return this.x-10 > 0 && this.y-10 > 0 && this.x+VisualConstants.TANK_WIDTH+10 < VisualConstants.ENGINE_WIDTH && this.y + VisualConstants.TANK_HEIGHT+35 < VisualConstants.ENGINE_HEIGHT;
     }
     
     /**
