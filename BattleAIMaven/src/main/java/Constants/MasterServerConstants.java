@@ -1,13 +1,14 @@
 package Constants;
 
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Dragos-Alexandru
  */
 public interface MasterServerConstants {
     String MASTER_USERNAME = "BattleAIMS";
-    String IP = "127.0.0.1";
-    //String IP = "79.115.166.26";
+    String IP = JOptionPane.showInputDialog(null, "Master Server IP: ", "MS - IP", JOptionPane.INFORMATION_MESSAGE);
     int PORT = 60010;
     long PACKET_DELAY = 3000; // expressed in milliseconds
 }
