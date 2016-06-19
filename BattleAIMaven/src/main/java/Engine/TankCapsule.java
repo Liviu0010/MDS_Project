@@ -42,7 +42,12 @@ public class TankCapsule implements Serializable {
     public final void rotateCannon(double degrees){
         tank.rotateCannon(degrees);
     }
-    
+    public final double getLife(){
+        return tank.getLife();
+    };
+    public final double getEnergy(){
+        return tank.getEnergy();
+    }
     public final void fire(){
             Bullet b = tank.fire();
             
