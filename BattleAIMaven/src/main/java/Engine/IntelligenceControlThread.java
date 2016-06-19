@@ -111,10 +111,10 @@ public class IntelligenceControlThread extends Thread{
     }
     
     public void gameOver(){
-        Scoreboard scor = new Scoreboard(tanks, surse);
+        Scoreboard scor = new Scoreboard(tanks);
+        scor.setVisible(true);  
         this.stopNicely();
         VisualEngine.getInstance().closeWindow();
-        scor.setVisible(true);
     }
     
     public static int getNumberOfTanks(){

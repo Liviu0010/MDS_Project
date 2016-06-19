@@ -7,6 +7,9 @@ package Interface;
 
 import Engine.Tank;
 import Source.Source;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JTable;
@@ -20,33 +23,30 @@ import javax.swing.table.TableModel;
 public class Scoreboard extends javax.swing.JFrame {
 
     private List<Tank> tanks;
-    private List<Source> surse;
     
     /**
      * Creates new form Scoreboard
      * @param tanks
      * @param surse
      */
-    public Scoreboard(List<Tank> tanks, List<Source> surse) {
+    public Scoreboard(List<Tank> tanks) {
         initComponents();
         this.tanks = tanks;
-        this.surse = surse;
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setLocationRelativeTo(null);
         
-        DefaultTableModel dft = new DefaultTableModel();
-        for(int i = 0; i<surse.size(); i++){
-            dft.insertRow(i,new Object[]{i,surse.get(i).getAuthor(),surse.get(i).getName(),i*100});
-        }
+        
+        Collections.sort(tanks, (Tank t, Tank t1) -> t.getScore() - t1.getScore());
+        
         
         Object[][] data = new Object[8][4];
         
         for(int i = 0; i < 8; i++){
-            if(i < surse.size()){
+            if(i < tanks.size()){
                 data[i][0] = i;
-                data[i][1] = surse.get(i).getAuthor();
-                data[i][2] = surse.get(i).getName();
-                data[i][3] = i*100;
+                data[i][1] = tanks.get(i).getAuthor();
+                data[i][2] = tanks.get(i).getName();
+                data[i][3] = tanks.get(i).getScore();
             }
         }
         
