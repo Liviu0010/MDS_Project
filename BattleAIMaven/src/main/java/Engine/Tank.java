@@ -236,7 +236,9 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
         energy = 0;
         return cannon.fire();
     }
-    
+    public double getEnergy(){
+        return energy;
+    }
     public void restoreEnergy(){
         if(energy < 100)
             energy += EngineConstants.ENERGY_RESTORE_RATE;
