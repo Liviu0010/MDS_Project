@@ -1,8 +1,8 @@
 package Compiler;
 
 import Console.ConsoleFrame;
-import Editor.Source;
-import Editor.SourceManager;
+import Source.Source;
+import Source.SourceManager;
 import Intelligence.IntelligenceTemplate;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

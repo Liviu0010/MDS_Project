@@ -1,8 +1,9 @@
 package Networking.Server;
 
+import Console.ConsoleFrame;
 import Networking.Client.ConnectionHandler;
 import Constants.MasterServerConstants;
-import Editor.Source;
+import Source.Source;
 import Interface.MainFrame;
 import Networking.Requests.HostMatch;
 import Networking.Requests.RegisterActivity;
@@ -106,7 +107,8 @@ public class ClientServerDispatcher extends ServerDispatcher {
                 THREAD_POOL.execute(playerConnection);
                 activeConnections.add(playerConnection);
             } catch (IOException ex) {
-                Logger.getLogger(ServerDispatcher.class.getName()).log(Level.SEVERE, null, ex);
+                //Logger.getLogger(ServerDispatcher.class.getName()).log(Level.SEVERE, null, ex);
+                ConsoleFrame.sendMessage(this.getClass().getSimpleName(), ex.getMessage());
             }
         }
     }

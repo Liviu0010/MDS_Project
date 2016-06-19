@@ -4,18 +4,15 @@ import java.io.Serializable;
 
 import Constants.EngineConstants;
 import Constants.VisualConstants;
-import Visual.VisualPanel;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.*;
 
-public class Tank extends GameEntity implements Serializable,MovementInterface, TransformInterface, Drawable {    
-    transient protected Image tankSprite;
+public class Tank extends GameEntity implements Serializable,MovementInterface, TransformInterface, Drawable {
     protected double life;
     private double energy = 100;
     protected Cannon cannon;
@@ -35,7 +32,6 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
     
     public Tank(double xPos, double yPos,String playerName) {
         super(staticId,xPos, yPos);
-        tankSprite  = VisualPanel.tankSprite;
         this.tank_id = staticId++;
         this.life = 100;
         this.author = playerName;
@@ -64,17 +60,18 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
         
         synchronized (this) {
             for (int i = 0; i < GameEntity.entityList.size(); i++) {
+                if(GameEntity.entityList.get(i) instanceof Tank){
                 Tank tank = (Tank) GameEntity.entityList.get(i);
                 
                 otherTank.x = (int)tank.getX();
                 otherTank.y = (int)tank.getY();
                 
-                //if (Math.sqrt((tank.getX() - xPos) * (tank.getX() - xPos) + (tank.getY() - yPos) * (tank.getY() - yPos)) < 30) {
                 if(!isInsideArena() || tankRect.intersects(otherTank)){
                     x = (int) (Math.random() * 1000) % VisualConstants.ENGINE_WIDTH;
                     y = (int) (Math.random() * 1000) % VisualConstants.ENGINE_HEIGHT;
                     i = 0;
                 }
+            }
             }
             
             //cannon = new Cannon(staticId, x, y);
@@ -85,7 +82,6 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
         //this.x = xPos;
         //this.y = yPos;
         
-        tankSprite  = VisualPanel.tankSprite;
         this.tank_id = staticId++;
         this.life = 100;
         width = (int)VisualConstants.TANK_WIDTH;
@@ -95,22 +91,13 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
         angle = EngineConstants.ANGLE;
         speed = EngineConstants.TANK_SPEED;
         life = EngineConstants.LIFE;
-            
-        synchronized(this){
-            GameEntity.entityList.add(this);
-        }
+        
     }
     
     public Point getCenter(){
-        Point midway = Cannon.getForwardPoint(new Point((int)this.x, (int)this.y), angle, Constants.VisualConstants.TANK_WIDTH/2);
-        Point center1 = Cannon.getForwardPoint(midway, angle-90, Constants.VisualConstants.TANK_HEIGHT/2);
-        Point center2 = Cannon.getForwardPoint(midway, angle-270, Constants.VisualConstants.TANK_HEIGHT/2);
-        
-        if(center1.x > this.x && center1.x < this.x+Constants.VisualConstants.TANK_WIDTH &&
-                center1.y > this.y && center1.y < this.x+Constants.VisualConstants.TANK_HEIGHT)
-            return center1;
-        else
-            return center2;
+       Point center = new Point((int)(this.x+VisualConstants.TANK_WIDTH/2),(int)(this.y+VisualConstants.TANK_HEIGHT/2));
+       
+       return center;
     }
     
     /**
@@ -193,7 +180,7 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
      * @return Value which specifies whether the point is inside the arena or not.
      */
     public boolean isInsideArena(Point p){
-        return p.x >= 0 && p.y >= 0 && p.x <= VisualConstants.ENGINE_WIDTH-40 && p.y <= VisualConstants.ENGINE_HEIGHT-40;
+        return p.x-10 > 0 && p.y-10 > 0 && p.x+VisualConstants.TANK_WIDTH+10 < VisualConstants.ENGINE_WIDTH && p.y+VisualConstants.TANK_HEIGHT+10 < VisualConstants.ENGINE_HEIGHT;
     }
     
     /**
@@ -201,13 +188,7 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
      * @return Value which specifies whether the tank is inside the arena or not.
      */
     public final boolean isInsideArena(){
-        Point upperLeft,upperRight, lowerLeft, lowerRight;
-        upperLeft = new Point((int)x,(int)y);
-        upperRight = Cannon.getForwardPoint(upperLeft, angle+90, VisualConstants.TANK_WIDTH);
-        lowerLeft = Cannon.getForwardPoint(upperLeft, angle, VisualConstants.TANK_HEIGHT);
-        lowerRight = Cannon.getForwardPoint(lowerLeft, angle, VisualConstants.TANK_WIDTH);
-        
-        return isInsideArena(upperLeft) && isInsideArena(upperRight) && isInsideArena(lowerLeft) && isInsideArena(lowerRight);
+        return this.x-10 > 0 && this.y-10 > 0 && this.x+VisualConstants.TANK_WIDTH+10 < VisualConstants.ENGINE_WIDTH && this.y + VisualConstants.TANK_HEIGHT+10 < VisualConstants.ENGINE_HEIGHT;
     }
     
     /**
@@ -284,7 +265,7 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
         
         g2.rotate(Math.toRadians(90), x+10, y+10);
         g2.rotate(Math.toRadians(angle), x+10, y+10);
-        g2.drawImage(VisualPanel.tankSprite, (int)x, (int)y, null);
+        g2.drawImage(EngineConstants.TANK_SPRITE, (int)x, (int)y, null);
         g2.setTransform(at); 
         
         cannon.draw(g);

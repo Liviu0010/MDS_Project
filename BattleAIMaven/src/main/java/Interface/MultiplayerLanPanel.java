@@ -1,5 +1,6 @@
 package Interface;
 
+import Networking.Server.Player;
 import java.awt.Color;
 import javax.swing.JOptionPane;
 
@@ -20,6 +21,7 @@ public class MultiplayerLanPanel extends javax.swing.JPanel {
         this.rootFrame = rootFrame;
         
         initComponents();
+        Player.getInstance().logOut();
     }
 
     /**

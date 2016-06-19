@@ -1,4 +1,4 @@
-package Editor;
+package Source;
 
 import Console.ConsoleFrame;
 import Constants.PathConstants;
@@ -152,7 +152,7 @@ public final class SourceManager {
     /**
      * Saves file to the source folder
      * @param source 
-     * @return  true if save was succesfull and false otherwise
+     * @return  true if save was successful and false otherwise
      */
     public boolean saveFileToSourceFolder(Source source){
         File newSource = new File(SOURCE_FOLDER_PATH+source.getName());
@@ -212,7 +212,7 @@ public final class SourceManager {
     /**
      * Deletes a given file
      * @param source
-     * @return true if deletion was succesfull and false otherwise
+     * @return true if deletion was successful and false otherwise
      */
     public boolean deleteFile(File source){
         boolean success = true;

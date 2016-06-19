@@ -1,12 +1,11 @@
 package Visual;
 
-import Editor.Source;
+import Source.Source;
 import Engine.GameEntity;
 import Engine.IntelligenceControlThread;
-import Main.GameModes;
-import Networking.Requests.EntityUpdateRequest;
-import Networking.Server.ClientServerDispatcher;
+import Enums.GameModes;
 import java.awt.Dimension;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,11 +58,6 @@ public class VisualEngine extends javax.swing.JFrame {
     
     public void updateEntityList(ArrayList<GameEntity> newList){
         visualPanel1.entityList = newList;
-        /*
-        if(matchMode == GameModes.MULTIPLAYER_HOST){
-            ClientServerDispatcher.getInstance().broadcastToAllExceptHost(new EntityUpdateRequest(newList));
-        }
-        */
     }
     
     public void setMatchMode(GameModes matchMode){
@@ -129,6 +123,10 @@ public class VisualEngine extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    public void closeWindow(){
+        this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+    }
+            
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         
         if(matchMode == GameModes.SINGLEPLAYER ||
@@ -149,8 +147,11 @@ public class VisualEngine extends javax.swing.JFrame {
         visualPanel1.animator.stopAnimation();   //stopping the animator when the window is closing
         instance = null;    //the form's close operation is DISPOSE, so there's no point in keeping the old instance around
         
+        //this.sursePrimite.clear();
+        
         if(matchMode != GameModes.MULTIPLAYER_CLIENT){
             ict.stopNicely();
+            
         }
     }//GEN-LAST:event_formWindowClosing
 
