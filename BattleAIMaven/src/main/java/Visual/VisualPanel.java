@@ -9,6 +9,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 
 /**
@@ -40,7 +41,6 @@ public class VisualPanel extends javax.swing.JPanel {
     
     @Override
     public void paintComponent(Graphics g){
-        int ingame = 0;
         
         g.setColor(Color.CYAN);
         g.fillRect(0, 0, this.getWidth(), this.getHeight());
@@ -55,7 +55,6 @@ public class VisualPanel extends javax.swing.JPanel {
                 for (GameEntity tankAux : entityList) {
                     if (tankAux instanceof Tank && ((Tank)tankAux).inTheGame()) {
                         ((Tank) tankAux).draw(g);
-                        ingame++;
                     }
                 }
 
@@ -65,10 +64,6 @@ public class VisualPanel extends javax.swing.JPanel {
                     }
                 }
             }
-        }
-        
-        if(ingame == 1){
-            this.gameOver();
         }
         
         long currentTime = System.currentTimeMillis();
@@ -84,10 +79,6 @@ public class VisualPanel extends javax.swing.JPanel {
         
         g.setColor(Color.BLACK);
         g.drawString("FPS: "+totalFrames, 2, 11);
-    }
-    
-    private void gameOver(){
-        
     }
     
     /**
