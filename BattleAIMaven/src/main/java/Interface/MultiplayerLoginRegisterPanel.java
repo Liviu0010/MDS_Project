@@ -145,6 +145,7 @@ public class MultiplayerLoginRegisterPanel extends javax.swing.JPanel {
                     ConsoleFrame.showError("No account matches the provided username and password");
                     return;
                 }
+                Player.getInstance().logIn(usernameField.getText());
                 rootFrame.changePanel(new MultiplayerServerPanel(rootFrame));
             } else {
                 ConsoleFrame.showError("Username can't contain these characters: ' = + ; \" ");
@@ -169,6 +170,7 @@ public class MultiplayerLoginRegisterPanel extends javax.swing.JPanel {
                     ConsoleFrame.showError("An account with that name already exists.");
                     return;
                 }
+                Player.getInstance().logIn(usernameField.getText());
                 rootFrame.changePanel(new MultiplayerServerPanel(rootFrame));
             }else{
                 ConsoleFrame.showError("Username can't contain these characters: ' = + ; \" ");
@@ -188,7 +190,6 @@ public class MultiplayerLoginRegisterPanel extends javax.swing.JPanel {
             String password = Guard.scramblePassword(String.valueOf(passwordField.getPassword()));
             
             if(checkUsername(username)){
-                Player.getInstance().login(username);
                 success = true;
             }else{
                 success = false;

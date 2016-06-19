@@ -11,6 +11,8 @@ import Networking.Server.PacketManager;
 import Visual.VisualEngine;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class IntelligenceControlThread extends Thread{
     private static IntelligenceControlThread instance;
@@ -22,8 +24,6 @@ public class IntelligenceControlThread extends Thread{
     
     public IntelligenceControlThread(List<Source> surse){
         numberOfTanks = surse.size();
-    
-        GameEntity.entityList.clear();
         GameEntity.currentIndex = 0;
         
         IntelligenceTemplate playerCode;// = new IntelligenceTemplate();
@@ -57,6 +57,7 @@ public class IntelligenceControlThread extends Thread{
     
     @Override
     public void run(){
+        int ingame;
         
         BulletHitChecker.getInstance().start();
         
@@ -67,6 +68,7 @@ public class IntelligenceControlThread extends Thread{
         bulletUpdater.start();
         
         while(running) {
+            ingame = 0;
             
             synchronized (GameEntity.entityList) {
                     PacketManager.getInstance().addFrame(GameEntity.entityList);    //send the current frame     
@@ -79,14 +81,19 @@ public class IntelligenceControlThread extends Thread{
                         //to ensure that the enemy is always detected
                         ((Tank)GameEntity.entityList.get(i)).janitor();
                         //end
+                        ingame++;
                         semaphores.get(i).goRed();
                         semaphores.get(i).notify();
                     }
                         else{
                             tankThreads.get(i).stopNicely();
+                        }
+                    }
                 }
             }
-                }
+            
+            if(ingame == 1){
+                this.gameOver();
             }
             
             try {
@@ -97,17 +104,50 @@ public class IntelligenceControlThread extends Thread{
         }
     }
     
+    public void gameOver(){
+        this.stopNicely();
+        VisualEngine.getInstance().closeWindow(); 
+    }
+    
     public static int getNumberOfTanks(){
         return numberOfTanks;
     }
     
+    /**
+     * To be called from a TankThread that wants to remove itself from the game.
+     * @param t 
+     */
+    public void removeFromGame(int index){
+        synchronized(GameEntity.entityList){
+            ((Tank)GameEntity.entityList.get(index)).setLife(0);
+        }
+        System.out.print("Removed from game");
+    }
+    
     public void stopNicely(){
+        synchronized(GameEntity.entityList){
+            GameEntity.entityList.clear();
+        }
+        
         running = false;
         
         bulletUpdater.stopNicely();
         BulletHitChecker.getInstance().stopNicely();
         
-        for(int i = 0; i < tankThreads.size(); i++)
-            tankThreads.get(i).stopNicely();
+        try {
+            bulletUpdater.join();
+            BulletHitChecker.getInstance().stopNicely();
+            BulletHitChecker.getInstance().join();
+        } catch (InterruptedException ex) { 
+            ConsoleFrame.sendMessage("IntelligeneControlThread", "InterruptedException during stopNicely()");
+        }
+        for(int i = 0; i < tankThreads.size(); i++){
+            try {
+                tankThreads.get(i).stopNicely();
+                tankThreads.get(i).join();
+            } catch (InterruptedException ex) {
+                ConsoleFrame.sendMessage("IntelligeneControlThread", "InterruptedException during stopNicely()");
+            }
+        }
     }
 }

@@ -5,7 +5,6 @@ import Enums.GameModes;
 import Networking.Client.ConnectionHandler;
 import Networking.Requests.EntityUpdateRequest;
 import Networking.Server.Packet;
-import java.io.IOException;
 
 /**
  * The separate thread which is responsible
@@ -77,11 +76,12 @@ public class Animator extends Thread{
                 if(currentPacket != null && currentPacket.framesLeft() > 0)
                     panel.entityList = currentPacket.consume();
                 else {
-                    currentPacket = ((EntityUpdateRequest)ConnectionHandler.getInstance().readFromMatch()).packet;
+                    currentPacket = 
+                            ((EntityUpdateRequest)ConnectionHandler.getInstance().getGameData()).packet;
                     panel.entityList = currentPacket.consume();
                 }
                 
-            } catch (IOException | ClassNotFoundException ex) {
+            } catch (InterruptedException ex) {
                 ex.printStackTrace();
                 ConsoleFrame.showError("Failed to read from battle stream");
                 running = false;

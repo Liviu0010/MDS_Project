@@ -261,7 +261,7 @@ public class MultiplayerServerPanel extends javax.swing.JPanel {
     /**
      * This worker gets the match list from the master server
      */
-    public class RefreshWorker extends SwingWorker<List<Match>, Void>{
+    public class RefreshWorker extends SwingWorker<List<Match>, Void> {
 
         @Override
         protected List<Match> doInBackground() throws Exception {
@@ -272,6 +272,7 @@ public class MultiplayerServerPanel extends javax.swing.JPanel {
             } catch (IOException | ClassNotFoundException ex) {
                 Logger.getLogger(MultiplayerServerPanel.class.getName()).log(Level.SEVERE, null, ex);
                 ConsoleFrame.showError("Lost connection to the master-server.");
+                Player.getInstance().logOut();
                 MainFrame.getInstance().changePanel(new MultiplayerChooserPanel(MainFrame.getInstance()));
             }
             return matches;
