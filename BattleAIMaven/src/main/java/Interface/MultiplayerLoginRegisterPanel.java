@@ -135,9 +135,11 @@ public class MultiplayerLoginRegisterPanel extends javax.swing.JPanel {
         try {
             worker.execute();
             if(worker.get()){
+                String scrambledPassword = 
+                        Guard.scramblePassword(new String(passwordField.getPassword()));
                 // Send a login request
-                LoginAccount request = new LoginAccount(usernameField.getText(), 
-                        new String(passwordField.getPassword()));
+                LoginAccount request = 
+                        new LoginAccount(usernameField.getText(), scrambledPassword);
                 Object ob = ConnectionHandler.getInstance().readFromMasterServer(request);
                 BooleanResponse response = (BooleanResponse)ob;
                 // Check if the authentification was successful
@@ -161,10 +163,10 @@ public class MultiplayerLoginRegisterPanel extends javax.swing.JPanel {
             worker.execute();
             if(worker.get()){
                 // Send a register request
-                ConnectionHandler.getInstance().sendToMasterServer(new RegisterAccount(usernameField.getText(), 
-                        new String(passwordField.getPassword())));
-                RegisterAccount request = new RegisterAccount(usernameField.getText(), 
-                        new String(passwordField.getPassword()));
+                String scrambledPassword = 
+                        Guard.scramblePassword(new String(passwordField.getPassword()));
+                RegisterAccount request = 
+                        new RegisterAccount(usernameField.getText(), scrambledPassword);
                 Object ob = ConnectionHandler.getInstance().readFromMasterServer(request);
                 BooleanResponse response = (BooleanResponse)ob;
                 // Check if the authentification was successful
