@@ -6,6 +6,8 @@
 package Interface;
 
 import Engine.Tank;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.JFrame;
@@ -21,14 +23,13 @@ public class Scoreboard extends javax.swing.JFrame {
     /**
      * Creates new form Scoreboard
      * @param tanks
-     * @param surse
      */
     public Scoreboard(List<Tank> tanks) {
         initComponents();
         this.tanks = tanks;
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setLocationRelativeTo(null);
-        
+        this.setAlwaysOnTop(true);
         this.setTitle("BattleAI - Scoreboard");
         
         Collections.sort(tanks, (Tank t, Tank t1) -> t1.getScore() - t.getScore());
@@ -75,7 +76,18 @@ public class Scoreboard extends javax.swing.JFrame {
             playerTable.getColumnModel().getColumn(2).setResizable(false);
             playerTable.getColumnModel().getColumn(3).setResizable(false);
         }
+        
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent we) {
+                super.windowClosed(we);
+                MainFrame.getInstance().setVisible(true);
+            }
+        });
+        
     }
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.

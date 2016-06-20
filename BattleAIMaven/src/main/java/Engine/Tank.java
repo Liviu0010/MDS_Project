@@ -1,5 +1,6 @@
 package Engine;
 
+import Console.ConsoleFrame;
 import java.io.Serializable;
 
 import Constants.EngineConstants;
@@ -11,6 +12,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.*;
+import java.util.Random;
 
 public class Tank extends GameEntity implements Serializable,MovementInterface, TransformInterface, Drawable {
     protected double life;
@@ -21,6 +23,7 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
     private String name, author;
     private int rotate_state, move_state;
     private int score;
+    public Color color = Color.WHITE;
     
     //the id of the tank will be the current number of instanced tank classes
     private static int staticId;
@@ -62,22 +65,23 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
         synchronized (this) {
             for (int i = 0; i < GameEntity.ENTITY_LIST.size(); i++) {
                 if(GameEntity.ENTITY_LIST.get(i) instanceof Tank){
-                Tank tank = (Tank) GameEntity.ENTITY_LIST.get(i);
-                
-                otherTank.x = (int)tank.getX();
-                otherTank.y = (int)tank.getY();
-                
-                if(!isInsideArena() || tankRect.intersects(otherTank)){
-                    x = (int) (Math.random() * 1000) % VisualConstants.ENGINE_WIDTH - 10 - VisualConstants.TANK_WIDTH;
-                    y = (int) (Math.random() * 1000) % VisualConstants.ENGINE_HEIGHT - 10 - VisualConstants.TANK_HEIGHT;
-                    i = 0;
+                    Tank tank = (Tank) GameEntity.ENTITY_LIST.get(i);
+
+                    otherTank.x = (int)tank.getX();
+                    otherTank.y = (int)tank.getY();
+
+                    if(!isInsideArena() || tankRect.intersects(otherTank)){
+                        x = (int) ((Math.random() * 1000) % VisualConstants.ENGINE_WIDTH)
+                                - 30 - VisualConstants.TANK_WIDTH;
+                        y = (int) ((Math.random() * 1000) % VisualConstants.ENGINE_HEIGHT)
+                                - 30 - VisualConstants.TANK_HEIGHT;
+                        i = 0;
+                    }
                 }
             }
-            }
-            
-            //cannon = new Cannon(staticId, x, y);
         }
         
+        System.out.println(x + " " + y);
         
         //super(staticId,xPos, yPos);
         //this.x = xPos;
@@ -92,7 +96,6 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
         angle = EngineConstants.ANGLE;
         speed = EngineConstants.TANK_SPEED;
         life = EngineConstants.LIFE;
-        
     }
     
     public Point getCenter(){
@@ -288,12 +291,13 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
         //end
         
         //draw name and author
-        g2.setColor(Color.BLACK);
+        g2.setColor(color);
         Font f = g2.getFont();
         g2.setFont(g2.getFont().deriveFont(10f));
         g2.drawString(this.name, (int)(this.x+Constants.VisualConstants.TANK_WIDTH + 3), (int)(this.y+Constants.VisualConstants.TANK_HEIGHT/2-4));
         g2.drawString(this.author, (int)(this.x+Constants.VisualConstants.TANK_WIDTH + 3), (int)(this.y+Constants.VisualConstants.TANK_HEIGHT/2+4));
         g2.setFont(f);
+        g2.setColor(Color.BLACK);
         //end
     }
     

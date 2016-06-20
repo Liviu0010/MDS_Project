@@ -79,22 +79,23 @@ final public class Cannon extends GameEntity implements Serializable,TransformIn
             detected = false;
             return;
         }
-        
-        for(int i = 0; i<GameEntity.ENTITY_LIST.size(); i++){
-            entity = GameEntity.ENTITY_LIST.get(i);
-            
-            if(entity instanceof Tank && ((Tank)entity).inTheGame() && entity != parent){
-                t = (Tank)entity;
-                Point left, right, detectedTank;
-                
-                left = getForwardPoint(new Point((int)x,(int)y), angle-VisualConstants.RADAR_SIZE/2, 1000);
-                right = getForwardPoint(new Point((int)x,(int)y), angle+VisualConstants.RADAR_SIZE/2, 1000);
-                //detectedTank = new Point((int)t.getX(), (int)t.getY());
-                detectedTank = t.getCenter();
-                
-                if(isInTriangle(new Point((int)x,(int)y), left, right, detectedTank)){
-                    detected = true;
-                    parent.tankCapsule.detectedEnemyTank(getDeltaAngle(parent.getCenter(), forward, detectedTank));
+        synchronized(GameEntity.ENTITY_LIST){
+            for(int i = 0; i<GameEntity.ENTITY_LIST.size(); i++){
+                entity = GameEntity.ENTITY_LIST.get(i);
+
+                if(entity instanceof Tank && ((Tank)entity).inTheGame() && entity != parent){
+                    t = (Tank)entity;
+                    Point left, right, detectedTank;
+
+                    left = getForwardPoint(new Point((int)x,(int)y), angle-VisualConstants.RADAR_SIZE/2, 1000);
+                    right = getForwardPoint(new Point((int)x,(int)y), angle+VisualConstants.RADAR_SIZE/2, 1000);
+                    //detectedTank = new Point((int)t.getX(), (int)t.getY());
+                    detectedTank = t.getCenter();
+
+                    if(isInTriangle(new Point((int)x,(int)y), left, right, detectedTank)){
+                        detected = true;
+                        parent.tankCapsule.detectedEnemyTank(getDeltaAngle(parent.getCenter(), forward, detectedTank));
+                    }
                 }
             }
         }
@@ -204,7 +205,7 @@ final public class Cannon extends GameEntity implements Serializable,TransformIn
         
         g2.setStroke(new BasicStroke(0.5f));
         
-        g2.setColor(Color.BLACK);
+        g2.setColor(parent.color);
         g2.drawLine(tankCenter.x, tankCenter.y, r1.x , r1.y);
         g2.drawLine(tankCenter.x, tankCenter.y, r2.x, r2.y);
         
