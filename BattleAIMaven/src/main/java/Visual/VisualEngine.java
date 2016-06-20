@@ -20,7 +20,7 @@ public class VisualEngine extends javax.swing.JFrame {
      */
     
     private GameModes matchMode = GameModes.SINGLEPLAYER;
-    IntelligenceControlThread ict;
+    IntelligenceControlThread intelligenceControlThread;
     private List<Source> sursePrimite;
     
     private static VisualEngine instance;
@@ -130,10 +130,10 @@ public class VisualEngine extends javax.swing.JFrame {
         if(matchMode == GameModes.SINGLEPLAYER ||
                 matchMode == GameModes.MULTIPLAYER_HOST){
             if(sursePrimite != null){
-                ict = new IntelligenceControlThread(sursePrimite);
+                intelligenceControlThread = new IntelligenceControlThread(sursePrimite);
             }
             
-            ict.start();
+            intelligenceControlThread.start();
         }
         
         visualPanel1.animator.start();   //starting the animator when the window is visible
@@ -148,8 +148,7 @@ public class VisualEngine extends javax.swing.JFrame {
         //this.sursePrimite.clear();
         
         if(matchMode != GameModes.MULTIPLAYER_CLIENT){
-            ict.stopNicely();
-            
+            intelligenceControlThread.stopNicely();
         }
     }//GEN-LAST:event_formWindowClosing
 

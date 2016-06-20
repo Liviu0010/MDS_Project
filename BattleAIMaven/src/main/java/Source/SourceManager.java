@@ -12,6 +12,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -167,7 +168,6 @@ public final class SourceManager {
             }
             try (FileWriter fileWriter = new FileWriter(newSource); 
                     BufferedWriter writer = new BufferedWriter(fileWriter)) {
-                
                 writer.write(source.getContent());
                 if(sources.contains(source)){
                     sources.remove(source);
@@ -175,6 +175,9 @@ public final class SourceManager {
                 sources.add(source);
                 File sourceIndex = new File(PathConstants.USER_SOURCES_INDEX_PATH);
                 writeSourceFileIndex(sourceIndex);
+            }catch(IOException ex){
+                ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed to create file "+source.getName());
+                ConsoleFrame.showError("Failed to create file "+source.getName());
             }
             return true;
         } catch (IOException ex) {
