@@ -102,44 +102,52 @@ public class ConnectionHandler {
     public synchronized void sendToMasterServer(Request request) throws IOException {
         if (masterServerSocket == null)
             connectToMasterServer();
+        
         try {
             masterServerOutputStream.writeObject(request);
+            masterServerOutputStream.flush();
         } catch (IOException ex) {
             try {
                 connectToMasterServer();
                 masterServerOutputStream.writeObject(request);
+                masterServerOutputStream.flush();
             } catch (IOException ex2) {
+                masterServerSocket = null;
                 ConsoleFrame.sendMessage(this.getClass().getSimpleName(), ex2.getMessage());
                 throw ex2;
             }
         }
-        
-        masterServerOutputStream.flush();
     }
     
     /**
-     * Attempt to read an object from the master server.
+     * Sends an request to the master-server and returns the response.
+     * This should be used only with requests that ask for a response.
      * @return Object read from master server.
      * @throws IOException
      * @throws ClassNotFoundException 
      */
-    public Object readFromMasterServer() throws IOException, ClassNotFoundException {
+    public Object readFromMasterServer(Request request) throws IOException, ClassNotFoundException {
         if (masterServerSocket == null)
             connectToMasterServer();
-        Object result = null;
+        
+        Object response = null;
         try {
-            result = masterServerInputStream.readObject();
+            masterServerOutputStream.writeObject(request);
+            masterServerOutputStream.flush();
+            response = masterServerInputStream.readObject();
         } catch (IOException ex) {
-            connectToMasterServer();
             try {
-                result = masterServerInputStream.readObject();
+                connectToMasterServer();
+                masterServerOutputStream.writeObject(request);
+                masterServerOutputStream.flush();
+                response = masterServerInputStream.readObject();    
             } catch (IOException ex2) {
                 Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex2);
                 masterServerSocket = null;
                 throw ex2;
             }
         }
-        return result;
+        return response;
     }
     
     public void connectToMatch(Match match) throws IOException {

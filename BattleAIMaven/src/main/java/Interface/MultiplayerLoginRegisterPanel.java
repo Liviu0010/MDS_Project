@@ -136,9 +136,9 @@ public class MultiplayerLoginRegisterPanel extends javax.swing.JPanel {
             worker.execute();
             if(worker.get()){
                 // Send a login request
-                ConnectionHandler.getInstance().sendToMasterServer(new LoginAccount(usernameField.getText(), 
-                        new String(passwordField.getPassword())));
-                Object ob = ConnectionHandler.getInstance().readFromMasterServer();
+                LoginAccount request = new LoginAccount(usernameField.getText(), 
+                        new String(passwordField.getPassword()));
+                Object ob = ConnectionHandler.getInstance().readFromMasterServer(request);
                 BooleanResponse response = (BooleanResponse)ob;
                 // Check if the authentification was successful
                 if (response.getValue() == false) {
@@ -163,7 +163,9 @@ public class MultiplayerLoginRegisterPanel extends javax.swing.JPanel {
                 // Send a register request
                 ConnectionHandler.getInstance().sendToMasterServer(new RegisterAccount(usernameField.getText(), 
                         new String(passwordField.getPassword())));
-                Object ob = ConnectionHandler.getInstance().readFromMasterServer();
+                RegisterAccount request = new RegisterAccount(usernameField.getText(), 
+                        new String(passwordField.getPassword()));
+                Object ob = ConnectionHandler.getInstance().readFromMasterServer(request);
                 BooleanResponse response = (BooleanResponse)ob;
                 // Check if the authentification was successful
                 if (response.getValue() == false) {
