@@ -8,6 +8,8 @@ import Intelligence.Semaphore;
 import Intelligence.TankThread;
 import Enums.GameModes;
 import Interface.Scoreboard;
+import Networking.Requests.EndBattle;
+import Networking.Server.ClientServerDispatcher;
 import Networking.Server.PacketManager;
 import Visual.VisualEngine;
 import java.util.ArrayList;
@@ -111,10 +113,9 @@ public class IntelligenceControlThread extends Thread{
     }
     
     public void gameOver(){
-        Scoreboard scor = new Scoreboard(tanks);
-        scor.setVisible(true);  
         this.stopNicely();
         VisualEngine.getInstance().closeWindow();
+        ClientServerDispatcher.getInstance().broadcast(new EndBattle(tanks));
     }
     
     public static int getNumberOfTanks(){

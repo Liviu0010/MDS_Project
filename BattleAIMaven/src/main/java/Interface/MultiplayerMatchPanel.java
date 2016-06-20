@@ -13,6 +13,7 @@ import Networking.Requests.RequestType;
 import Networking.Requests.SourceFileReceived;
 import Networking.Requests.SourceFileTransfer;
 import Networking.Requests.StartBattle;
+import Networking.Requests.EndBattle;
 import Networking.Server.ClientServerDispatcher;
 import Networking.Server.Match;
 import Networking.Server.Player;
@@ -395,6 +396,11 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
                                             ve.setMatchMode(GameModes.MULTIPLAYER_CLIENT);
                                             ve.setVisible(true);
                                         }
+                                        break;
+                                    case RequestType.END_BATTLE: 
+                                        EndBattle endBattleRequest = (EndBattle)request;
+                                        Scoreboard scor = new Scoreboard(endBattleRequest.getTankList());
+                                        scor.setVisible(true);  
                                         break;
                                     case RequestType.SOURCE_FILE_RECEIVED:
                                         String username = ((SourceFileReceived)request).getUsername();
