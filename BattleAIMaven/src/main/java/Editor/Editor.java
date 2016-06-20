@@ -69,7 +69,7 @@ public final class Editor extends JFrame {
         
         this.frame = mainFrame;
         inteligenceTemplate = SourceManager.getInstance().getIntelligenceTemplate();
-        sourceName = JOptionPane.showInputDialog("Source name: ", "LocalSource");
+        sourceName = "LocalSource";
         if(sourceName != null){
             inteligenceTemplate = inteligenceTemplate.replaceAll("<name>", sourceName);
         }

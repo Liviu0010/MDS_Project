@@ -27,12 +27,10 @@ public class VisualEngine extends javax.swing.JFrame {
     
     private VisualEngine() {
         initComponents();
-        setAlwaysOnTop(true);
     }
     
     private VisualEngine(List<Source> surse) {
         initComponents();
-        setAlwaysOnTop(true);
         this.sursePrimite = surse;
     }
     

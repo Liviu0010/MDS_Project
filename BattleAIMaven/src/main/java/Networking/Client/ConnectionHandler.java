@@ -15,7 +15,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.BlockingQueue;
@@ -66,12 +65,17 @@ public class ConnectionHandler {
     }
     
     private void connectToMasterServer() throws IOException {
-        masterServerSocket = new Socket();
-        masterServerSocket.connect(masterServerAddress, 4000);
-        masterServerSocket.setSoTimeout(5000);
-        masterServerOutputStream = new ObjectOutputStream(masterServerSocket.getOutputStream());
-        masterServerOutputStream.flush();
-        masterServerInputStream = new ObjectInputStream(masterServerSocket.getInputStream());
+        try {
+            masterServerSocket = new Socket();
+            masterServerSocket.connect(masterServerAddress, 3500);
+            masterServerSocket.setSoTimeout(5000);
+            masterServerOutputStream = new ObjectOutputStream(masterServerSocket.getOutputStream());
+            masterServerOutputStream.flush();
+            masterServerInputStream = new ObjectInputStream(masterServerSocket.getInputStream());
+        } catch (IOException ex) {
+            masterServerSocket = null;
+            throw ex;
+        }
         
     }
     
@@ -101,10 +105,13 @@ public class ConnectionHandler {
         try {
             masterServerOutputStream.writeObject(request);
         } catch (IOException ex) {
-            //Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
-            ConsoleFrame.sendMessage(this.getClass().getSimpleName(), ex.getMessage());
-            connectToMasterServer();
-            masterServerOutputStream.writeObject(request);
+            try {
+                connectToMasterServer();
+                masterServerOutputStream.writeObject(request);
+            } catch (IOException ex2) {
+                ConsoleFrame.sendMessage(this.getClass().getSimpleName(), ex2.getMessage());
+                throw ex2;
+            }
         }
         
         masterServerOutputStream.flush();
@@ -123,13 +130,12 @@ public class ConnectionHandler {
         try {
             result = masterServerInputStream.readObject();
         } catch (IOException ex) {
-            Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
             connectToMasterServer();
             try {
                 result = masterServerInputStream.readObject();
             } catch (IOException ex2) {
+                Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex2);
                 masterServerSocket = null;
-                ConsoleFrame.showError("Connection timed out.");
                 throw ex2;
             }
         }
@@ -138,6 +144,7 @@ public class ConnectionHandler {
     
     public void connectToMatch(Match match) throws IOException {
         InetSocketAddress address = new InetSocketAddress(match.getIP(), match.getPort());
+        System.out.println("Connecting to " + match.getIP());
         matchSocket = new Socket();
 
         matchSocket.connect(address, 3500);

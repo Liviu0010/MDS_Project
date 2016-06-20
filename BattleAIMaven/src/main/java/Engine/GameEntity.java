@@ -16,7 +16,7 @@ import java.util.ArrayList;
  */
 public abstract class GameEntity implements TransformInterface, Serializable {
     
-    static protected ArrayList<GameEntity> entityList = new ArrayList<>();
+    final static protected ArrayList<GameEntity> ENTITY_LIST = new ArrayList<>();
     static protected int currentIndex = 0;
     
     protected int id;

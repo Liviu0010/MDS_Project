@@ -7,12 +7,11 @@ import Intelligence.IntelligenceTemplate;
 import Intelligence.Semaphore;
 import Intelligence.TankThread;
 import Enums.GameModes;
+import Interface.Scoreboard;
 import Networking.Server.PacketManager;
 import Visual.VisualEngine;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class IntelligenceControlThread extends Thread{
     private static IntelligenceControlThread instance;
@@ -22,9 +21,15 @@ public class IntelligenceControlThread extends Thread{
     private boolean running;
     private static int numberOfTanks;
     
+    private ArrayList<Tank> tanks = new ArrayList<>();
+    private List<Source> surse;
+    
     public IntelligenceControlThread(List<Source> surse){
         numberOfTanks = surse.size();
         GameEntity.currentIndex = 0;
+        
+        tanks.clear();
+        this.surse = surse;
         
         IntelligenceTemplate playerCode;// = new IntelligenceTemplate();
         tankThreads = new ArrayList<>();
@@ -34,9 +39,10 @@ public class IntelligenceControlThread extends Thread{
         
         for(int i = 0; i<surse.size(); i++){
             
-            synchronized(GameEntity.entityList){
-                Tank tanc = new Tank(surse.get(i).getName(), surse.get(i).getAuthor()); //adds it to entityList
-                GameEntity.entityList.add(tanc);
+            synchronized(GameEntity.ENTITY_LIST){
+                Tank tank = new Tank(surse.get(i).getName(), surse.get(i).getAuthor()); //adds it to entityList
+                GameEntity.ENTITY_LIST.add(tank);
+                tanks.add(tank);
             }
             playerCode = (IntelligenceTemplate) SourceCompiler.getInstanceOfSource(surse.get(i));
             
@@ -46,11 +52,11 @@ public class IntelligenceControlThread extends Thread{
         
         if(VisualEngine.getInstance().getMatchMode() == GameModes.SINGLEPLAYER ||
                 VisualEngine.getInstance().getMatchMode() == GameModes.MULTIPLAYER_HOST)
-            VisualEngine.getInstance().updateEntityList(GameEntity.entityList);
+            VisualEngine.getInstance().updateEntityList(GameEntity.ENTITY_LIST);
         
         bulletUpdater = new BulletUpdater();
         
-        ConsoleFrame.sendMessage("IntelligenceControlThread","size = "+GameEntity.entityList.size());
+        ConsoleFrame.sendMessage("IntelligenceControlThread","size = "+GameEntity.ENTITY_LIST.size());
     }
     //END testing
     
@@ -70,16 +76,16 @@ public class IntelligenceControlThread extends Thread{
         while(running) {
             ingame = 0;
             
-            synchronized (GameEntity.entityList) {
-                    PacketManager.getInstance().addFrame(GameEntity.entityList);    //send the current frame     
-                    }
+            synchronized (GameEntity.ENTITY_LIST) {
+                PacketManager.getInstance().addFrame(GameEntity.ENTITY_LIST);    //send the current frame     
+            }
         
             for(int i = 0; i < tankThreads.size(); i++){
                 synchronized (semaphores.get(i)) {
                     if (semaphores.get(i).isGreen()) {
-                        if (((Tank) GameEntity.entityList.get(i)).inTheGame()) {
+                        if (((Tank) GameEntity.ENTITY_LIST.get(i)).inTheGame()) {
                         //to ensure that the enemy is always detected
-                        ((Tank)GameEntity.entityList.get(i)).janitor();
+                        ((Tank)GameEntity.ENTITY_LIST.get(i)).janitor();
                         //end
                         ingame++;
                         semaphores.get(i).goRed();
@@ -105,8 +111,10 @@ public class IntelligenceControlThread extends Thread{
     }
     
     public void gameOver(){
+        Scoreboard scor = new Scoreboard(tanks);
+        scor.setVisible(true);  
         this.stopNicely();
-        VisualEngine.getInstance().closeWindow(); 
+        VisualEngine.getInstance().closeWindow();
     }
     
     public static int getNumberOfTanks(){
@@ -118,15 +126,15 @@ public class IntelligenceControlThread extends Thread{
      * @param t 
      */
     public void removeFromGame(int index){
-        synchronized(GameEntity.entityList){
-            ((Tank)GameEntity.entityList.get(index)).setLife(0);
+        synchronized(GameEntity.ENTITY_LIST){
+            ((Tank)GameEntity.ENTITY_LIST.get(index)).setLife(0);
         }
         System.out.print("Removed from game");
     }
     
     public void stopNicely(){
-        synchronized(GameEntity.entityList){
-            GameEntity.entityList.clear();
+        synchronized(GameEntity.ENTITY_LIST){
+            GameEntity.ENTITY_LIST.clear();
         }
         
         running = false;
