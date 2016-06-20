@@ -30,7 +30,7 @@ public class BulletHitChecker extends Thread {
         Tank t;
         Bullet b;
         Rectangle2D tankRect, bulletRect;
-        ArrayList<GameEntity> entities = GameEntity.entityList;
+        ArrayList<GameEntity> entities = GameEntity.ENTITY_LIST;
         startingTime = System.currentTimeMillis()/1000;
         
         while(running){

@@ -60,9 +60,9 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
         tankRect.y = (int) y;
         
         synchronized (this) {
-            for (int i = 0; i < GameEntity.entityList.size(); i++) {
-                if(GameEntity.entityList.get(i) instanceof Tank){
-                Tank tank = (Tank) GameEntity.entityList.get(i);
+            for (int i = 0; i < GameEntity.ENTITY_LIST.size(); i++) {
+                if(GameEntity.ENTITY_LIST.get(i) instanceof Tank){
+                Tank tank = (Tank) GameEntity.ENTITY_LIST.get(i);
                 
                 otherTank.x = (int)tank.getX();
                 otherTank.y = (int)tank.getY();

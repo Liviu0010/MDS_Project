@@ -80,8 +80,8 @@ final public class Cannon extends GameEntity implements Serializable,TransformIn
             return;
         }
         
-        for(int i = 0; i<GameEntity.entityList.size(); i++){
-            entity = GameEntity.entityList.get(i);
+        for(int i = 0; i<GameEntity.ENTITY_LIST.size(); i++){
+            entity = GameEntity.ENTITY_LIST.get(i);
             
             if(entity instanceof Tank && ((Tank)entity).inTheGame() && entity != parent){
                 t = (Tank)entity;
