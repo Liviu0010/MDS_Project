@@ -54,7 +54,7 @@ final public class Bullet extends GameEntity implements Serializable,TransformIn
         
         g2.rotate(Math.toRadians(angle), x, y);
         
-        g2.setColor(Color.red);
+        g2.setColor(owner.color);
         g2.fillRect((int)x, (int)y, (int)VisualConstants.BULLET_WIDTH, (int)VisualConstants.BULLET_HEIGHT);  
         
         g2.setTransform(at);

@@ -89,7 +89,6 @@ public abstract class SourceCompiler {
                 ConsoleFrame.sendMessage(SourceCompiler.class.getSimpleName(), "Failed to get instantiate source class");
             } catch (ClassNotFoundException ex) {
                 ConsoleFrame.sendMessage(SourceCompiler.class.getSimpleName(), "Failed to find class");
-                ex.printStackTrace();
             }finally{
                 if(!SourceManager.getInstance().deleteFile(compiledSourceFile)){
                     ConsoleFrame.sendMessage(SourceCompiler.class.getSimpleName(), "Failed to delete compiled source code");
