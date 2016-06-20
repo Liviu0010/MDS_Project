@@ -6,15 +6,9 @@
 package Interface;
 
 import Engine.Tank;
-import Source.Source;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import javax.swing.JFrame;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 
 /**
  *
@@ -35,15 +29,15 @@ public class Scoreboard extends javax.swing.JFrame {
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setLocationRelativeTo(null);
         
+        this.setTitle("BattleAI - Scoreboard");
         
-        Collections.sort(tanks, (Tank t, Tank t1) -> t.getScore() - t1.getScore());
-        
+        Collections.sort(tanks, (Tank t, Tank t1) -> t1.getScore() - t.getScore());
         
         Object[][] data = new Object[8][4];
         
         for(int i = 0; i < 8; i++){
             if(i < tanks.size()){
-                data[i][0] = i;
+                data[i][0] = i+1;
                 data[i][1] = tanks.get(i).getAuthor();
                 data[i][2] = tanks.get(i).getName();
                 data[i][3] = tanks.get(i).getScore();

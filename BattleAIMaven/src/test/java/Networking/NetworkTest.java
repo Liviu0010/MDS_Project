@@ -13,6 +13,7 @@ import org.junit.Test;
 public class NetworkTest {
     
     public NetworkTest() throws InterruptedException {
+        System.setProperty("TEST", "true");
         ServerDispatcher.getInstance().start(Constants.MasterServerConstants.PORT);
         Thread.sleep(1500);
     }
