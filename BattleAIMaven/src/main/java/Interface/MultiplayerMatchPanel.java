@@ -46,7 +46,7 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
     private final List<Source> sourceList;
     private Source selectedSource;
     private final DefaultListModel listModel = new DefaultListModel();
-    private final DefaultListModel playerSelectionModel = new DefaultListModel();
+    private final DefaultListModel<String> playerSelectionModel = new DefaultListModel<>();
     private boolean ready = false;
     private int lastSelectedIndex = -1;
     private Boolean listenForRequests = true;
@@ -351,7 +351,37 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
         setWorkerStatus(false);
         rootFrame.changePanel(new MultiplayerServerPanel(rootFrame));
     }//GEN-LAST:event_backButtonActionPerformed
-
+    
+    private int getPlayerIndex(String username) {
+        for (int i = 0; i < playerSelectionModel.size(); i++) {
+            String[] name = playerSelectionModel.get(i).split("/");
+            if (name[0].equals(username))
+                return i;
+        }
+        
+        return -1;
+    }
+    
+    // newName should be of the form 'username/text'
+    private void editPlayerName(String username, String newName) {
+        int index = getPlayerIndex(username);
+        
+        if (index == -1)
+            return;
+        
+        playerSelectionModel.remove(index);
+        playerSelectionModel.addElement(newName);
+    }
+    
+    private void removePlayerName(String username) {
+        int index = getPlayerIndex(username);
+        
+        if (index == -1)
+            return;
+        
+        playerSelectionModel.remove(index);
+    }
+    
     /**
      * This worker listens for requests given by the match server
      */
@@ -376,7 +406,6 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
                         Request request = (Request)ConnectionHandler.getInstance().readFromMatch();
                         
                         SwingUtilities.invokeLater(new Runnable() {
-
                             @Override
                             public void run() {
                                 switch (request.getType()) {
@@ -387,6 +416,7 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
                                         playerSelectionModel.addElement(((AddPlayer)request).getUsername());
                                         break;
                                     case RequestType.REMOVE_PLAYER:
+                                        removePlayerName(((RemovePlayer)request).getUsername());
                                         playerSelectionModel.removeElement(((RemovePlayer)request).getUsername());
                                         break;
                                     case RequestType.START_BATTLE:
@@ -405,15 +435,7 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
                                     case RequestType.SOURCE_FILE_RECEIVED:
                                         String username = ((SourceFileReceived)request).getUsername();
                                         String sourcename = ((SourceFileReceived)request).getSourcename();
-                                        for(int i = 0; i<playerSelectionModel.getSize();i++){
-                                            String aux = (String) playerSelectionModel.get(i);
-                                            if(aux.startsWith(username)){
-                                                playerSelectionModel.remove(i);
-                                                break;
-                                            }
-                                        }
-                                        playerSelectionModel.addElement(username + "/" + sourcename);
-                                        
+                                        editPlayerName(username, username + "/" + sourcename); 
                                         break;
                                     case RequestType.ENTITIY_UPDATE:
                                         ConnectionHandler.getInstance().addGameData(request);
