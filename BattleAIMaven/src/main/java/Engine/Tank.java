@@ -1,6 +1,5 @@
 package Engine;
 
-import Console.ConsoleFrame;
 import java.io.Serializable;
 
 import Constants.EngineConstants;
@@ -12,7 +11,6 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.*;
-import java.util.Random;
 
 public class Tank extends GameEntity implements Serializable,MovementInterface, TransformInterface, Drawable {
     protected double life;
@@ -22,7 +20,7 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
     protected transient TankCapsule tankCapsule;
     private String name, author;
     private int rotate_state, move_state;
-    private int score;
+    private int score = 0;
     public Color color = Color.WHITE;
     
     //the id of the tank will be the current number of instanced tank classes
@@ -290,12 +288,13 @@ public class Tank extends GameEntity implements Serializable,MovementInterface, 
         g2.fillRect((int)x-2, (int)(y-10-VisualConstants.HEALTH_BAR_HEIGHT), (int)(energy/100*VisualConstants.HEALTH_BAR_WIDTH), (int)VisualConstants.HEALTH_BAR_HEIGHT);
         //end
         
-        //draw name and author
+        //draw name and author and points
         g2.setColor(color);
         Font f = g2.getFont();
         g2.setFont(g2.getFont().deriveFont(10f));
         g2.drawString(this.name, (int)(this.x+Constants.VisualConstants.TANK_WIDTH + 3), (int)(this.y+Constants.VisualConstants.TANK_HEIGHT/2-4));
         g2.drawString(this.author, (int)(this.x+Constants.VisualConstants.TANK_WIDTH + 3), (int)(this.y+Constants.VisualConstants.TANK_HEIGHT/2+4));
+        g2.drawString(this.score+"", (int)(this.x+Constants.VisualConstants.TANK_WIDTH + 3), (int)(this.y+Constants.VisualConstants.TANK_HEIGHT/2+13));
         g2.setFont(f);
         g2.setColor(Color.BLACK);
         //end

@@ -133,7 +133,6 @@ public class VisualEngine extends javax.swing.JFrame {
             if(sursePrimite != null){
                 intelligenceControlThread = new IntelligenceControlThread(sursePrimite);
             }
-            
             intelligenceControlThread.start();
         }
         
