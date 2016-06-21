@@ -16,8 +16,13 @@ public interface MasterServerConstants {
         if(System.getenv().get("TRAVIS") != null || System.getProperty("TEST") != null){
             return "localhost";
         }else{
-            return JOptionPane.showInputDialog(null, "Master Server IP: ",
+            String ip = JOptionPane.showInputDialog(null, "Master Server IP: ",
                     "MS - IP", JOptionPane.INFORMATION_MESSAGE);
+            while(ip == null){
+                ip = JOptionPane.showInputDialog(null, "Master Server IP: ",
+                    "MS - IP", JOptionPane.INFORMATION_MESSAGE);
+            }
+            return ip;
         }
     }
     
