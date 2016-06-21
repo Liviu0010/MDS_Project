@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentSkipListMap;
@@ -157,5 +159,18 @@ public class ClientServerDispatcher extends ServerDispatcher {
     
     public AbstractMap getSourceFilesMap() {
         return sourceFiles;
+    }
+    
+    public List<String> getPlayerStateList() {
+        List<String> playerStates = new ArrayList<>();
+        for (String player: activeMatch.getPlayerList()) {
+            String entry = player;
+            Source sourceName = sourceFiles.get(player);
+            if (sourceName != null) 
+                entry += "/" + sourceName.getName();
+            playerStates.add(entry);
+        }
+        
+        return playerStates;
     }
 }

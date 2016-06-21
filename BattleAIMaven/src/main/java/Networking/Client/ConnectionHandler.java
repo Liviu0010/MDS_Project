@@ -4,6 +4,7 @@ import Console.ConsoleFrame;
 import Constants.MasterServerConstants;
 import Interface.MainFrame;
 import Interface.MultiplayerServerPanel;
+import Networking.Requests.GetPlayerStateList;
 import Networking.Requests.PlayerConnect;
 import Networking.Requests.RegisterActivity;
 import Networking.Server.Match;
@@ -160,6 +161,8 @@ public class ConnectionHandler {
         matchOutputStream = new ObjectOutputStream(matchSocket.getOutputStream());
         matchOutputStream.flush();
         matchInputStream = new ObjectInputStream(matchSocket.getInputStream());
+        matchOutputStream.writeObject(new GetPlayerStateList());
+        matchOutputStream.flush();
         matchOutputStream.writeObject(new PlayerConnect(Player.getInstance().getUsername()));
         matchOutputStream.flush();
        

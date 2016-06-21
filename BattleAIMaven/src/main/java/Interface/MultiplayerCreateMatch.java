@@ -6,7 +6,9 @@ import Networking.Server.Match;
 import Networking.Server.NetworkUtilities;
 import Networking.Server.Player;
 import java.awt.Color;
+import java.io.IOException;
 import java.net.InetAddress;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import javax.swing.SwingWorker;
 
@@ -165,9 +167,11 @@ public class MultiplayerCreateMatch extends javax.swing.JPanel {
                 }else{
                     ConsoleFrame.showError("Already opened a server");
                 }
-                rootFrame.changePanel(new MultiplayerMatchPanel(rootFrame, createdMatch));
+                List<String> playerStateList =  
+                        (List<String>)ConnectionHandler.getInstance().readFromMatch();
+                rootFrame.changePanel(new MultiplayerMatchPanel(rootFrame, playerStateList));
             }
-        } catch (InterruptedException | ExecutionException ex) {
+        } catch (ClassNotFoundException | IOException | InterruptedException | ExecutionException ex) {
             ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Failed to create match");
             ConsoleFrame.showError("Failed to create match");
         }

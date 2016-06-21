@@ -67,7 +67,7 @@ public class PlayerConnection extends Connection {
         startConnectionHandler();
         
         Object object;
-
+        
         while (threadRunning.get()) {
             try {
                 if (!clientSocket.isInputShutdown()) {
@@ -85,7 +85,7 @@ public class PlayerConnection extends Connection {
                         ClientServerDispatcher.getInstance().getSourceFilesMap().put(username, source.getSource());
                     }
                     
-                    if (!identityConfirmed) {
+                    if (!identityConfirmed && request.getType() == RequestType.PLAYER_CONNECT) {
                         identityConfirmed = true;
                         username = ((PlayerConnect)request).getUsername();
                     }

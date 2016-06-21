@@ -3,6 +3,7 @@ package Interface;
 import Networking.Client.ConnectionHandler;
 import Console.ConsoleFrame;
 import Networking.Requests.GetMatchList;
+import Networking.Requests.GetPlayerStateList;
 import Networking.Server.Match;
 import Networking.Server.Player;
 import java.io.IOException;
@@ -207,9 +208,11 @@ public class MultiplayerServerPanel extends javax.swing.JPanel {
             worker.execute();
             boolean success = worker.get();
             if(success){
-                rootFrame.changePanel(new MultiplayerMatchPanel(rootFrame, selectedMatch));
+                List<String> playerStateList =  
+                        (List<String>)ConnectionHandler.getInstance().readFromMatch();
+                rootFrame.changePanel(new MultiplayerMatchPanel(rootFrame, playerStateList));
             }
-        } catch (InterruptedException | ExecutionException ex) {
+        } catch (ClassNotFoundException | IOException | InterruptedException | ExecutionException ex) {
             ConsoleFrame.showError("Failed to connect to match.");
         }
     }//GEN-LAST:event_joinMatchButtonActionPerformed
