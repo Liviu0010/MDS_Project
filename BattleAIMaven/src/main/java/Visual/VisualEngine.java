@@ -4,6 +4,7 @@ import Source.Source;
 import Engine.GameEntity;
 import Engine.IntelligenceControlThread;
 import Enums.GameModes;
+import Interface.MainFrame;
 import java.awt.Dimension;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -143,13 +144,15 @@ public class VisualEngine extends javax.swing.JFrame {
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         visualPanel1.animator.stopAnimation();   //stopping the animator when the window is closing
-        instance = null;    //the form's close operation is DISPOSE, so there's no point in keeping the old instance around
         
         //this.sursePrimite.clear();
         
         if(matchMode != GameModes.MULTIPLAYER_CLIENT){
             intelligenceControlThread.stopNicely();
         }
+        
+        instance = null;    //the form's close operation is DISPOSE, so there's no point in keeping the old instance around
+        
     }//GEN-LAST:event_formWindowClosing
 
     /**
