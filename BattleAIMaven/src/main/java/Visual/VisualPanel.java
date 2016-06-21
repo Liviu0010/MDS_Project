@@ -1,5 +1,6 @@
 package Visual;
 
+import Constants.VisualConstants;
 import Engine.Bullet;
 import Engine.GameEntity;
 import Engine.Tank;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
  */
 public class VisualPanel extends javax.swing.JPanel {
 
-    private long lastTime, totalTime, frames, totalFrames;
+    private long lastTime, totalTime, frames, totalFrames, startTime;
     Animator animator;
     
     private GameModes gameMode;
@@ -29,7 +30,7 @@ public class VisualPanel extends javax.swing.JPanel {
     
     public VisualPanel() {
         initComponents();
-        
+        startTime = System.currentTimeMillis();
         animator = new Animator(this);
     }
     
@@ -76,8 +77,9 @@ public class VisualPanel extends javax.swing.JPanel {
             totalTime = 0;
         }
         
-        g.setColor(Color.BLACK);
+        g.setColor(Color.WHITE);
         g.drawString("FPS: "+totalFrames, 2, 11);
+        g.drawString("Time: "+(currentTime-startTime)/1000 +"s", 2, VisualConstants.ENGINE_HEIGHT-30);
     }
     
     /**
