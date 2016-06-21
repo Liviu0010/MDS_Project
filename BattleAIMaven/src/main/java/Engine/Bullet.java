@@ -16,6 +16,7 @@ import java.awt.geom.*;
 final public class Bullet extends GameEntity implements Serializable,TransformInterface, Drawable{
 
     transient Tank owner;
+    private final Color color;
     
     public Bullet(int id, double xPos , double yPos, Tank owner){
         super(id,xPos,yPos);                 
@@ -28,6 +29,7 @@ final public class Bullet extends GameEntity implements Serializable,TransformIn
         angle = EngineConstants.ANGLE;
         damage = EngineConstants.DAMAGE;
         this.owner = owner;
+        color = this.owner.color;
     }
     public void moveFront(){
         double s = Math.sin(angle * Math.PI/180.0);
@@ -54,7 +56,7 @@ final public class Bullet extends GameEntity implements Serializable,TransformIn
         
         g2.rotate(Math.toRadians(angle), x, y);
         
-        g2.setColor(owner.color);
+        g2.setColor(color);
         g2.fillRect((int)x, (int)y, (int)VisualConstants.BULLET_WIDTH, (int)VisualConstants.BULLET_HEIGHT);  
         
         g2.setTransform(at);
