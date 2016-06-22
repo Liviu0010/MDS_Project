@@ -16,13 +16,15 @@ public interface MasterServerConstants {
         if(System.getenv().get("TRAVIS") != null || System.getProperty("TEST") != null){
             return "localhost";
         }else{
-            String ip = JOptionPane.showInputDialog(null, "Master Server IP: ",
+            //When creating a match via LAN it looks like this causes a deadlock
+            //Please investigate.
+            /*String ip = JOptionPane.showInputDialog(null, "Master Server IP: ",
                     "MS - IP", JOptionPane.INFORMATION_MESSAGE);
             while(ip == null){
                 ip = JOptionPane.showInputDialog(null, "Master Server IP: ",
                     "MS - IP", JOptionPane.INFORMATION_MESSAGE);
-            }
-            return ip;
+            }*/
+            return "5.12.250.190";
         }
     }
     

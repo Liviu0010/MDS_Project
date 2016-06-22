@@ -1,7 +1,13 @@
 package Interface;
 
+import Console.ConsoleFrame;
+import Networking.Client.ConnectionHandler;
 import Networking.Server.Player;
 import java.awt.Color;
+import java.io.IOException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -141,7 +147,22 @@ public class MultiplayerLanPanel extends javax.swing.JPanel {
     private void connectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectButtonActionPerformed
         if(!checkPlayerName())
             return;
-        rootFrame.changePanel(new MultiplayerServerPanel(rootFrame));
+        String ip = adressField.getText();
+        if (!ip.isEmpty()) {
+            try {
+                Player.getInstance().setUsername(playerNameField.getText());
+                ConnectionHandler.getInstance().connectToMatch(ip, Integer.parseInt(portNumberField.getText()));
+                List<String> playerStateList =  
+                        (List<String>)ConnectionHandler.getInstance().readFromMatch();
+                rootFrame.changePanel(new MultiplayerMatchPanel(rootFrame, playerStateList));
+            } catch (ClassNotFoundException | IOException ex) {
+                Logger.getLogger(MultiplayerLanPanel.class.getName()).log(Level.SEVERE, null, ex);
+                ConsoleFrame.showError("Failed to connect to match.");
+            }
+        } else {
+            ConsoleFrame.showError("Invalid IP or port.");
+        }
+        
     }//GEN-LAST:event_connectButtonActionPerformed
 
     private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
@@ -150,7 +171,9 @@ public class MultiplayerLanPanel extends javax.swing.JPanel {
 
     private void createServerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createServerButtonActionPerformed
         if(!checkPlayerName())
-            return ;
+            return;
+        Player.getInstance().setUsername(playerNameField.getText());
+        rootFrame.changePanel(new MultiplayerCreateMatch(rootFrame));
     }//GEN-LAST:event_createServerButtonActionPerformed
     
     /**

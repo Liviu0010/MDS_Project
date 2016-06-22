@@ -3,6 +3,7 @@ package Networking.Client;
 import Console.ConsoleFrame;
 import Constants.MasterServerConstants;
 import Interface.MainFrame;
+import Interface.MultiplayerLanPanel;
 import Interface.MultiplayerServerPanel;
 import Networking.Requests.GetPlayerStateList;
 import Networking.Requests.PlayerConnect;
@@ -151,6 +152,10 @@ public class ConnectionHandler {
         return response;
     }
     
+    public void connectToMatch(String ip, int port) throws IOException {
+        connectToMatch(new Match("Match", ip, port, "", 0));
+    }
+    
     public void connectToMatch(Match match) throws IOException {
         InetSocketAddress address = new InetSocketAddress(match.getIP(), match.getPort());
         System.out.println("Connecting to " + match.getIP());
@@ -178,8 +183,12 @@ public class ConnectionHandler {
                     t.cancel();
                     
                     if (!host && !disconnectedFromMatch) {
-                        MainFrame.getInstance()
-                                .changePanel(new MultiplayerServerPanel(MainFrame.getInstance()));
+                        if (Player.getInstance().isLoggedIn())
+                            MainFrame.getInstance()
+                                    .changePanel(new MultiplayerServerPanel(MainFrame.getInstance()));
+                        else 
+                            MainFrame.getInstance()
+                                    .changePanel(new MultiplayerLanPanel(MainFrame.getInstance()));
                         ConsoleFrame.showError("Connection lost.");
                     } else {
                         host = false;
@@ -202,7 +211,8 @@ public class ConnectionHandler {
                    server-browser after it is closed. The workaround is to close
                    the master-server socket when closing the server. The issue
                    should be further investigated */
-                masterServerSocket.close();
+                if (masterServerSocket != null)
+                    masterServerSocket.close();
             }
         } catch (IOException ex) {
             Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
