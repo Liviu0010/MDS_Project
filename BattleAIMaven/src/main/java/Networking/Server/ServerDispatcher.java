@@ -82,6 +82,7 @@ public class ServerDispatcher implements Runnable {
         while (isRunning.get()) {
             try {
                 Socket clientSocket = serverSocket.accept();
+                clientSocket.setTcpNoDelay(MasterServerConstants.TCP_NO_DELAY);
                 System.out.println(clientSocket.getRemoteSocketAddress());
                 addConnection(new RegularConnection(clientSocket));
             } catch (IOException ex) {

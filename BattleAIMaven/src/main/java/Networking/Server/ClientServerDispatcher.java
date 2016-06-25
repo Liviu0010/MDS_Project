@@ -108,6 +108,7 @@ public class ClientServerDispatcher extends ServerDispatcher {
         while (isRunning.get()) {
             try {
                 Socket clientSocket = serverSocket.accept();
+                clientSocket.setTcpNoDelay(MasterServerConstants.TCP_NO_DELAY);
                 PlayerConnection playerConnection = new PlayerConnection(clientSocket);
                 THREAD_POOL.execute(playerConnection);
                 activeConnections.add(playerConnection);

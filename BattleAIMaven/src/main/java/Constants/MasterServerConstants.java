@@ -10,7 +10,8 @@ public interface MasterServerConstants {
     final String IP = getIP();
     int PORT = 60010;
     long PACKET_DELAY = 3000; // expressed in milliseconds
-
+    final boolean TCP_NO_DELAY = true;
+    
     public static String getIP() {
         if (System.getenv().get("TRAVIS") != null || System.getProperty("TEST") != null) {
             return "localhost";

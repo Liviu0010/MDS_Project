@@ -71,6 +71,7 @@ public class ConnectionHandler {
     private void connectToMasterServer() throws IOException {
         try {
             masterServerSocket = new Socket();
+            masterServerSocket.setTcpNoDelay(MasterServerConstants.TCP_NO_DELAY);
             masterServerSocket.connect(masterServerAddress, 3500);
             masterServerSocket.setSoTimeout(5000);
             masterServerOutputStream = new ObjectOutputStream(masterServerSocket.getOutputStream());
@@ -167,7 +168,7 @@ public class ConnectionHandler {
         InetSocketAddress address = new InetSocketAddress(match.getIP(), match.getPort());
         System.out.println("Connecting to " + match.getIP());
         matchSocket = new Socket();
-
+        matchSocket.setTcpNoDelay(MasterServerConstants.TCP_NO_DELAY);
         matchSocket.connect(address, 3500);
 
         matchOutputStream = new ObjectOutputStream(matchSocket.getOutputStream());
