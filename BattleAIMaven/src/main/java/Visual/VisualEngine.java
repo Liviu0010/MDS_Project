@@ -123,27 +123,24 @@ public class VisualEngine extends javax.swing.JFrame {
     public void closeWindow() {
         this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }
-
+    
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
 
         if (matchMode == GameModes.SINGLEPLAYER
                 || matchMode == GameModes.MULTIPLAYER_HOST) {
             if (sursePrimite != null) {
                 intelligenceControlThread = new IntelligenceControlThread(sursePrimite);
+                intelligenceControlThread.start();
+                visualPanel1.animator.start();   //starting the animator when the window is visible
             }
-            intelligenceControlThread.start();
         }
-
-        visualPanel1.animator.start();   //starting the animator when the window is visible
-
-
     }//GEN-LAST:event_formWindowOpened
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         visualPanel1.animator.stopAnimation();   //stopping the animator when the window is closing
 
         //this.sursePrimite.clear();
-        if (matchMode != GameModes.MULTIPLAYER_CLIENT) {
+        if (matchMode != GameModes.MULTIPLAYER_CLIENT && intelligenceControlThread != null) {
             intelligenceControlThread.stopNicely();
         }
 
