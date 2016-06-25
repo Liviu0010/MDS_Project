@@ -145,11 +145,13 @@ public class DatabaseHandler {
 
             // create ATTEND
             sqlQuery = "CREATE TABLE ATTEND "
-                    + " (id_match INTEGER not NULL REFERENCES "
-                    + " MATCHES_BD(id_match) ON DELETE CASCADE ON UPDATE CASCADE, "
-                    + " player_name VARCHAR(255) not NULL REFERENCES "
-                    + " PLAYER_BD(name) ON DELETE CASCADE ON UPDATE CASCADE, "
-                    + " PRIMARY KEY ( id_match, player_name ))ENGINE=InnoDB ";
+                    + " (id_match INTEGER not NULL, "
+                    + " player_name VARCHAR(255) not NULL, "
+                    + " PRIMARY KEY ( id_match, player_name ),"
+                    + " FOREIGN KEY (id_match) REFERENCES MATCHES_DB(id_match)"
+                    + " ON DELETE CASCADE ON UPDATE CASCADE,"
+                    + " FOREIGN KEY(player_name) REFERENCES PLAYER_DB(name)"
+                    + " ON DELETE CASCADE ON UPDATE CASCADE)ENGINE=InnoDB ";
             stmt.executeUpdate(sqlQuery);
 
         } catch (SQLException ex) {
