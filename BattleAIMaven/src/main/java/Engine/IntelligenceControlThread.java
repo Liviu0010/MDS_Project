@@ -103,7 +103,7 @@ public class IntelligenceControlThread extends Thread {
 
         while (running) {
             ingame = 0;
-
+            
             synchronized (GameEntity.ENTITY_LIST) {
                 PacketManager.getInstance().addFrame(GameEntity.ENTITY_LIST);    //send the current frame     
             }
@@ -111,18 +111,23 @@ public class IntelligenceControlThread extends Thread {
             for (int i = 0; i < tankThreads.size(); i++) {
                 synchronized (semaphores.get(i)) {
                     if (semaphores.get(i).isGreen()) {
-                        if (i < GameEntity.ENTITY_LIST.size()
-                                && ((Tank) GameEntity.ENTITY_LIST.get(i)).inTheGame()) {
+                        if (i < GameEntity.ENTITY_LIST.size() && ((Tank) GameEntity.ENTITY_LIST.get(i)).inTheGame()) {
                             //to ensure that the enemy is always detected
                             ((Tank) GameEntity.ENTITY_LIST.get(i)).janitor();
                             //end
-                            ingame++;
                             semaphores.get(i).goRed();
                             semaphores.get(i).notify();
                         } else {
                             tankThreads.get(i).stopNicely();
                         }
                     }
+                }
+            }
+            
+            for(int i = 0; i < numberOfTanks; i++){
+                synchronized(GameEntity.ENTITY_LIST){
+                    if(((Tank)GameEntity.ENTITY_LIST.get(i)).inTheGame())
+                        ingame++;
                 }
             }
 
