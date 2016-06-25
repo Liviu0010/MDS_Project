@@ -40,7 +40,27 @@ public class PacketManager {
 
         sendReadyPackets(); //works asynchronously ofc
     }
-
+    
+    /**
+     * Sends any leftover packets.
+     */
+    
+    public void gameOver(){
+        for(int i = 0; i < packetQueue.size(); i++){
+            packetQueue.get(i).setReady();
+        }
+        
+        sendReadyPackets();
+    }
+    
+    /**
+     * Clears the packet queue. To be called when the game is over and the
+     * visual engine is closed.
+     */
+    public void clearQueue(){
+        packetQueue.clear();
+    }
+    
     private void sendReadyPackets() {
 
         for (int i = 0; i < packetQueue.size() && i >= 0; i++) {

@@ -148,6 +148,7 @@ public class IntelligenceControlThread extends Thread {
         VisualEngine.getInstance().closeWindow();
         long endTime = System.currentTimeMillis() - startTime;
         endTime /= 1000;
+        PacketManager.getInstance().gameOver();
         ClientServerDispatcher.getInstance().broadcast(new EndBattle(tanks, endTime));
     }
 
@@ -170,6 +171,9 @@ public class IntelligenceControlThread extends Thread {
     public void stopNicely() {
         pickedUpTheTrash = false;
         numberOfTanks = 0;
+        
+        PacketManager.getInstance().clearQueue();
+        
         synchronized (GameEntity.ENTITY_LIST) {
             GameEntity.ENTITY_LIST.clear();
         }

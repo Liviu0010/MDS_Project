@@ -9,9 +9,11 @@ public class Packet implements Serializable {
     private final ArrayList<ArrayList<GameEntity>> frames;
     private int index, added;
     static int capacity = 60;
-
+    private boolean ready;
+    
     public Packet() {
         frames = new ArrayList<>(capacity);
+        ready = false;
     }
 
     /**
@@ -33,6 +35,19 @@ public class Packet implements Serializable {
 
         frames.add(copy);
         added++;
+        
+        if(added == capacity){
+            ready = true;
+        }
+    }
+    
+    /**
+     * Marks the packet as ready, no matter how many frames it contains.
+     * CAUTION: It is only meant to be used on the *last* packet.
+     */
+    
+    public void setReady(){
+        ready = true;
     }
 
     /**
@@ -61,6 +76,6 @@ public class Packet implements Serializable {
      * @return true if the packet is ready to be sent
      */
     public boolean ready() {
-        return added == capacity;
+        return ready;
     }
 }
