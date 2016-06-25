@@ -131,9 +131,9 @@ public class VisualEngine extends javax.swing.JFrame {
             if (sursePrimite != null) {
                 intelligenceControlThread = new IntelligenceControlThread(sursePrimite);
                 intelligenceControlThread.start();
-                visualPanel1.animator.start();   //starting the animator when the window is visible
             }
         }
+        visualPanel1.animator.start();   //starting the animator when the window is visible
     }//GEN-LAST:event_formWindowOpened
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
