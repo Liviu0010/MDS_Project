@@ -15,6 +15,8 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class IntelligenceControlThread extends Thread {
 
@@ -23,7 +25,8 @@ public class IntelligenceControlThread extends Thread {
     private final ArrayList<Semaphore> semaphores;
     private boolean running;
     private static int numberOfTanks;
-
+    private static boolean pickedUpTheTrash = true;
+    
     private final ArrayList<Tank> tanks = new ArrayList<>();
     private final List<Source> surse;
 
@@ -32,6 +35,14 @@ public class IntelligenceControlThread extends Thread {
     private final long startTime;
 
     public IntelligenceControlThread(List<Source> surse) {
+        while(!pickedUpTheTrash){
+            try {
+                Thread.sleep(5);
+            } catch (InterruptedException ex) {
+                ConsoleFrame.sendMessage("IntelligenceControlThread", "got interrupted while waiting for another ICT to finish ending");
+            }
+        }
+        
         numberOfTanks = surse.size();
         GameEntity.currentIndex = 0;
         tanks.clear();
@@ -63,7 +74,7 @@ public class IntelligenceControlThread extends Thread {
                 || VisualEngine.getInstance().getMatchMode() == GameModes.MULTIPLAYER_HOST) {
             VisualEngine.getInstance().updateEntityList(GameEntity.ENTITY_LIST);
         }
-
+ 
         bulletUpdater = new BulletUpdater();
 
         ConsoleFrame.sendMessage("IntelligenceControlThread", "size = " + GameEntity.ENTITY_LIST.size());
@@ -74,6 +85,14 @@ public class IntelligenceControlThread extends Thread {
     public void run() {
         int ingame;
 
+        while(!BulletHitChecker.ready2Start()){
+            try {
+                Thread.sleep(5);
+            } catch (InterruptedException ex) {
+                ConsoleFrame.sendMessage("IntelligenceControlThread", "Interrupted while waiting"
+                        + " for BulletHitChecker to be ready to start again.");
+            }
+        }
         BulletHitChecker.getInstance().start();
 
         for (int i = 0; i < tankThreads.size(); i++) {
@@ -144,6 +163,8 @@ public class IntelligenceControlThread extends Thread {
     }
 
     public void stopNicely() {
+        pickedUpTheTrash = false;
+        numberOfTanks = 0;
         synchronized (GameEntity.ENTITY_LIST) {
             GameEntity.ENTITY_LIST.clear();
         }
@@ -167,6 +188,7 @@ public class IntelligenceControlThread extends Thread {
             }
         }
         running = false;
+        pickedUpTheTrash = true;
     }
 
     private void setupColors() {

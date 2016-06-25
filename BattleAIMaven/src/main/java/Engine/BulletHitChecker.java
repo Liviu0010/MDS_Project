@@ -10,17 +10,17 @@ public class BulletHitChecker extends Thread {
 
     private boolean running;
     private static BulletHitChecker instance;
-    private static boolean good2go;
+    private static boolean good2go = true;
     private long startingTime;
     private int deathIndex = 1;
 
-    private BulletHitChecker() {
+    private BulletHitChecker() {   
         running = true;
         good2go = true;
     }
 
     public static BulletHitChecker getInstance() {
-        if (good2go == false) {
+        if (instance == null) {
             instance = new BulletHitChecker();
         }
 
@@ -34,7 +34,7 @@ public class BulletHitChecker extends Thread {
         Rectangle2D tankRect, bulletRect;
         ArrayList<GameEntity> entities = GameEntity.ENTITY_LIST;
         startingTime = System.currentTimeMillis() / 1000;
-
+        
         while (running) {
             synchronized (entities) {
                 //if there are N tanks in the game, the first N objects in the
@@ -84,8 +84,13 @@ public class BulletHitChecker extends Thread {
     }
 
     public void stopNicely() {
-
-        good2go = running = false;
+        instance = null;
+        running = false;
+        good2go = true;
+    }
+    
+    public static boolean ready2Start(){
+        return good2go;
     }
 
     private void scoreDeath(Tank t, int index) {
