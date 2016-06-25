@@ -16,21 +16,22 @@ import javax.swing.SwingWorker;
  * @author Dragos-Alexandru
  */
 public class MultiplayerLoginRegisterPanel extends javax.swing.JPanel {
-    
+
     private final MainFrame rootFrame;
-    
+
     /**
      * Creates new form MultiplayerLoginPanel
+     *
      * @param rootFrame
      */
     public MultiplayerLoginRegisterPanel(MainFrame rootFrame) {
-        
+
         this.rootFrame = rootFrame;
-        
+
         initComponents();
         this.usernameField.setText(Player.getInstance().getUsername());
         passwordField.setText("");
-        
+
     }
 
     /**
@@ -129,17 +130,19 @@ public class MultiplayerLoginRegisterPanel extends javax.swing.JPanel {
     private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
         rootFrame.changePanel(new MultiplayerChooserPanel(rootFrame));
     }//GEN-LAST:event_backButtonActionPerformed
-    
+
     private void loginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginButtonActionPerformed
         LoginWorker worker = new LoginWorker();
         try {
             worker.execute();
-            if(worker.get()){
+            if (worker.get()) {
+                String scrambledPassword
+                        = Guard.scramblePassword(new String(passwordField.getPassword()));
                 // Send a login request
-                ConnectionHandler.getInstance().sendToMasterServer(new LoginAccount(usernameField.getText(), 
-                        new String(passwordField.getPassword())));
-                Object ob = ConnectionHandler.getInstance().readFromMasterServer();
-                BooleanResponse response = (BooleanResponse)ob;
+                LoginAccount request
+                        = new LoginAccount(usernameField.getText(), scrambledPassword);
+                Object ob = ConnectionHandler.getInstance().readFromMasterServer(request);
+                BooleanResponse response = (BooleanResponse) ob;
                 // Check if the authentification was successful
                 if (response.getValue() == false) {
                     ConsoleFrame.showError("No account matches the provided username and password");
@@ -152,19 +155,21 @@ public class MultiplayerLoginRegisterPanel extends javax.swing.JPanel {
             }
         } catch (InterruptedException | ExecutionException | IOException | ClassNotFoundException ex) {
             ConsoleFrame.showError(ex.getMessage());
-        } 
+        }
     }//GEN-LAST:event_loginButtonActionPerformed
 
     private void registerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerButtonActionPerformed
         LoginWorker worker = new LoginWorker();
         try {
             worker.execute();
-            if(worker.get()){
+            if (worker.get()) {
                 // Send a register request
-                ConnectionHandler.getInstance().sendToMasterServer(new RegisterAccount(usernameField.getText(), 
-                        new String(passwordField.getPassword())));
-                Object ob = ConnectionHandler.getInstance().readFromMasterServer();
-                BooleanResponse response = (BooleanResponse)ob;
+                String scrambledPassword
+                        = Guard.scramblePassword(new String(passwordField.getPassword()));
+                RegisterAccount request
+                        = new RegisterAccount(usernameField.getText(), scrambledPassword);
+                Object ob = ConnectionHandler.getInstance().readFromMasterServer(request);
+                BooleanResponse response = (BooleanResponse) ob;
                 // Check if the authentification was successful
                 if (response.getValue() == false) {
                     ConsoleFrame.showError("An account with that name already exists.");
@@ -172,15 +177,15 @@ public class MultiplayerLoginRegisterPanel extends javax.swing.JPanel {
                 }
                 Player.getInstance().logIn(usernameField.getText());
                 rootFrame.changePanel(new MultiplayerServerPanel(rootFrame));
-            }else{
+            } else {
                 ConsoleFrame.showError("Username can't contain these characters: ' = + ; \" ");
             }
         } catch (InterruptedException | ExecutionException | IOException | ClassNotFoundException ex) {
             ConsoleFrame.showError(ex.getMessage());
         }
     }//GEN-LAST:event_registerButtonActionPerformed
-    
-    private class LoginWorker extends SwingWorker<Boolean, Object>{
+
+    private class LoginWorker extends SwingWorker<Boolean, Object> {
 
         @Override
         protected Boolean doInBackground() throws Exception {
@@ -188,29 +193,24 @@ public class MultiplayerLoginRegisterPanel extends javax.swing.JPanel {
             boolean success;
             String username = usernameField.getText();
             String password = Guard.scramblePassword(String.valueOf(passwordField.getPassword()));
-            
-            if(checkUsername(username)){
-                success = true;
-            }else{
-                success = false;
-                
-            }
-            
+
+            success = checkUsername(username);
+
             return success;
         }
-        
-        private boolean checkUsername(String username){
-            char[] unacceptebleChars = {'\'','=','+',';','\"'};
-            for(char c:unacceptebleChars){
-                if(username.indexOf(c) >= 0){
+
+        private boolean checkUsername(String username) {
+            char[] unacceptebleChars = {'\'', '=', '+', ';', '\"'};
+            for (char c : unacceptebleChars) {
+                if (username.indexOf(c) >= 0) {
                     return false;
                 }
             }
             return true;
         }
-        
+
     }
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton backButton;
     private javax.swing.JButton loginButton;

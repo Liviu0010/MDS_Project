@@ -18,55 +18,54 @@ public class VisualEngine extends javax.swing.JFrame {
     /**
      * Creates new form VisualEngine
      */
-    
     private GameModes matchMode = GameModes.SINGLEPLAYER;
-    IntelligenceControlThread ict;
+    IntelligenceControlThread intelligenceControlThread;
     private List<Source> sursePrimite;
-    
+
     private static VisualEngine instance;
-    
+
     private VisualEngine() {
         initComponents();
     }
-    
+
     private VisualEngine(List<Source> surse) {
         initComponents();
         this.sursePrimite = surse;
     }
-    
-    public static VisualEngine getInstance(){
-        if(instance == null){
+
+    public static VisualEngine getInstance() {
+        if (instance == null) {
             instance = new VisualEngine();
             instance.setLocationRelativeTo(null);
         }
         return instance;
     }
-    
-    public static VisualEngine getInstance(List<Source> surse){
-        if(instance == null){
+
+    public static VisualEngine getInstance(List<Source> surse) {
+        if (instance == null) {
             instance = new VisualEngine(surse);
             instance.setLocationRelativeTo(null);
         }
         return instance;
     }
-    
-    public static boolean initialized(){
+
+    public static boolean initialized() {
         return instance != null;
     }
-    
-    public void updateEntityList(ArrayList<GameEntity> newList){
+
+    public void updateEntityList(ArrayList<GameEntity> newList) {
         visualPanel1.entityList = newList;
     }
-    
-    public void setMatchMode(GameModes matchMode){
+
+    public void setMatchMode(GameModes matchMode) {
         this.matchMode = matchMode;
         visualPanel1.setGameMode(matchMode);
     }
-    
-    public GameModes getMatchMode(){
+
+    public GameModes getMatchMode() {
         return matchMode;
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -121,36 +120,35 @@ public class VisualEngine extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    public void closeWindow(){
+    public void closeWindow() {
         this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }
-            
+
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-        
-        if(matchMode == GameModes.SINGLEPLAYER ||
-                matchMode == GameModes.MULTIPLAYER_HOST){
-            if(sursePrimite != null){
-                ict = new IntelligenceControlThread(sursePrimite);
+
+        if (matchMode == GameModes.SINGLEPLAYER
+                || matchMode == GameModes.MULTIPLAYER_HOST) {
+            if (sursePrimite != null) {
+                intelligenceControlThread = new IntelligenceControlThread(sursePrimite);
             }
-            
-            ict.start();
+            intelligenceControlThread.start();
         }
-        
+
         visualPanel1.animator.start();   //starting the animator when the window is visible
-        
-        
+
+
     }//GEN-LAST:event_formWindowOpened
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         visualPanel1.animator.stopAnimation();   //stopping the animator when the window is closing
-        instance = null;    //the form's close operation is DISPOSE, so there's no point in keeping the old instance around
-        
+
         //this.sursePrimite.clear();
-        
-        if(matchMode != GameModes.MULTIPLAYER_CLIENT){
-            ict.stopNicely();
-            
+        if (matchMode != GameModes.MULTIPLAYER_CLIENT) {
+            intelligenceControlThread.stopNicely();
         }
+
+        instance = null;    //the form's close operation is DISPOSE, so there's no point in keeping the old instance around
+
     }//GEN-LAST:event_formWindowClosing
 
     /**
