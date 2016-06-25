@@ -25,47 +25,49 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * This class handles two type of connections, the connection to the master 
+ * This class handles two type of connections, the connection to the master
  * server and the connection to a match.
  */
 public class ConnectionHandler {
-    
+
     private final static ConnectionHandler INSTANCE = new ConnectionHandler();
-    
+
     private final InetSocketAddress masterServerAddress;
     private Socket masterServerSocket;
     private ObjectInputStream masterServerInputStream;
     private ObjectOutputStream masterServerOutputStream;
-    
+
     private Socket matchSocket;
     private ObjectInputStream matchInputStream;
     private ObjectOutputStream matchOutputStream;
-    
+
     private boolean host;
     // this variable indicated where the disconnect was voluntary
     private boolean disconnectedFromMatch;
-    
+
     private final BlockingQueue<Request> gameDataQueue;
-           
+
     public boolean isHost() {
         return host;
     }
-    
+
     private ConnectionHandler() {
-        masterServerAddress = 
-                new InetSocketAddress(MasterServerConstants.IP, MasterServerConstants.PORT);
+        masterServerAddress
+                = new InetSocketAddress(MasterServerConstants.IP, MasterServerConstants.PORT);
         gameDataQueue = new LinkedBlockingQueue<>();
         masterServerSocket = null;
         matchSocket = null;
         host = false;
         disconnectedFromMatch = false;
         matchSocket = null;
-    };
+    }
+
+    ;
     
     public static ConnectionHandler getInstance() {
         return INSTANCE;
     }
-    
+
     private void connectToMasterServer() throws IOException {
         try {
             masterServerSocket = new Socket();
@@ -78,9 +80,9 @@ public class ConnectionHandler {
             masterServerSocket = null;
             throw ex;
         }
-        
+
     }
-    
+
     public boolean hostMatch(Match activeMatch) {
         if (!host) {
             if (ClientServerDispatcher.getInstance().start(activeMatch)) {
@@ -88,23 +90,25 @@ public class ConnectionHandler {
                     host = true;
                     connectToMatch(activeMatch);
                 } catch (IOException ex) {
-                        Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }
-        
+
         return host;
     }
-         
+
     /**
      * Attempts to send a request to master server.
+     *
      * @param request Request send to the master server.
-     * @throws IOException 
+     * @throws IOException
      */
     public synchronized void sendToMasterServer(Request request) throws IOException {
-        if (masterServerSocket == null)
+        if (masterServerSocket == null) {
             connectToMasterServer();
-        
+        }
+
         try {
             masterServerOutputStream.writeObject(request);
             masterServerOutputStream.flush();
@@ -120,18 +124,21 @@ public class ConnectionHandler {
             }
         }
     }
-    
+
     /**
-     * Sends an request to the master-server and returns the response.
-     * This should be used only with requests that ask for a response.
+     * Sends an request to the master-server and returns the response. This
+     * should be used only with requests that ask for a response.
+     *
+     * @param request Request object to which you're expecting a response
      * @return Object read from master server.
      * @throws IOException
-     * @throws ClassNotFoundException 
+     * @throws ClassNotFoundException
      */
     public Object readFromMasterServer(Request request) throws IOException, ClassNotFoundException {
-        if (masterServerSocket == null)
+        if (masterServerSocket == null) {
             connectToMasterServer();
-        
+        }
+
         Object response = null;
         try {
             masterServerOutputStream.writeObject(request);
@@ -142,7 +149,7 @@ public class ConnectionHandler {
                 connectToMasterServer();
                 masterServerOutputStream.writeObject(request);
                 masterServerOutputStream.flush();
-                response = masterServerInputStream.readObject();    
+                response = masterServerInputStream.readObject();
             } catch (IOException ex2) {
                 Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex2);
                 masterServerSocket = null;
@@ -151,18 +158,18 @@ public class ConnectionHandler {
         }
         return response;
     }
-    
+
     public void connectToMatch(String ip, int port) throws IOException {
         connectToMatch(new Match("Match", ip, port, "", 0));
     }
-    
+
     public void connectToMatch(Match match) throws IOException {
         InetSocketAddress address = new InetSocketAddress(match.getIP(), match.getPort());
         System.out.println("Connecting to " + match.getIP());
         matchSocket = new Socket();
 
         matchSocket.connect(address, 3500);
-        
+
         matchOutputStream = new ObjectOutputStream(matchSocket.getOutputStream());
         matchOutputStream.flush();
         matchInputStream = new ObjectInputStream(matchSocket.getInputStream());
@@ -170,8 +177,7 @@ public class ConnectionHandler {
         matchOutputStream.flush();
         matchOutputStream.writeObject(new PlayerConnect(Player.getInstance().getUsername()));
         matchOutputStream.flush();
-       
-        
+
         Timer t = new Timer();
         TimerTask notification = new TimerTask() {
             @Override
@@ -181,14 +187,15 @@ public class ConnectionHandler {
                     matchOutputStream.flush();
                 } catch (IOException ex) {
                     t.cancel();
-                    
+
                     if (!host && !disconnectedFromMatch) {
-                        if (Player.getInstance().isLoggedIn())
+                        if (Player.getInstance().isLoggedIn()) {
                             MainFrame.getInstance()
                                     .changePanel(new MultiplayerServerPanel(MainFrame.getInstance()));
-                        else 
+                        } else {
                             MainFrame.getInstance()
                                     .changePanel(new MultiplayerLanPanel(MainFrame.getInstance()));
+                        }
                         ConsoleFrame.showError("Connection lost.");
                     } else {
                         host = false;
@@ -200,7 +207,7 @@ public class ConnectionHandler {
         };
         t.scheduleAtFixedRate(notification, 0, MasterServerConstants.PACKET_DELAY);
     }
-    
+
     public void disconnectFromMatch() {
         try {
             matchSocket.close();
@@ -211,33 +218,34 @@ public class ConnectionHandler {
                    server-browser after it is closed. The workaround is to close
                    the master-server socket when closing the server. The issue
                    should be further investigated */
-                if (masterServerSocket != null)
+                if (masterServerSocket != null) {
                     masterServerSocket.close();
+                }
             }
         } catch (IOException ex) {
             Logger.getLogger(ConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public Object readFromMatch() throws IOException, ClassNotFoundException {
         Object object = matchInputStream.readObject();
         return object;
     }
-    
+
     public void sendToMatch(Request request) throws IOException {
         matchOutputStream.reset();
         matchOutputStream.writeObject(request);
         matchOutputStream.flush();
     }
-    
+
     public void addGameData(Request request) {
         gameDataQueue.add(request);
     }
-    
+
     public Request getGameData() throws InterruptedException {
         return gameDataQueue.take();
     }
-    
+
     public void clearGameData() {
         gameDataQueue.clear();
     }

@@ -10,17 +10,18 @@ import javax.swing.JPanel;
  * @author Dragos-Alexandru
  */
 public class MainMenuPanel extends JPanel {
-    
+
     private final MainFrame rootFrame;
-    
+
     /**
      * Creates new form NewJPanel
+     *
      * @param rootFrame
      */
     public MainMenuPanel(MainFrame rootFrame) {
-        
+
         this.rootFrame = rootFrame;
-        
+
         initComponents();
         Player.getInstance().logOut();
     }
@@ -113,12 +114,12 @@ public class MainMenuPanel extends JPanel {
 
     private void editorButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editorButtonActionPerformed
         rootFrame.setVisible(false);
-        Editor editor= new Editor(rootFrame);
+        Editor editor = new Editor(rootFrame);
     }//GEN-LAST:event_editorButtonActionPerformed
 
     private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
         int result = JOptionPane.showConfirmDialog(rootFrame, "Sure you wanna quit?", "Quit?", JOptionPane.YES_NO_OPTION);
-        if(result == 0){
+        if (result == 0) {
             System.exit(0);
         }
     }//GEN-LAST:event_exitButtonActionPerformed

@@ -12,16 +12,16 @@ import java.util.logging.Logger;
  * @author root
  */
 public class GetPlayerStateList extends Request {
-    
+
     public GetPlayerStateList() {
         super(RequestType.GET_PLAYER_STATE_LIST);
     }
-    
+
     @Override
     public void execute(ObjectOutputStream outputStream) {
         try {
-            List<String> playerStates =
-                    ClientServerDispatcher.getInstance().getPlayerStateList();
+            List<String> playerStates
+                    = ClientServerDispatcher.getInstance().getPlayerStateList();
             outputStream.reset();
             outputStream.writeObject(playerStates);
             outputStream.flush();
@@ -29,5 +29,5 @@ public class GetPlayerStateList extends Request {
             Logger.getLogger(GetPlayerStateList.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
 }

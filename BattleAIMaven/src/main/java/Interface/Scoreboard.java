@@ -19,9 +19,10 @@ import javax.swing.JFrame;
 public class Scoreboard extends javax.swing.JFrame {
 
     private List<Tank> tanks;
-    
+
     /**
      * Creates new form Scoreboard
+     *
      * @param tanks
      */
     public Scoreboard(List<Tank> tanks) {
@@ -31,41 +32,41 @@ public class Scoreboard extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         this.setAlwaysOnTop(true);
         this.setTitle("BattleAI - Scoreboard");
-        
+
         Collections.sort(tanks, (Tank t, Tank t1) -> t1.getScore() - t.getScore());
-        
+
         Object[][] data = new Object[8][4];
-        
-        for(int i = 0; i < 8; i++){
-            if(i < tanks.size()){
-                data[i][0] = i+1;
+
+        for (int i = 0; i < 8; i++) {
+            if (i < tanks.size()) {
+                data[i][0] = i + 1;
                 data[i][1] = tanks.get(i).getAuthor();
                 data[i][2] = tanks.get(i).getName();
                 data[i][3] = tanks.get(i).getScore();
             }
         }
-        
+
         playerTable.setModel(new javax.swing.table.DefaultTableModel(
-            data,
-            new String [] {
-                "Place", "Player", "Source", "Points"
-            }
+                data,
+                new String[]{
+                    "Place", "Player", "Source", "Points"
+                }
         ) {
-            Class[] types = new Class [] {
+            Class[] types = new Class[]{
                 java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
-            boolean[] canEdit = new boolean [] {
+            boolean[] canEdit = new boolean[]{
                 false, false, false, false
             };
 
             @Override
             public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
+                return types[columnIndex];
             }
 
             @Override
             public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
+                return canEdit[columnIndex];
             }
         });
         playerTable.setEnabled(false);
@@ -76,7 +77,7 @@ public class Scoreboard extends javax.swing.JFrame {
             playerTable.getColumnModel().getColumn(2).setResizable(false);
             playerTable.getColumnModel().getColumn(3).setResizable(false);
         }
-        
+
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent we) {
@@ -84,10 +85,8 @@ public class Scoreboard extends javax.swing.JFrame {
                 MainFrame.getInstance().setVisible(true);
             }
         });
-        
+
     }
-    
-    
 
     /**
      * This method is called from within the constructor to initialize the form.

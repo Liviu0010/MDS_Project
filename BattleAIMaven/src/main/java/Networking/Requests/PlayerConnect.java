@@ -6,8 +6,6 @@ import Networking.Server.ClientServerDispatcher;
 import Networking.Server.Match;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * This request is sent when attempting to connect to a match.
@@ -16,13 +14,13 @@ public class PlayerConnect extends Request {
 
     private String username;
     private boolean isDisconnecting;
-    
+
     public PlayerConnect(String username) {
         super(RequestType.PLAYER_CONNECT);
         this.username = username;
         isDisconnecting = false;
     }
-    
+
     public PlayerConnect(String username, boolean isDisconnecting) {
         this(username);
         this.isDisconnecting = isDisconnecting;
@@ -36,8 +34,7 @@ public class PlayerConnect extends Request {
         if (isDisconnecting) {
             message += " has left.\n";
             activeMatch.removePlayer(username);
-        }
-        else {
+        } else {
             message += " has joined.\n";
             activeMatch.addPlayer(username);
         }
@@ -52,7 +49,7 @@ public class PlayerConnect extends Request {
         // Broadcast join/left message
         ClientServerDispatcher.getInstance().broadcast(new ChatMessage(message));
     }
-    
+
     public String getUsername() {
         return username;
     }

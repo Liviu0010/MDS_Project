@@ -17,15 +17,16 @@ import javax.swing.JOptionPane;
 public class MultiplayerLanPanel extends javax.swing.JPanel {
 
     private final MainFrame rootFrame;
-    
+
     /**
      * Creates new form MultiplayerLanPanel
+     *
      * @param rootFrame
      */
     public MultiplayerLanPanel(MainFrame rootFrame) {
-        
+
         this.rootFrame = rootFrame;
-        
+
         initComponents();
         Player.getInstance().logOut();
     }
@@ -145,15 +146,16 @@ public class MultiplayerLanPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void connectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectButtonActionPerformed
-        if(!checkPlayerName())
+        if (!checkPlayerName()) {
             return;
+        }
         String ip = adressField.getText();
         if (!ip.isEmpty()) {
             try {
                 Player.getInstance().setUsername(playerNameField.getText());
                 ConnectionHandler.getInstance().connectToMatch(ip, Integer.parseInt(portNumberField.getText()));
-                List<String> playerStateList =  
-                        (List<String>)ConnectionHandler.getInstance().readFromMatch();
+                List<String> playerStateList
+                        = (List<String>) ConnectionHandler.getInstance().readFromMatch();
                 rootFrame.changePanel(new MultiplayerMatchPanel(rootFrame, playerStateList));
             } catch (ClassNotFoundException | IOException ex) {
                 Logger.getLogger(MultiplayerLanPanel.class.getName()).log(Level.SEVERE, null, ex);
@@ -162,7 +164,7 @@ public class MultiplayerLanPanel extends javax.swing.JPanel {
         } else {
             ConsoleFrame.showError("Invalid IP or port.");
         }
-        
+
     }//GEN-LAST:event_connectButtonActionPerformed
 
     private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButtonActionPerformed
@@ -170,30 +172,32 @@ public class MultiplayerLanPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_backButtonActionPerformed
 
     private void createServerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createServerButtonActionPerformed
-        if(!checkPlayerName())
+        if (!checkPlayerName()) {
             return;
+        }
         Player.getInstance().setUsername(playerNameField.getText());
         rootFrame.changePanel(new MultiplayerCreateMatch(rootFrame));
     }//GEN-LAST:event_createServerButtonActionPerformed
-    
+
     /**
      * Returns true if the player has put a valid name
-     * @return 
+     *
+     * @return
      */
-    private boolean checkPlayerName(){
+    private boolean checkPlayerName() {
         String playerName = playerNameField.getText();
-        
-        if(playerName.isEmpty()){
+
+        if (playerName.isEmpty()) {
             JOptionPane.showMessageDialog(null, "You must choose a player name", "Must have a player name", JOptionPane.WARNING_MESSAGE);
             playerNameLabel.setForeground(Color.RED);
             return false;
         }
-        
+
         playerNameLabel.setForeground(Color.BLACK);
-        
+
         return true;
     }
-    
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel adress;

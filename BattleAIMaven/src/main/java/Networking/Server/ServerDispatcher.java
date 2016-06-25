@@ -20,20 +20,20 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ServerDispatcher implements Runnable {
-	
+
     private static final ServerDispatcher SERVER_DISPATCHER = new ServerDispatcher();
-    protected AbstractCollection<Connection> activeConnections =
-        new ConcurrentLinkedQueue<>();
+    protected AbstractCollection<Connection> activeConnections
+            = new ConcurrentLinkedQueue<>();
     protected AtomicBoolean isRunning;
     protected Thread mainThread;
     protected int port;
     protected ExecutorService THREAD_POOL;
     protected ServerSocket serverSocket;
-    
+
     protected ServerDispatcher() {
         isRunning = new AtomicBoolean(false);
     }
-    
+
     public static ServerDispatcher getInstance() {
         return SERVER_DISPATCHER;
     }
@@ -60,8 +60,9 @@ public class ServerDispatcher implements Runnable {
     public boolean stop() {
         if (isRunning.get()) {
             isRunning.set(false);
-            for (Connection i: activeConnections)
+            for (Connection i : activeConnections) {
                 i.closeConnection();
+            }
             activeConnections.clear();
             try {
                 serverSocket.close();
@@ -76,7 +77,7 @@ public class ServerDispatcher implements Runnable {
 
         return false;
     }
-    
+
     protected void listenForConnections(ServerSocket serverSocket) {
         while (isRunning.get()) {
             try {
@@ -88,7 +89,7 @@ public class ServerDispatcher implements Runnable {
             }
         }
     }
-    
+
     protected void startConnectionCleaner() {
         Timer connectionCleaner = new Timer();
 
@@ -101,61 +102,61 @@ public class ServerDispatcher implements Runnable {
                     connectionCleaner.cancel();
                     return;
                 }
-                    
+
                 Iterator<Connection> it = activeConnections.iterator();
                 while (it.hasNext()) {
                     Connection connection = it.next();
                     if (!connection.isActive()) {
                         System.out.println("removing");
                         ConsoleFrame.sendMessage(TimerTask.class.getSimpleName(),
-                                "Removing connection with "+connection.getClientSocket().getInetAddress());
-                        it.remove();    
+                                "Removing connection with " + connection.getClientSocket().getInetAddress());
+                        it.remove();
                     }
                 }
             }
         };
         connectionCleaner.scheduleAtFixedRate(removeInactiveConnections, 0,
-                        MasterServerConstants.PACKET_DELAY * 2);
+                MasterServerConstants.PACKET_DELAY * 2);
     }
-    
+
     @Override
-    public void run() {        
+    public void run() {
         startConnectionCleaner();
         listenForConnections(serverSocket);
     }
-    
+
     public List<Match> getActiveMatches() throws IOException {
         List<Match> activeMatches = new LinkedList<>();
-        
+
         MatchConnection matchConnection;
-        for (Connection connection: activeConnections) {
+        for (Connection connection : activeConnections) {
             if (connection.isActive() && connection instanceof MatchConnection) {
-                matchConnection = (MatchConnection)connection;
+                matchConnection = (MatchConnection) connection;
                 ConsoleFrame.sendMessage(this.getClass().getSimpleName(),
                         "Sent match: " + matchConnection.getActiveMatch().getTitle()
-                        +" to " + connection.getClientSocket().getInetAddress());
+                        + " to " + connection.getClientSocket().getInetAddress());
                 System.out.println("Sent match: " + matchConnection.getActiveMatch().getTitle());
                 activeMatches.add(matchConnection.getActiveMatch());
             }
         }
-        
+
         return activeMatches;
     }
-    
-    public List<String> getLocalConnections(){
+
+    public List<String> getLocalConnections() {
         List<String> connections = new LinkedList<>();
-        
-        for(Connection connection:activeConnections){
-            if(connection.isActive()){
+
+        for (Connection connection : activeConnections) {
+            if (connection.isActive()) {
                 connections.add(connection.getClientSocket().getInetAddress().getHostAddress());
             }
         }
         return connections;
     }
-    
+
     public void addConnection(Connection connection) {
         THREAD_POOL.execute(connection);
         activeConnections.add(connection);
-        ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Added connection with "+connection.getClientSocket().getInetAddress());
+        ConsoleFrame.sendMessage(this.getClass().getSimpleName(), "Added connection with " + connection.getClientSocket().getInetAddress());
     }
 }
