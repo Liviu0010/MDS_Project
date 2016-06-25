@@ -14,6 +14,7 @@ import Networking.Requests.SourceFileReceived;
 import Networking.Requests.SourceFileTransfer;
 import Networking.Requests.StartBattle;
 import Networking.Requests.EndBattle;
+import Networking.Requests.EndBattleDBUpdate;
 import Networking.Requests.GetPlayerStateList;
 import Networking.Server.ClientServerDispatcher;
 import Networking.Server.Match;
@@ -292,9 +293,11 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
         if(ready){
             ready = false;
             readyButton.setBackground(Color.YELLOW);
+            selectButton.setEnabled(true);
         }else{
             ready = true;
             readyButton.setBackground(Color.BLUE);
+            selectButton.setEnabled(false);
         }
     }//GEN-LAST:event_readyButtonActionPerformed
 
@@ -437,6 +440,16 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
                                     EndBattle endBattleRequest = (EndBattle)request;
                                     Scoreboard scor = new Scoreboard(endBattleRequest.getTankList());
                                     scor.setVisible(true);  
+                                    if (ConnectionHandler.getInstance().isHost()) {
+                                        EndBattleDBUpdate dbUpdateRequest = 
+                                                new EndBattleDBUpdate(endBattleRequest);
+                                        try {
+                                            ConnectionHandler.getInstance().sendToMasterServer(dbUpdateRequest);
+                                        } catch (IOException ex) {
+                                            ConsoleFrame.sendMessage(this.getClass().getSimpleName(), 
+                                                    "Failed to request ");
+                                        }
+                                    }
                                     break;
                                 case RequestType.SOURCE_FILE_RECEIVED:
                                     String username = ((SourceFileReceived)request).getUsername();

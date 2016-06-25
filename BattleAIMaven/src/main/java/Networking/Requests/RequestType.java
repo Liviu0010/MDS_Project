@@ -20,4 +20,5 @@ public final class RequestType {
     public final static int SOURCE_FILE_RECEIVED = 13;
     public final static int END_BATTLE = 14;
     public final static int GET_PLAYER_STATE_LIST = 15;
+    public final static int END_BATTLE_DB_UPDATE = 16;
 }

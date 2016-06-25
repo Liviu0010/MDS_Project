@@ -24,7 +24,7 @@ public interface MasterServerConstants {
                 ip = JOptionPane.showInputDialog(null, "Master Server IP: ",
                     "MS - IP", JOptionPane.INFORMATION_MESSAGE);
             }*/
-            return "5.12.250.190";
+            return "84.232.219.164";
         }
     }
     

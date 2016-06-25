@@ -29,12 +29,14 @@ public class IntelligenceControlThread extends Thread{
     
     private ArrayList<Color> colors = new ArrayList<>();
     
+    private long startTime;
+    
     public IntelligenceControlThread(List<Source> surse){
         numberOfTanks = surse.size();
         GameEntity.currentIndex = 0;
         tanks.clear();
         this.surse = surse;
-        
+       
         setupColors();
         IntelligenceTemplate playerCode;// = new IntelligenceTemplate();
         tankThreads = new ArrayList<>();
@@ -42,6 +44,7 @@ public class IntelligenceControlThread extends Thread{
         
         running = true;
         
+        startTime = System.currentTimeMillis();
         for(int i = 0; i<surse.size(); i++){
             
             synchronized(GameEntity.ENTITY_LIST){
@@ -119,7 +122,9 @@ public class IntelligenceControlThread extends Thread{
     public void gameOver(){
         this.stopNicely();
         VisualEngine.getInstance().closeWindow();
-        ClientServerDispatcher.getInstance().broadcast(new EndBattle(tanks));
+        long endTime = System.currentTimeMillis() - startTime;
+        endTime /= 1000;
+        ClientServerDispatcher.getInstance().broadcast(new EndBattle(tanks, endTime));
     }
     
     public static int getNumberOfTanks(){
