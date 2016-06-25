@@ -16,6 +16,7 @@ import Networking.Requests.StartBattle;
 import Networking.Requests.EndBattle;
 import Networking.Requests.EndBattleDBUpdate;
 import Networking.Requests.GetPlayerStateList;
+import Networking.Requests.SourceFileRemoved;
 import Networking.Server.ClientServerDispatcher;
 import Networking.Server.Match;
 import Networking.Server.Player;
@@ -278,26 +279,38 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
             if (index != lastSelectedIndex) {
                 selectedSource = sourceList.get(index);
                 selectedSource.setAuthor(Player.getInstance().getUsername());
-                ConnectionHandler.getInstance().
-                        sendToMatch(new SourceFileTransfer(Player.getInstance().getUsername(), selectedSource));
+                editPlayerName(selectedSource.getAuthor(), 
+                        selectedSource.getAuthor() + "/" + selectedSource.getName());
+                
                 lastSelectedIndex = index;
             }
         }catch(IndexOutOfBoundsException ex){
             ConsoleFrame.showError("Select script, please");
-        } catch (IOException ex) {
-            ConsoleFrame.showError("Cannot send source file content to server.");
         }
     }//GEN-LAST:event_selectButtonActionPerformed
 
     private void readyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_readyButtonActionPerformed
-        if(ready){
-            ready = false;
-            readyButton.setBackground(Color.YELLOW);
-            selectButton.setEnabled(true);
-        }else{
-            ready = true;
-            readyButton.setBackground(Color.BLUE);
-            selectButton.setEnabled(false);
+        if (lastSelectedIndex == -1) {
+            ConsoleFrame.showError("You must select an AI script first.");
+            return;
+        }
+        
+        try {
+            if(ready){
+                ConnectionHandler.getInstance().
+                            sendToMatch(new SourceFileTransfer(Player.getInstance().getUsername()));
+                ready = false;
+                readyButton.setBackground(Color.YELLOW);
+                selectButton.setEnabled(true);
+            }else{
+                ConnectionHandler.getInstance().
+                            sendToMatch(new SourceFileTransfer(Player.getInstance().getUsername(), selectedSource));
+                ready = true;
+                readyButton.setBackground(Color.BLUE);
+                selectButton.setEnabled(false);
+            }
+        } catch (IOException ex) {
+            ConsoleFrame.showError("Cannot send source file update request to server.");
         }
     }//GEN-LAST:event_readyButtonActionPerformed
 
@@ -455,6 +468,10 @@ public class MultiplayerMatchPanel extends javax.swing.JPanel {
                                     String username = ((SourceFileReceived)request).getUsername();
                                     String sourcename = ((SourceFileReceived)request).getSourcename();
                                     editPlayerName(username, username + "/" + sourcename); 
+                                    break;
+                                case RequestType.SOURCE_FILE_REMOVED:
+                                    username = ((SourceFileRemoved)request).getUsername();
+                                    editPlayerName(username, username);
                                     break;
                                 case RequestType.ENTITIY_UPDATE:
                                     ConnectionHandler.getInstance().addGameData(request);

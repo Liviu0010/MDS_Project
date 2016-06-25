@@ -82,10 +82,12 @@ public class PlayerConnection extends Connection {
                     if (request.getType() == RequestType.SOURCE_FILE_TRANSFER) {
                         // map this source to the player
                         SourceFileTransfer source = (SourceFileTransfer)request;
-                        ClientServerDispatcher.getInstance().getSourceFilesMap().put(username, source.getSource());
+                        if (source.isRemovingSource())
+                            ClientServerDispatcher.getInstance().getSourceFilesMap().remove(username);
+                        else
+                            ClientServerDispatcher.getInstance().getSourceFilesMap().put(username, source.getSource());
                     }
-                    
-                    if (!identityConfirmed && request.getType() == RequestType.PLAYER_CONNECT) {
+                    else if (!identityConfirmed && request.getType() == RequestType.PLAYER_CONNECT) {
                         identityConfirmed = true;
                         username = ((PlayerConnect)request).getUsername();
                     }
@@ -111,5 +113,5 @@ public class PlayerConnection extends Connection {
     
     public String getUsername() {
         return username;
-}
+    }
 }
